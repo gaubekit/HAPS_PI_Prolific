@@ -1,0 +1,28 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Comprehension Weakest Link Game{{ endblock }}
+
+{{ block content }}
+
+    <style>
+        .my-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+
+<div class="my-box">
+    <div class="container">
+      <h2 class="card-title text-center">Comprehension Questions (1/4)</h2>
+      <p class="card-text text-center">To guarantee you understand the payout structure, we ask you to answer the following comprehension questions.</p>
+                {{ include_sibling 'PayoffTable.html'}}
+                {{ formfield 'comprehension1' }}
+    </div>
+    <br/>
+    </div>
+
+
+  <br/>
+{{next_button }}
+
+{{ endblock }}

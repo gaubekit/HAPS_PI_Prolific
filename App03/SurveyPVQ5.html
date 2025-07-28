@@ -1,0 +1,412 @@
+{{ block title }}
+Stage 3: Additional Questionnaire 3/3 (Page 5/6)
+{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        background-color: #f9f9f9;
+        font-family: sans-serif;
+    }
+
+    .slider-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+        column-gap: 40px;
+    }
+
+    .slider-grid:first-child {
+        border-top: none;
+    }
+
+    .slider-section {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .slider-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .slider-wrapper span.label {
+        width: 80px;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    .slider-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .slider-ticks,
+    .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        width: 94%;
+        left: 3%;
+        pointer-events: none;
+    }
+
+    .slider-ticks {
+        top: 14px;
+    }
+
+    .slider-labels {
+        top: 25px;
+        font-size: 0.8em;
+        width: 94%;
+        left: 2%;
+        color: #333;
+    }
+
+    .slider-ticks span {
+        width: 1px;
+        height: 10px;
+        background-color: black;
+        display: block;
+    }
+
+    .slider-labels span {
+        text-align: center;
+        width: 1px;
+        transform: translateX(-50%);
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+        height: 8px;
+        position: relative;
+        z-index: 2;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        background: #ccc;
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        margin-top: -6px;
+        cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-track {
+        background: #ccc;
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    input[type=range]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .slider-section > div:first-child {
+        text-align: center;
+    }
+</style>
+
+<div class="my-box">
+    Please continue with the questionnaire. <br><br>
+    As before, the table below indicates the meaning of each slider position.
+     <table class="table table-striped" style="text-align: center;">
+        <tr>
+            <th></th>
+            <th>Not like me <br> at all</th>
+            <th>Not like me</th>
+            <th>Little like me</th>
+            <th>Moderately <br>like me</th>
+            <th>Like me</th>
+            <th>Very much <br>like me</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+        </tr>
+    </table>
+
+    <br>
+
+    <p>
+        <b>HOW MUCH LIKE YOU IS THIS PERSON?</b>
+    </p>
+
+
+    <br>
+    <p><b>It is important to him/her...</b></p>
+
+    <!-- Slider PVQ39 -->
+    <div class="slider-grid">
+        <div>..to figure things out himself/herself.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq39" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ40 -->
+    <div class="slider-grid">
+        <div>..to honor the traditional practices of his/her culture.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq40" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ41 -->
+    <div class="slider-grid">
+        <div>..to be the one who tells others what to do.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq41" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ42 -->
+    <div class="slider-grid">
+        <div>..to obey all the laws.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq42" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ43 -->
+    <div class="slider-grid">
+        <div>..to have all sorts of new experiences.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq43" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ44 -->
+    <div class="slider-grid">
+        <div>..to own expensive things that show his/her wealth.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq44" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ45 -->
+    <div class="slider-grid">
+        <div>..to protect the natural environment from destruction or pollution.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq45" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ46 -->
+    <div class="slider-grid">
+        <div>..to take advantage of every opportunity to have fun.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq46" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ47 -->
+    <div class="slider-grid">
+        <div>..to concern himself/herself with every need of his/her dear ones.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq47" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <!-- Slider PVQ48 -->
+    <div class="slider-grid">
+        <div>..that people recognize what he/she achieves.</div>
+        <div class="slider-section">
+            <div class="slider-wrapper">
+                <span class="label">not like me at all</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span>
+                    </div>
+                    <input type="range" name="pvq48" min="1" max="6" step="1" class="persist">
+                </div>
+                    <span class="label">very much like me</span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <br><br>
+
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 90; // zentral konfigurierbar
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // Initialer Countdown-Text
+        countdownEl.textContent = secondsLeft;
+
+        // Countdown aktualisieren jede Sekunde
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+</script>
+
+{{ endblock }}

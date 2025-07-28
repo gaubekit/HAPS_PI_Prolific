@@ -1,0 +1,33 @@
+{{ extends 'global/Page.html' }}
+{{ block title }} What's next? {{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+    
+    You have now further completed  blocks (a), (b), (c) <b> and (d) </b>.
+    <br/> <br/>
+    <img src="{{ static 'images/overview3.jpg' }}" width="100%" /> <br/><br/>
+
+
+    You will now continue on your own with Block (e). There is no need to wait for other players.<br>
+    We are aware that the next block contains a lot of questions, but we kindly ask you to read them carefully and answer them conscientiously.<br>
+    <br>
+    Please note that missed attention checks will negatively affect your payout, as our research depends on consistent and reliable data.<br>
+    <br>
+    Please answer all questions truthfully. We will not — and cannot — match your answers with your identity.<br>
+
+</div>
+
+<br/><br/>
+{{ next_button }}
+
+{{ endblock }}

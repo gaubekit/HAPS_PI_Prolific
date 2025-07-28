@@ -1,0 +1,40 @@
+{{ block title }}
+    Waitpage
+{{ endblock }}
+
+{{ block content }}
+    <p>Warte auf 3 Spieler…</p>
+    <p>Aktive Spieler: <span id="count">0</span></p>
+
+    {{ next_button }}
+
+    <style>
+        /* Versteckt den echten oTree-"Weiter"-Button */
+        .otree-btn-next {
+            display: none;
+        }
+    </style>
+
+    <script>
+        // Alle 800ms: Ping senden → Spieler gilt als "aktiv"
+        setInterval(() => {
+            liveSend("ping");
+        }, 800);
+
+        // Serverantwort verarbeiten
+        function liveRecv(data) {
+            // Zeige Anzahl aktiver Spieler
+            document.getElementById("count").textContent = data.count;
+
+            // Wenn 3 aktive Spieler → automatisch weiter
+            if (data.ready) {
+                setTimeout(() => {
+                    const realNext = document.querySelector('.otree-btn-next');
+                    if (realNext) {
+                        realNext.click();
+                    }
+                }, 100); // kleine Verzögerung, um sicherzustellen, dass Button geladen ist
+            }
+        }
+    </script>
+{{ endblock }}

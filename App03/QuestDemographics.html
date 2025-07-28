@@ -1,0 +1,167 @@
+{{ block title }}Stage 3: Additional Questionnaire 1/3{{ endblock }}
+
+{{ block content }}
+{% block css %}
+<link rel="stylesheet" type="text/css">
+{% endblock %}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+<div class="my-box">
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card border-0 shadow-sm mt-12" style="background-color: #f8f9fa;">
+        <div class="card-body">
+          <h2 class="card-title text-center"></h2>
+          <p class="card-text text-center">
+              <b>Please provide the following personal details to conclude.</b></p>
+
+            {{ formfield 'prolificdays_month' }}
+            {{ formfield 'prolifichours_day' }}
+
+              <div class="form-group">
+               <label for="incomeProlific" class="control-label col-form-label">Is Prolific your primary source of income?</label>
+               <div>
+                 <select name="incomeProlific" id="incomeProlific" class="form-select">
+                     <option value="" selected disabled hidden>--------</option>
+                     <option value="1">Yes</option>
+                     <option value="2">No</option>
+                     <option value="3">Other, please specify</option>
+                 </select>
+                   <input name="prolificprimary_income" id="hidden_income" value="1" type="hidden"/>
+
+               </div>
+             </div>
+
+
+              <div id="other_income_specify_container" style="display:none;">
+                {{ formfield 'other_income_specify' }}
+             </div>
+
+
+            {{ formfield 'us_state' }}
+            {{ formfield 'age' }}
+
+
+            <div class="form-group">
+               <label for="genderProlific" class="control-label col-form-label">How do you identify?</label>
+               <div>
+                 <select name="genderProlific" id="genderProlific" class="form-select">
+                     <option value="" selected disabled hidden>--------</option>
+                     <option value="1">Male</option>
+                     <option value="2">Female</option>
+                     <option value="3">Other</option>
+                 </select>
+                   <input name="gender" id="hidden_gender" value="0" type="hidden"/>
+
+               </div>
+             </div>
+
+
+              <div id="other_gender_specify_container" style="display:none;">
+                {{ formfield 'other_gender_specify' }}
+             </div>
+
+            {{ formfield 'education' }}
+           
+             <div class="form-group">
+               <label for="ethnicityField" class="control-label col-form-label">What ethnic group do you belong to?</label>
+               <div>
+                 <select name="ethnicityField" id="ethnicityField" class="form-select">
+                     <option value="" selected disabled hidden>--------</option>
+                     <option value="1">White</option>
+                     <option value="2">Black</option>
+                     <option value="3">Asian</option>
+                     <option value="4">Mixed</option>
+                     <option value="5">Other</option>
+                     <option value="6">Prefer not to say</option>
+                 </select>
+                   <input name="ethnicity" id="hidden_ethnicity" value="0" type="hidden"/>
+
+               </div>
+             </div>
+
+
+              <div id="other_ethnicity_specify_container" style="display:none;">
+                  {{ formfield 'other_ethnicity_specify' }}
+             </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<br>
+{{next_button}}
+
+
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectField = document.getElementById('genderProlific');
+            const otherSpecifyContainer = document.getElementById('other_gender_specify_container');
+            selectField.addEventListener('change', function() {
+
+                if (selectField.value == "3") {
+                    otherSpecifyContainer.style.display = 'block';
+                     const gender = document.getElementById('hidden_gender');
+                     gender.value = selectField.value;
+                } else {
+                    otherSpecifyContainer.style.display = 'none';
+                     const gender = document.getElementById('hidden_gender');
+                     gender.value = selectField.value;
+
+                }
+            });
+
+            const selectIncomeField = document.getElementById('incomeProlific');
+            const otherIncomeSpecifyContainer = document.getElementById('other_income_specify_container');
+            selectIncomeField.addEventListener('change', function() {
+
+                if (selectIncomeField.value == "3") {
+                    otherIncomeSpecifyContainer.style.display = 'block';
+                     const income = document.getElementById('hidden_income');
+                     income.value = selectIncomeField.value;
+                } else {
+                    otherIncomeSpecifyContainer.style.display = 'none';
+                     const income = document.getElementById('hidden_income');
+                     income.value = selectIncomeField.value;
+
+                }
+            });
+
+        });
+
+            // Get the input field element
+
+        // Add an event listener for the visibility change
+       // document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        const selectEthnicityField = document.getElementById('ethnicityField');
+        const otherEthSpecifyContainer = document.getElementById('other_ethnicity_specify_container');
+        selectEthnicityField.addEventListener('change', function() {
+
+                if (selectEthnicityField.value === "5") {
+                    otherEthSpecifyContainer.style.display = 'block';
+                     const ethnicity = document.getElementById('hidden_ethnicity');
+                     ethnicity.value = selectEthnicityField.value;
+                } else {
+                    otherEthSpecifyContainer.style.display = 'none';
+                     const ethnicity = document.getElementById('hidden_ethnicity');
+                     ethnicity.value = selectEthnicityField.value;
+
+                }
+            });
+
+
+
+    </script>
+{{ endblock }}

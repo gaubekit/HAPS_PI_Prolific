@@ -1,0 +1,66 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Pre-Study: Consent Form{{ endblock }}
+
+{{ block content }}
+<style>
+    label {
+        display: inline-block;
+    }
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+    .checkbox-container {
+        display: flex;
+        align-items: flex-start;
+    }
+    .checkbox-container input {
+        margin-right: 10px;
+        align-self: center;
+    }
+    .checkbox-label {
+        display: inline-block;
+    }
+    .radio-container {
+        margin-top: 10px;
+    }
+    .radio-option {
+        display: flex;
+        align-items: center;
+        margin-right: 10px; /* 10px left margin for each option */
+    }
+    .radio-option input {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="my-box">
+
+    <p>I have understood the instructions and wish to participate in the project. I understand that my participant ID and the individual participation code will be used to verify my participation and send my payment. I further confirm that I give permission to share my audio and video with other participants during a vide meeting.</p>
+
+    <form>
+        <p>Do you want to participate?</p>
+        <div class="radio-container">
+            <div class="radio-option">
+                <input type="radio" id="yes" name="participation" value="yes" onchange="updateParticipation(this.value)">
+                <label for="yes">Yes, I want to participate.</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="no" name="participation" value="no" onchange="updateParticipation(this.value)">
+                <label for="no">No, I do not want to participate.</label>
+            </div>
+            <input id="hiddenConsent" type="hidden" name="consent" value="0"/>
+        </div>
+    </form>
+    <script>
+
+        function updateParticipation(selectedValue) {
+            var consent = document.getElementById("hiddenConsent");
+            consent.value = selectedValue === 'yes' ? 1 : 0;
+        }
+    </script>
+</div>
+<br/><br/>
+{{next_button}}
+{{ endblock }}

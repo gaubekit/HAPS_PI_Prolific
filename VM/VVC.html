@@ -1,0 +1,802 @@
+{{ extends 'global/Page.html' }}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'global.css' %}">
+    <style>
+    .column {
+        float: left;
+        height: 80vh; /* Responsive height */
+
+    }
+    .left {
+        width: 80%;
+    }
+    .right {
+        width: 20%;
+        vertical-align: middle;
+        border: 1px solid #000;
+    }
+
+
+    .top {
+        height: 5vh;
+        border: 1px solid #000; /* Optional styling */
+        box-sizing: border-box;
+        width: 100%;
+ 	padding-bottom: 3%;
+       }
+
+    .bottom {
+        height: 80vh;
+        width: 100%;
+    }
+    /* Row style with maximum width and responsive adjustments */
+    .row {
+        width: 100%;
+        max-width: 100%;
+	margin: 0 auto;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+    #meet {
+        width: 100%;
+        height: 80vh; /* Set the height to 100% of the viewport height */
+
+    }
+     .meet-default {
+         width: 100%;
+         height: 80vh; }
+    .meet-treatment2 {
+        width: 100%;
+         height: 40vh;
+    }
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+    .my-box1 {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+        display:none;
+    }
+    #displaymessage {
+        display: none;
+    }
+    .center-container {
+      display: flex;
+      justify-content: center; /* horizontal center */
+      align-items: center;     /* vertical center */
+      text-align: center;
+      line-height: 1.5;
+      width: 100%;
+    }
+
+
+     label {
+        display: inline-block;
+    }
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+    .checkbox-container {
+        display: flex;
+        align-items: flex-start;
+    }
+    .checkbox-container input {
+        margin-right: 10px;
+        align-self: center;
+    }
+    .checkbox-label {
+        display: inline-block;
+    }
+    .radio-container {
+        margin-top: 10px;
+    }
+    .radio-option {
+        display: flex;
+        align-items: center;
+        margin-right: 10px; /* 10px left margin for each option */
+    }
+    .radio-option input {
+        margin-right: 10px;
+    }
+
+
+    /* Responsive layout */
+    @media (max-width: 1200px) {
+        .row {
+            max-width: 1200px;
+        }
+    }
+
+    @media (max-width: 1000px) {
+        .row {
+            max-width: 1000px;
+        }
+    }
+
+    @media (max-width: 800px) {
+        .row {
+            max-width: 800px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .row {
+            max-width: 600px;
+        }
+
+        .column {
+            float: none;
+            width: 100%;
+            height: 80vh; /* Adjust height to auto for small screens */
+        }
+
+        .left, .right {
+            width: 100%;
+        }
+
+        .right {
+            margin-top: 20px;
+            border: none;
+             display: flex;
+            justify-content: center; /* horizontal center */
+            align-items: center;
+        }
+    }
+
+     .collapsible-container {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      padding: 10px;
+      border-radius: 5px;
+      width: fit-content;
+    }
+
+    .icon {
+      font-weight: bold;
+      margin-right: 10px;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border: 1px solid #666;
+      border-radius: 3px;
+      font-size: 14px;
+      background-color: white;
+    }
+
+    .content {
+      display: none;
+      padding: 10px;
+      margin-top: 5px;
+      background-color: #f9f9f9;
+      border-left: 3px solid #ccc;
+    }
+
+     #progressBar {
+        width: 0%;
+        height: 30px;
+        background-color: #4CAF50;
+        transition: width 0.5s ease-in-out; /* Smooth transition for the width change */
+    }
+
+</style>
+{% endblock %}
+{{ block title }} Virtual Team Meeting {{ endblock }}
+{{ block content }}
+
+<div id="myHeader" class="otree-title page-header"></div>
+
+<div id = "box1" class="my-box">
+    <div id="message">
+    The virtual team meeting has started and you have a total of <b>7 minutes to discuss types of vacation (camping, beach, city trips etc.). In the Jitsi meeting, you can see a timer at the top center.</b> The virtual team meeting then ends automatically and you will proceed to the next page.
+        <br/>Please <b><u>do not</u></b> refresh this page. Please click <b><u>allow</u></b> on the popup for permission to record audio, otherwise you cannot proceed with the study after the video call.
+	
+
+     <div class="collapsible-container" onclick="toggleContent()">
+      <span id="icon" class="icon">+</span>
+      <span>Note:</span>
+    </div>
+        <div id="collapsible-content"  style="background-color: #F2F2F2; padding: 10px;  border: 2px solid gray;  margin: 0;" class="content">
+            <ul>
+                <li>You can click on <b>^ above the "Mute / Unmute" (microphone) icon </b>to select the microphone and speaker you want to use. This might help if your <b>currently selected microphone or speaker do not work</b>.
+                "Mute / Unmute" (microphone) icon:
+                    <img src="{% static 'Picture_Microphone.jpg' %}" alt="microphone-icon"/></li>
+                <li>If you have several cameras, you can choose which camera is used by clicking on <b>^ above the "Start/Stop camera" icon</b>. It is mandatory to keep the camera turned on during the meeting.
+                "Start/Stop camera" icon:
+                    <img src="{% static 'Picture_Camera.jpg' %}" alt="camera-icon"/></li>
+      		<li>If your camera or microphone is not functioning properly, please make sure you have allowed microhone and camera access in your browser settings (Click Browser Settings or to the Left of the address bar).
+                <br/></li>
+                <br/>
+               <li> Each team member is given a name "O" during <b>Stage 2 and Stage 3</b>.
+                There is <b>no hierarchy</b> based on the names. In the Jitsi meeting, you can see the names of each team member in the <b>bottom left corner of each screen</b>.
+                </li>
+                </ul>
+        </div>
+    </div>
+   <br/>
+    <br/>
+    <div id="progressBarContainer" style="width: 100%; background-color: #ddd; margin-top: -50px;">
+    <div id="progressBar" style="width: 0%; height: 30px; background-color: cornflowerblue;"></div>
+</div>
+</div>
+<br/>
+
+    <div id="videopanel" class="row">
+	{% if player.treatmentNumber == 3 %}
+        <div id="container" class="column top">
+		
+              <div id = "messageTreatment" class="center-container">
+                  <br/> <b><h2>Focus on engaging with others in the meeting, and communicate with them.</h2></b><br/>
+              </div>
+		
+        </div>
+	{% endif %}
+
+
+	<div id="meet"  {% if player.treatmentNumber == 2 %} style="height: 40vh;border: 1px solid #000;" {% else %} style="height: 80vh;border: 1px solid #000" {% endif %} ></div>
+        
+
+
+    </div>
+
+<div id = "description"  type = "hidden" class="my-box1">
+ <div class="my-box">
+    <p><b>Please choose the closest option about the quality of the virtual team meeting:</b></p>
+    <form>
+        <div class="radio-container">
+
+            <div class="radio-option">
+                <input type="radio" id="yes" name="seehearyes" value="yes" onchange="updateSeeHear(this.value)">
+                <label for="yes">I could hear and see both of the other two team members.</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="maybe" name="seehearyes" value="maybe" onchange="updateSeeHear(this.value)">
+                <label for="maybe">I could <i>mostly</i> hear and understand the others, despite minor audio or video interruptions.</label>
+            </div>
+
+            <div class="radio-option">
+                <input type="radio" id="no" name="seehearyes" value="no" onchange="updateSeeHear(this.value)">
+                <label for="no">I could not hear and see one or both of the other two team members throughout the call.</label>
+            </div>
+		<br/><br/>
+ 	    <b>Please confirm the following statement:</b>
+
+ 	    <div class="radio-option">
+                <input type="radio" id="attnCheck" name="attentionCheckYes" value="yes" onchange="updateAttentionCheck(this.value)">
+                <label for="attnCheck">I confirm that I am human, and will continue participating in this experiment.</label>
+
+            </div>
+            <input id="hiddenSeeHear" type="hidden" name="seeHear" value="2"/>
+	    <input id="hiddenAttentionCheck" type="hidden" name="attentionCheck" value="0"/>
+        </div>
+
+    </form>
+    <script>
+        function updateSeeHear(selectedValue) {
+            var seeHear = document.getElementById("hiddenSeeHear");
+            if (selectedValue === 'yes') {
+                seeHear.value = 1;
+            } else if (selectedValue === 'no') {
+                seeHear.value = 0;
+            } else if (selectedValue === 'maybe') {
+                seeHear.value = 2;
+            } else {
+                seeHear.value = 2;
+            } 
+
+        }
+    </script>
+     <script>
+        function updateAttentionCheck(selectedValue) {
+            var attentionCheck = document.getElementById("hiddenAttentionCheck");
+            if (selectedValue === 'yes') {
+                attentionCheck.value = 1;
+            } else {
+                attentionCheck.value = 0;
+            }
+
+        }
+    </script>
+</div>
+
+
+
+</div>
+
+
+<script src="https://haps-meeting.k8s.iism.kit.edu/external_api.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.0/dist/ffmpeg.min.js"></script>
+
+
+<script>
+    console.debug("is dropout");
+    const domain = "haps-meeting.k8s.iism.kit.edu"; //Here goes your domain where the meeting takes place.
+    const NameParam = {{player.id_in_group}} % 4; 
+    let TN_name="O";
+    let api;
+
+    // adjust information to display
+    const treatment = {{ player.treatmentNumber}};
+    // treatment = 1: control
+    // treatment = 2: self-view
+    // treatment = 3: message
+    const options = {
+        roomName: "Video Meeting" + {{player.group_id}}, //This is the name of the room, with player's group ID
+        parentNode: document.querySelector('#meet'), //Now, you declare here which element should parent your stream.
+        configOverwrite: {
+            prejoinConfig: {
+                enabled: false
+            },
+            disableSelfView: treatment===2,
+            startWithAudioMuted: false,
+            startWithVideoMuted: false,
+            filmstrip: {
+                disableResizable: true,
+            },
+            participantsPane: {
+                hideModeratorSettingsTab: true,
+                hideMoreActionsButton: true,
+                hideMuteAllButton: true
+            },
+	        disableAEC: false, // Acoustic Echo Cancellation
+            disableNS: false,  // Noise Suppression
+            resolution: 360,
+                constraints: {
+                    video: {
+                        height: {
+                            ideal: treatment === 2 ? 180 : 360,
+                            max: treatment === 2 ? 180 : 360,
+                            min: 180
+                        }
+                    }
+                },
+                disableSimulcast: true,
+                enableLayerSuspension: false,
+                toolbarButtons: [
+                    'microphone', 'camera' // Custom button added
+                ]
+
+        },
+        interfaceConfigOverwrite: {
+            TOOLBAR_BUTTONS: ['microphone', 'camera', 'fodeviceselection'],
+            SHOW_JITSI_WATERMARK: false,
+            TILE_VIEW_MAX_COLUMNS: 2,
+            TILE_VIEW_ENABLED: true,
+            SHOW_MEETING_TIMER: false,
+            SHOW_MORE_ACTIONS: false,
+            PARTICIPANT_MENU_BUTTONS: []
+        },
+        userInfo: {
+            displayName: TN_name,
+        }
+    };
+     {% if is_dropout == False %}
+        api = new JitsiMeetExternalAPI(domain, options); //This is where the iframe is actually constructed
+        //The function below turns on the Tile View everytime a participant joins. Practically it makes Tile View the default mode
+        api.addEventListener('videoConferenceJoined', () => {
+            api.executeCommand('setTileView', true);
+        });
+
+     {% endif %}
+
+    let recordedChunks = [];
+    let audioStream;
+    let displayStream;
+    let audioRecorder;
+    let displayRecorder;
+    let recordedAudioChunks = [];
+    let recordedDisplayAudioChunks= [];
+
+
+    document.addEventListener('DOMContentLoaded', async function () {
+
+        let timerElement = document.querySelector('.otree-timer');
+        if (timerElement) {
+            timerElement.style.visibility = 'hidden';  // Hides the timer
+        }
+
+       const nextBtn = document.querySelector(".otree-btn-next.btn.btn-primary");
+
+          {% if is_dropout == True %}
+                var timerElements = document.getElementsByClassName('otree-timer alert alert-warning');
+                for (var i = 0; i < timerElements.length; i++) {
+                    timerElements[i].style.visibility = 'hidden';
+                    timerElements[i].style.display = 'none';
+                }
+                   nextBtn.style.display = "block";
+                   nextBtn.click();
+           {% endif %}
+
+        {% if is_dropout == False %}
+        nextBtn.style.display = "none";
+        var timerElements = document.getElementsByClassName('otree-timer alert alert-warning');
+        for (var i = 0; i < timerElements.length; i++) {
+            timerElements[i].style.visibility = 'hidden';
+            timerElements[i].style.display = 'none';
+
+        }
+        {% endif %}
+
+
+       // Send the data to the server
+        console.log('Before audio media request...');
+       {% if is_dropout == False %}
+        const audioFormData = new FormData();
+        const displayFormData = new FormData();
+        console.log('audio media request...');
+        try {
+
+            console.log('Requesting audio media...');
+            audioStream = await navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: false // Only audio is needed here
+            });
+
+
+            console.log('Media streams obtained.');
+
+            // Create a MediaRecorder for audio
+            audioRecorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm' });
+            if (audioRecorder) {
+                audioRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedAudioChunks.push(event.data);
+                        console.log('Audio data available:', event.data);
+                    }
+                };
+            }
+
+            displayStream = await navigator.mediaDevices.getDisplayMedia({
+                preferCurrentTab: true,
+                   video: { mediaSource: 'tab' },
+                    audio: true // Capture system audio
+                });
+
+ 		    displayStream.getVideoTracks()[0].stop();
+        	displayStream.removeTrack(displayStream.getVideoTracks()[0]);
+
+            displayRecorder = new MediaRecorder(displayStream, { mimeType: 'audio/webm' });
+            if (displayRecorder) {
+                // Store display media audio data
+                displayRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedDisplayAudioChunks.push(event.data);
+                        console.log('Display media audio chunk stored.');
+                    }
+                };
+            }
+            if (audioRecorder) {
+                audioRecorder.onstop = async () => {
+                    console.log('Audio recorder stopped.');
+
+                    // Create a Blob from the recorded audio chunks
+                    const audioBlob = new Blob(recordedAudioChunks, { type: 'audio/webm' });
+
+                    const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
+                    const groupId = '{{ group.id_in_subsession }}';
+                    const playerId = '{{ player.id_in_group }}';
+                    const filenameWebm = `audio_${groupId}_${playerId}_${timestamp}.webm`;
+
+                    // Append the webm file to audioFormData
+                    audioFormData.append('audio', audioBlob, filenameWebm);
+                    console.log('Audio form data prepared for upload.');
+
+                    // Upload audio data
+                    let uploadUrlAudio = 'https://kithumansubjectsstudy.org:3000/upload/audio/noOptIn';
+                    {% if participant.vars.optInConsent == 0 %}
+                        uploadUrlAudio = 'https://kithumansubjectsstudy.org:3000/upload/audio/noOptIn';
+                    {% else %}
+                        uploadUrlAudio = 'https://kithumansubjectsstudy.org:3000/upload/audio/optIn';
+                    {% endif %}
+
+                    try {
+                        const response = await fetch(uploadUrlAudio, {
+                            method: 'POST',
+                            body: audioFormData
+                        });
+
+                        if (response.ok) {
+                            console.log('Audio uploaded successfully.');
+
+                            nextBtn.style.display = "block";
+                            document.getElementById('message').innerHTML = '<p><b> The video meeting is now terminated. <br/> We will now proceed to Part 2. </b></p>';
+
+                            document.getElementById('progressBarContainer').style.visibility = 'hidden';
+                            document.getElementById('progressBarContainer').style.display = 'none';
+                            document.getElementById('progressBar').style.visibility = 'hidden';
+                            document.getElementById('progressBar').style.display = 'none';
+
+                            var timerElements = document.getElementsByClassName('otree-timer alert alert-warning');
+                            for (var i = 0; i < timerElements.length; i++) {
+                               timerElements[i].style.visibility = 'hidden';
+                               timerElements[i].style.display = 'none';
+                            }
+                        } else {
+                            console.error('Failed to upload audio.');
+                            nextBtn.style.display = "block";
+                            document.getElementById('message').innerHTML = '<p><b> The video meeting is now terminated. <br/> We will now proceed to Part 2. </b></p>';
+                            document.getElementById('progressBarContainer').style.visibility = 'hidden';
+                            document.getElementById('progressBarContainer').style.display = 'none';
+                            document.getElementById('progressBar').style.visibility = 'hidden';
+                            document.getElementById('progressBar').style.display = 'none';
+                            var timerElements = document.getElementsByClassName('otree-timer alert alert-warning');
+                            for (var i = 0; i < timerElements.length; i++) {
+                                timerElements[i].style.visibility = 'hidden';
+                                timerElements[i].style.display = 'none';
+                            }
+                        }
+
+
+                    } catch (error) {
+                        console.error('Error uploading audio:', error);
+                    }
+
+                    // Hide the video and audio panels and show the message after both uploads
+
+                };
+
+            }
+            if (displayRecorder) {
+                displayRecorder.onstop =  async()=> {
+                console.log('Display recorder stopped.');
+                const displayBlob = new Blob(recordedDisplayAudioChunks, { type: 'audio/webm' });
+                const timestamp = new Date().toISOString().replace(/[-:.]/g, '');
+                const groupId = '{{ group.id_in_subsession }}';
+                const playerId = '{{ player.id_in_group }}';
+                const filenameWebm = `display_${groupId}_${playerId}_${timestamp}.webm`;
+
+                displayFormData.append('audio', displayBlob, filenameWebm);
+                console.log('Display media recording stored.');
+
+                let uploadUrlAudio = 'https://kithumansubjectsstudy.org:3000/upload/audio/noOptIn';
+                {% if participant.vars.optInConsent == 0 %}
+                    uploadUrlAudio = 'https://kithumansubjectsstudy.org:3000/upload/audio/noOptIn';
+                {% else %}
+                    uploadUrlAudio = 'https://kithumansubjectsstudy.org:3000/upload/audio/optIn';
+                {% endif %}
+
+                try {
+                    const response = await fetch(uploadUrlAudio, {
+                        method: 'POST',
+                        body: displayFormData
+                    });
+
+                    if (response.ok) {
+                        console.log('Display Audio uploaded successfully.');
+
+                        nextBtn.style.display = "block";
+                            document.getElementById('message').innerHTML = '<p><b> The video meeting is now terminated. <br/> We will now proceed to Part 2. </b></p>';
+                        document.getElementById('progressBarContainer').style.visibility = 'hidden';
+                            document.getElementById('progressBarContainer').style.display = 'none';
+                            document.getElementById('progressBar').style.visibility = 'hidden';
+                            document.getElementById('progressBar').style.display = 'none';
+
+                            var timerElements = document.getElementsByClassName('otree-timer alert alert-warning');
+                            for (var i = 0; i < timerElements.length; i++) {
+                               timerElements[i].style.visibility = 'hidden';
+                               timerElements[i].style.display = 'none';
+                            }
+
+
+                    } else {
+                            console.error('Failed to upload display audio.');
+                            nextBtn.style.display = "block";
+                            document.getElementById('message').innerHTML = '<p><b> The video meeting is now terminated. <br/> We will now proceed to Part 2. </b></p>';
+                            document.getElementById('progressBarContainer').style.visibility = 'hidden';
+                            document.getElementById('progressBarContainer').style.display = 'none';
+                            document.getElementById('progressBar').style.visibility = 'hidden';
+                            document.getElementById('progressBar').style.display = 'none';
+                            var timerElements = document.getElementsByClassName('otree-timer alert alert-warning');
+                            for (var i = 0; i < timerElements.length; i++) {
+                                timerElements[i].style.visibility = 'hidden';
+                                timerElements[i].style.display = 'none';
+                            }
+                    }
+                } catch (error) {
+                    console.error('Error uploading display audio:', error);
+                }
+
+                // Hide the video and audio panels and show the message after both uploads
+
+            };
+            }
+
+             if (audioRecorder) {
+		audioRecorder.start();
+	     }
+             if (displayRecorder) {
+		displayRecorder.start();	
+	     }
+
+            console.log('Media recorders started.');
+             $('.otree-timer__time-left').on('update.countdown', function (event) {
+                            if (event.offset.totalSeconds === 121) {
+                                if (audioRecorder) audioRecorder.stop();
+                                if (displayRecorder) displayRecorder.stop();
+
+                                if (audioStream) {
+                                    audioStream.getTracks().forEach(track => track.stop());
+                                }
+
+                                if (displayStream) {
+                                    displayStream.getTracks().forEach(track => track.stop());
+                                }
+
+                                if (api) api.dispose();
+                                document.getElementById('message').innerHTML = '<div style="background-color: #FFCCCC; padding: 10px; margin: 0;"> <p style="color: #C9224A;">Uploading recording... Please wait until the upload is finished. Please <u><b>do not refresh </b></u>the page during this time. <br/><br/>While uploading, please provide feedback on the virtual team meeting below.<br/><br/> <b>Please make sure to select atleast one of the options below.</b> <br/><br/> Once the upload is finished, please answer the question below and click next.<br/><br/><b>If the upload takes too long, you will automatically proceed to the next page after <b>two minutes at most</b>.</p> </div>';
+                                  document.getElementById('progressBarContainer').style.visibility = 'hidden';
+                                    document.getElementById('progressBarContainer').style.display = 'none';
+                                    document.getElementById('progressBar').style.visibility = 'hidden';
+                                    document.getElementById('progressBar').style.display = 'none';
+
+                                var headerElement= document.getElementById('myHeader');
+                                console.debug('header element');
+                                console.debug(headerElement);
+                                if (headerElement) {
+                                    console.debug('header element found');
+                                    headerElement.innerHTML = '<h2>Description Part 2</h2>';
+
+                                } else {
+                                    console.error('Header element not found');
+                                }
+                                document.getElementById('description').style.display = 'block';
+                                document.getElementById('videopanel').style.display = 'none';
+                            }
+                        });
+
+
+        } catch (err) {
+            console.error('Error accessing media.', err);
+	    console.log ('before timer');
+            $('.otree-timer__time-left').on('update.countdown', function (event) {
+                            if (event.offset.totalSeconds === 121) {
+  				console.log ('detects timer event 121');
+                                if (audioRecorder) {
+					console.log ('attempts to stop audio recorder');
+
+					audioRecorder.stop();
+				}
+                                if (displayRecorder) {
+					console.log ('attempts to stop display recorder');
+
+					displayRecorder.stop();
+				}
+
+                                if (audioStream) {
+				    console.log ('attempts to stop audio stream');
+
+                                    audioStream.getTracks().forEach(track => track.stop());
+                                }
+
+                                if (displayStream) {
+				    console.log ('attempts to stop display stream');
+
+                                    displayStream.getTracks().forEach(track => track.stop());
+                                }
+
+                                if (api) {
+					 console.log ('attempts to stop api');
+
+					 api.dispose();
+				}
+                                document.getElementById('message').innerHTML = '<div style="background-color: #FFCCCC; padding: 10px; margin: 0;">  <p style="color: #C9224A;"> Uploading recording...  Please wait until the upload is finished. While uploading, you can provide feedback on the virtual team meeting below. <br/><br/> Once the upload is finished, you will automatically proceed to the next page. <br/><br/>  <b>If the upload takes too long, you will automatically proceed to the next page after <b>two minutes at  most</b>. </p> </div>';
+                                document.getElementById('progressBarContainer').style.visibility = 'hidden';
+                                document.getElementById('progressBarContainer').style.display = 'none';
+                                document.getElementById('progressBar').style.visibility = 'hidden';
+                                document.getElementById('progressBar').style.display = 'none';
+                                var headerElement= document.getElementById('myHeader');
+                                console.debug('header element');
+                                console.debug(headerElement);
+                                if (headerElement) {
+                                    console.debug('header element found');
+                                    headerElement.innerHTML = '<h2>Description Part 2</h2>';
+
+                                } else {
+                                    console.error('Header element not found');
+                                }
+                                document.getElementById('description').style.display = 'block';
+                                document.getElementById('videopanel').style.display = 'none';
+                            }
+                        });
+        }
+
+
+         {% endif %}
+    });
+
+function toggleContent() {
+    const content = document.getElementById("collapsible-content");
+    const icon = document.getElementById("icon");
+
+    if (content.style.display === "block") {
+      content.style.display = "none";
+      icon.textContent = "+";
+    } else {
+      content.style.display = "block";
+      icon.textContent = "−";
+    }
+  }
+
+</script>
+
+
+<script>
+    const duration = 7 * 60;
+
+    /// Start Time Log
+    document.addEventListener("DOMContentLoaded", function() {
+
+        startProgressBar(duration);
+
+
+    });
+
+    function startProgressBar(duration) {
+        var elem = document.getElementById("progressBar");
+
+        var totalTime = duration * 1000; // Total time in milliseconds
+        var intervalTime = 500; // Update interval in milliseconds
+        var increments = totalTime / intervalTime; // Total number of increments
+        var widthIncrement = 100 / increments; // Width increment per interval
+
+        var width = widthIncrement;
+
+        var id = setInterval(frame, intervalTime);
+        function frame() {
+            if (width > 100) {
+                clearInterval(id);
+            } else {
+                width += widthIncrement;
+                elem.style.width = width + '%';
+            }
+        }
+    }
+
+
+</script>
+<br/>
+<script>
+    window.onload = function () {
+        preventRefreshAndReload();
+    };
+function preventRefreshAndReload() {
+    // Prevent F5 and Ctrl+R / Cmd+R
+    window.addEventListener('keydown', function (e) {
+        // F5
+        if (e.key === 'F5') {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Ctrl+R or Cmd+R
+        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
+
+  
+}
+</script>
+{{ next_button }}
+{{ endblock }}
+

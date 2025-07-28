@@ -1,0 +1,71 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Pre-Study: Study Information and Data Protection{{ endblock }}
+
+{{ block content }}
+<style>
+label {
+  display: inline-block;
+}
+.my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+}
+</style>
+
+
+<div class="my-box">
+<label>
+    <h4><b>Principal investigators: </b></h4>
+    <p>Christof Weinhardt (Karlsruhe Institute of Technology)</p>
+
+    <h4><b>Description:</b></h4>
+    <p>We study the role of collaboration in virtual teams. This study will take no longer than <span style="color: orange;">60 minutes</span> of your time.</p>
+
+    <h4><b>Eligibility criteria:</b></h4>
+    <p>You are eligible to participate if you previously agreed to share video and audio with other participants and are technically and physically able to take part in a video conference. Additionally, you are between 18 and 65 years old, speak English fluently, have at least 100 previous submissions, and have an approval rate of at least 95%. Furthermore, your residence is in the US and you have not participated in this study before.</p>
+
+    <h4><b>Risks and benefits:</b></h4>
+    <p>There are no physical or emotional risks associated with this study that would go beyond the risks of daily life. Your participation may improve remote work and benefit society.</p>
+
+    <h4><b>Confidentiality:</b></h4>
+    <p>The information collected in this study may be published in a report or a journal article and presented to interested parties, including possibly, but not exclusively, members of editorial boards or scientific committees. We do not collect your IP address and will delete the Prolific ID from the dataset 10 years after the completion of the study. Other information (e.g., survey responses, time of the survey) will be kept by the researchers and may be used for future studies. In addition to consenting to participate in the study, you will have the opportunity to opt-in to the use of your audio data in research presentations with a scientific audience. If you opt-in, your audio data will be kept by the researchers for an unlimited period of time, otherwise it will be deleted ten years after completion of the study. Upon request, personal data (e.g. audio) will be made available to journal editors and reviewers to verify our statements.</p>
+
+    <h4><b>Your right as a participant:</b></h4>
+    <p>Participation is entirely voluntary. You may leave the study and withdraw your consent at any time without any penalty or prejudice.</p>
+
+    <h4><b>Ethics approval:</b></h4>
+    <p>This research has been reviewed according to the ethics procedures involving human subjects by the Karlsruhe Institute of Technology <span style="color: orange;">(IRB Number: XXXXXXX #TODO )</span>.</p>
+
+     <p>If you want further information about data protection, please click
+        <a href="{{ static '02Privacy.pdf'}}" target="_blank">here</a>.
+     </p>
+
+    <h4><b>Optional Opt-In:</b></h4>
+    <div class="checkbox-container">
+      <table style="border: none; width: 100%;">
+    <tr style="border: none;">
+        <td style="border: none; vertical-align: middle; padding: 0;">
+            <input type="checkbox" id="opt_in_checkbox" onchange="updateConsent(this.checked)">
+        </td>
+        <td style="border: none; vertical-align: middle; padding: 2%;">
+            <label for="opt_in_checkbox" class="checkbox-label">
+                I agree with the usage of my audio in research presentations with a scientific audience. I understand that therefore my audio data will be kept by researchers for an unlimited period of time. I understand that this opt-in is completely voluntary and is not a prerequisite to participate in the study.
+            </label>
+        </td>
+    </tr>
+</table>   </div>
+    <input id="hiddenOptIn" type="hidden" name="optInConsent" value="0"/>
+
+    <script>
+        function updateConsent(isChecked) {
+            var hiddenOptIn = document.getElementById("hiddenOptIn");
+            hiddenOptIn.value = isChecked ? 1 : 0;
+        }
+    </script>
+
+</label>
+</div>
+<br/><br/>
+{{next_button}}
+{{ endblock }}

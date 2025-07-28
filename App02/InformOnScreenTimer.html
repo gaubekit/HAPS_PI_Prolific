@@ -1,0 +1,72 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Stage 2: On-Screen Timer{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+
+     <b>Note: </b>
+    As you have to proceed in stage 2 in the same pace as the slowest team member, we have on the following pages <b>on-screen timers</b> on the top of the pages (see above).
+    <br/><br/>
+    If you <b> do not proceed to the next page or reach a decision within the given time</b>, you will be tagged as single player and not paid for Stage 2.
+    <br/><br/>
+
+    The timers on the top indicate the <b><u>maximum time</u></b> a page will be displayed. Please proceed further in the study by pressing "Next", before the time on top has elapsed.
+    <br> The next-button will be always become visible early enough to continue. To avoid inconsistency's please do not refresh the pages.
+   <br/>
+<br/>
+</div>
+<br/>
+
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 30; // set minimum time
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // Initialer Countdown-Text
+        countdownEl.textContent = secondsLeft;
+
+        // Countdown aktualisieren jede Sekunde
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
+
+{{ endblock }}

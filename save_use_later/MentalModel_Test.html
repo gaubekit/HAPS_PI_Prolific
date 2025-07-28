@@ -1,0 +1,172 @@
+{{ block title }}Stage 1: Questionnaire 1/2{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        background-color: #f9f9f9;
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .slider-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+        column-gap: 40px;
+    }
+
+    .slider-grid:first-child {
+        border-top: none;
+    }
+
+    .slider-section {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .slider-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .slider-wrapper span {
+        width: 60px;
+        text-align: center;
+        user-select: none;
+        flex-shrink: 0;
+    }
+
+    .slider-container {
+        position: relative;
+        flex: 1;
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 8px;
+        background: transparent; /* transparent, damit Ticks sichtbar sind */
+        margin: 0;
+        position: relative;
+        z-index: 3;
+        cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        height: 8px;
+        background: #ccc;
+        border-radius: 4px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        margin-top: -6px;
+        cursor: pointer;
+        position: relative;
+        z-index: 5;
+    }
+
+    input[type=range]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        cursor: pointer;
+        position: relative;
+        z-index: 5;
+    }
+
+    .slider-ticks {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 8px;
+        display: flex;
+        justify-content: space-between;
+        transform: translateY(-50%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .slider-ticks span {
+        display: block;
+        width: 2px;
+        height: 16px;
+        background: black;
+    }
+
+    .slider-ticks span.midpoint {
+        height: 22px;
+        background: red;
+    }
+
+    .slider-section > div:first-child {
+        text-align: center;
+        font-weight: 600;
+    }
+</style>
+
+<div class="my-box">
+    <p>Please take a moment to reflect on virtual collaborative behavior as a spectrum between competition and cooperation.
+       Adjust the two sliders below to indicate your personal stance.</p>
+
+    <p><b>Usually, when working virtually in a team,...</b></p>
+
+    <div class="slider-grid">
+        <div>..regardless of what I expect from others, my own goal is to:</div>
+        <div class="slider-section">
+            <div><strong>Goal</strong></div>
+            <div class="slider-wrapper">
+                <span>compete</span>
+                <div class="slider-container">
+                    <input type="range" name="collaborative_goal" min="-3" max="3" step="1" class="persist">
+                    <div class="slider-ticks">
+                        {% for i in range(-3,4) %}
+                        <span class="{% if i == 0 %}midpoint{% endif %}"></span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <span>cooperate</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="slider-grid">
+        <div>..regardless of my own goals, I expect my team members to:</div>
+        <div class="slider-section">
+            <div><strong>Expectations</strong></div>
+            <div class="slider-wrapper">
+                <span>compete</span>
+                <div class="slider-container">
+                    <input type="range" name="collaboration_expectations" min="-3" max="3" step="1" class="persist">
+                    <div class="slider-ticks">
+                        {% for i in range(-3,4) %}
+                        <span class="{% if i == 0 %}midpoint{% endif %}"></span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <span>cooperate</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+<p>{{ next_button }}</p>
+
+{{ endblock }}

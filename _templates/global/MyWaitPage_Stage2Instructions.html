@@ -1,0 +1,117 @@
+{% block global_styles %}
+<style>
+
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+        .my-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #ffffff;
+            text-align: center;
+            position: relative;
+            width: 80%
+        }
+        .rotating-time {
+            display: inline-block;
+            font-size: 24px;
+            margin-top: 20px;
+            animation: rotate 2s linear infinite;
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        ul {
+            list-style-position: inside;  /* Moves the bullet closer to the text */
+            text-align: center;  /* Centers the text */
+            padding: 0;  /* Removes extra padding */
+        }
+
+     
+
+</style>
+{% endblock %}
+
+{% block content %}
+ <div class="my-box">
+
+
+        <!-- The following <div> displayed in addition to the rest of the content that is currently present on the page
+        if the user has waited for more than 5 minutes for other participants to join. This <div> is taken from the
+        global.MyWaitPage2 page and I added some new formatting to it to match the text document. -->
+{{ if player.waitpage_too_long == True }}
+         <div id="dropout" class="dropout" style="background-color: #FF7F7F; padding: 10px; margin: 0;">
+            You already waited for more than <b>fifteen minutes</b> to create a team for Stage 2.
+            <br>
+             <p>
+                There are currently not enough participants in order to create a team of three.
+            </p>
+            <div style="background-color: #FFA07A;  padding: 10px;  margin: 0;">
+                <p>
+                    <b>Number of participants that have currently joined the team: {{waiting_count}} out of 3.</b>
+                    <br/>
+                </p>
+            </div>
+            <br>
+            If you do not wish to wait longer, you have now the opportunity to leave the study now.
+            <br>
+            <br>
+            In this case, <b>please return your submission</b> and, afterwards, we will <b> send you a bonus payment of <u>£1.50</u> for your time</b>.
+            <br>
+            <br>
+            If you leave this study, <b>please close this tab!</b>
+            <br>
+            <b>Click
+                <a href="https://app.prolific.com/submissions/complete?cc=C13FO8SH" target="_blank" onclick="window.open(this.href, '_blank'); window.close(); return false;">
+                    <b>here</b>
+                </a>
+                to be redirected to Prolific.</b>
+            <br>
+            <br>
+            If you leave the study now, you still might have the opportunity to participant in Part 2 of this study at a later time.
+            <br>
+        </div>
+
+
+{{ else }}
+     <!-- The following <div> is a copy of the instructions from the page DescriptionVideoCommunication. -->
+     <h2>Please wait</h2>
+        <p>
+            There are currently not enough participants in order to create a team of three.
+        </p>
+        <div style="background-color: #FFA07A;  padding: 10px;  margin: 0;">
+            <p>
+                <b>Number of participants that have currently joined the team: {{waiting_count}} out of 3.</b>
+                <br/>
+            </p>
+        </div>
+        <!-- Not sure if the following line should be a <h2>.-->
+        <h3>This wait page will automatically refresh every 5 seconds to ensure that you proceed to the next page as soon as all team members are ready.</h3> <br/>
+
+        <div class="rotating-time">⏳</div>
+    </div>
+
+{{ endif }}
+
+/*
+<script>
+    function reloadPage() {
+        setTimeout(function() {
+            location.reload();
+        }, 5000); // Reload interval from js_vars
+    }
+    window.onload = reloadPage;
+</script>
+*/
+
+{% endblock %}

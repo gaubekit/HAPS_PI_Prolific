@@ -1,0 +1,30 @@
+{{ extends 'global/Page.html' }}
+{{ block title }} What's next? {{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+    
+    You have now completed the blocks (a), (b), and (c).
+    <br/> <br/>
+    <img src="{{ static 'images/overview2.jpg' }}" width="100%" /> <br/><br/>
+
+
+    To continue with block (d) you have to wait on the next page until two more participants have joint. If no participants join within 10 minutes, you will be automatically forwarded to block (e) and compensated for the time you waited.
+    <br/><br/>
+
+    Please use the 'Next' button to join the cue. The experiment will automatically continue as soon a team has formed.
+</div>
+
+<br/><br/>
+{{ next_button }}
+
+{{ endblock }}

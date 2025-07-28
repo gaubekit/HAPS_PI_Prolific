@@ -1,0 +1,275 @@
+{{ block title }}Stage 1: Questionnaire 2/2{{ endblock }}
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        background-color: #f9f9f9;
+        font-family: sans-serif;
+    }
+
+    .slider-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+        column-gap: 40px;
+    }
+
+    .slider-grid:first-child {
+        border-top: none;
+    }
+
+    .slider-section {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .slider-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .slider-wrapper span.label {
+        width: 80px;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    .slider-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .slider-ticks,
+    .slider-labels {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        width: 94%;
+        left: 3%;
+        pointer-events: none;
+    }
+
+    .slider-ticks {
+        top: 14px;
+    }
+
+    .slider-labels {
+        top: 25px;
+        font-size: 0.8em;
+        width: 94%;
+        left: 1%;
+        color: #333;
+    }
+
+    .slider-ticks span {
+        width: 1px;
+        height: 10px;
+        background-color: black;
+        display: block;
+    }
+
+    .slider-labels span {
+        text-align: center;
+        width: 1px;
+        transform: translateX(-50%);
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+        height: 8px;
+        position: relative;
+        z-index: 2;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        background: #ccc;
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        margin-top: -6px;
+        cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-track {
+        background: #ccc;
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    input[type=range]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .slider-section > div:first-child {
+        text-align: center;
+    }
+</style>
+
+<div class="my-box">
+    <p>Please think about the following six goals that individuals might have in video meetings.<br>
+    How important are these goals to you personally? Please adjust the sliders accordingly:</p>
+
+    <p><b>In video meetings, it is important for me...</b></p>
+
+    <!-- Slider 1 -->
+    <div class="slider-grid">
+        <div>..to perform well, make valuable contributions, and be recognized for my efforts.</div>
+        <div class="slider-section">
+            <div><strong>Success and Recognition</strong></div>
+            <div class="slider-wrapper">
+                <span class="label">Not agree</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
+                    </div>
+                    <input type="range" name="vm_achievement" min="-3" max="3" step="1" class="persist">
+                </div>
+                <span class="label">agree</span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Slider 2 -->
+    <div class="slider-grid">
+        <div>..to take a leading role, direct the meetings agenda and shape decisions.</div>
+        <div class="slider-section">
+            <div><strong>Leading the Meeting</strong></div>
+            <div class="slider-wrapper">
+                <span class="label">Not important</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
+                    </div>
+                    <input type="range" name="vm_power_dominance" min="-3" max="3" step="1" class="persist">
+                </div>
+                <span class="label">Very important</span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Slider 3 -->
+    <div class="slider-grid">
+        <div>..to appear competent and avoid embarrassment or loss of status.</div>
+        <div class="slider-section">
+            <div><strong>Positive Public Image</strong></div>
+            <div class="slider-wrapper">
+                <span class="label">Not important</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
+                    </div>
+                    <input type="range" name="vm_face" min="-3" max="3" step="1" class="persist">
+                </div>
+                <span class="label">Very important</span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Slider 4 -->
+    <div class="slider-grid">
+        <div>..to respect formal rules, roles, and formal obligations.</div>
+        <div class="slider-section">
+            <div><strong>Rules and Obligations</strong></div>
+            <div class="slider-wrapper">
+                <span class="label">Not important</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
+                    </div>
+                    <input type="range" name="vm_conformity_rules" min="-3" max="3" step="1" class="persist">
+                </div>
+                <span class="label">Very important</span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Slider 5 -->
+    <div class="slider-grid">
+        <div>..to treat all participants equally, regardless of their role or seniority.</div>
+        <div class="slider-section">
+            <div><strong>Fairness and Justice</strong></div>
+            <div class="slider-wrapper">
+                <span class="label">Not important</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
+                    </div>
+                    <input type="range" name="vm_universalism_concern" min="-3" max="3" step="1" class="persist">
+                </div>
+                <span class="label">Very important</span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Slider 6 -->
+    <div class="slider-grid">
+        <div>..to actively listen and respect all viewpoints, regardless of background.</div>
+        <div class="slider-section">
+            <div><strong>Diversity and Inclusion</strong></div>
+            <div class="slider-wrapper">
+                <span class="label">Not important</span>
+                <div class="slider-container">
+                    <div class="slider-ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="slider-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
+                    </div>
+                    <input type="range" name="vm_universalism_tolerance" min="-3" max="3" step="1" class="persist">
+                </div>
+                <span class="label">Very important</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+<p>{{ next_button }}</p>
+
+{{ endblock }}

@@ -1,0 +1,68 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}You cannot start this study without giving consent to all data processing.{{ endblock }}
+
+{{ block content }}
+<style>
+    label {
+        display: inline-block;
+    }
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+    .checkbox-container {
+        display: flex;
+        align-items: flex-start;
+    }
+    .checkbox-container input {
+        margin-right: 10px;
+        align-self: center;
+    }
+    .checkbox-label {
+        display: inline-block;
+    }
+    .radio-container {
+        margin-top: 10px;
+    }
+    .radio-option {
+        display: flex;
+        align-items: center;
+        margin-right: 10px; /* 10px left margin for each option */
+    }
+    .radio-option input {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="my-box">
+    <p><b>If you want to proceed with the study you need click ‘yes’ below.</b></p>
+    <p><b>If you do not want to consent to all of the data processing, you cannot start with this study.</b></p>
+
+    <form>
+        <p>Do you want to participate?</p>
+        <div class="radio-container">
+            <div class="radio-option">
+                <input type="radio" id="yes" name="participation" value="yes" onchange="updateParticipation(this.value)">
+                <label for="yes">Yes, I want to participate.</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="no" name="participation" value="no" onchange="updateParticipation(this.value)">
+                <label for="no">No, I do not want to participate.</label>
+            </div>
+            <input id="hiddenConfirmConsent" type="hidden" name="confirmConsent" value="0"/>
+        </div>
+    </form>
+
+    <script>
+
+        function updateParticipation(selectedValue) {
+            var confirmConsent = document.getElementById("hiddenConfirmConsent");
+            confirmConsent.value = selectedValue === 'yes' ? 1 : 0;
+        }
+    </script>
+</div>
+<br/><br/>
+
+{{next_button}}
+{{ endblock }}

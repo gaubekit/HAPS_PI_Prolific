@@ -1,0 +1,270 @@
+{% block styles %}
+<style type="text/css">
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 15px;
+        background-color: #f9f9f9;
+        max-width: 800px;
+        margin: 20px auto;
+        border-radius: 6px;
+    }
+
+    .slidecontainer {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .slidecontainer span {
+        width: 15%;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .slidecontainer .decision {
+        width: 85%;
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 25px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        margin: 0;
+    }
+
+    .slider:hover {
+        opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        background: #000000;
+        cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        background: #04AA6D;
+        cursor: pointer;
+    }
+
+    datalist {
+        display: flex;
+        justify-content: space-between;
+        color: black;
+        width: 100%;
+        margin: 5px 0 0 0;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid #ccc;
+        margin: 25px 0;
+    }
+</style>
+
+<link href="{{ static 'global/css/style.css' }}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+
+{{ block title }}
+Stage 1: Decision Allocating Some Additional Payout
+{{ endblock }}
+
+{{ block content }}
+
+{% load static %}
+
+<div class="my-box">
+
+    Please move now the six sliders in the preferred position to allocate additional payout (calculated as shown on the previous page) between you and the other:
+
+    <br><br>
+
+    <div class="decision-block">
+        <div class="slidecontainer">
+            <span><br>Your receive:<br><br>Other receives:</span>
+            <div class="decision">
+                <center><strong>Decision Q1:</strong></center>
+                <datalist>
+                    {{for p in C11}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+                <input type="range" name="q1_svo" min="1" max="9" step="1" class="slider">
+                <datalist>
+                    {{for p in C21}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="decision-block">
+        <div class="slidecontainer">
+            <span><br>Your receive:<br><br>Other receives:</span>
+            <div class="decision">
+                <center><strong>Decision Q2:</strong></center>
+                <datalist>
+                    {{for p in C12}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+                <input type="range" name="q2_svo" min="1" max="9" step="1" class="slider">
+                <datalist>
+                    {{for p in C22}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="decision-block">
+        <div class="slidecontainer">
+            <span><br>Your receive:<br><br>Other receives:</span>
+            <div class="decision">
+                <center><strong>Decision Q3:</strong></center>
+                <datalist>
+                    {{for p in C13}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+                <input type="range" name="q3_svo" min="1" max="9" step="1" class="slider">
+                <datalist>
+                    {{for p in C23}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="decision-block">
+        <div class="slidecontainer">
+            <span><br>Your receive:<br><br>Other receives:</span>
+            <div class="decision">
+                <center><strong>Decision Q4:</strong></center>
+                <datalist>
+                    {{for p in C14}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+                <input type="range" name="q4_svo" min="1" max="9" step="1" class="slider">
+                <datalist>
+                    {{for p in C24}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="decision-block">
+        <div class="slidecontainer">
+            <span><br>Your receive:<br><br>Other receives:</span>
+            <div class="decision">
+                <center><strong>Decision Q5:</strong></center>
+                <datalist>
+                    {{for p in C15}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+                <input type="range" name="q5_svo" min="1" max="9" step="1" class="slider">
+                <datalist>
+                    {{for p in C25}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="decision-block">
+        <div class="slidecontainer">
+            <span><br>Your receive:<br><br>Other receives:</span>
+            <div class="decision">
+                <center><strong>Decision Q6:</strong></center>
+                <datalist>
+                    {{for p in C16}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+                <input type="range" name="q6_svo" min="1" max="9" step="1" class="slider">
+                <datalist>
+                    {{for p in C26}}
+                    <option value={{p}} label={{p}}></option>
+                    {{endfor}}
+                </datalist>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+<br><br>
+
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 30; // zentral konfigurierbar
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // Initialer Countdown-Text
+        countdownEl.textContent = secondsLeft;
+
+        // Countdown aktualisieren jede Sekunde
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
+
+{{ endblock }}

@@ -1,0 +1,39 @@
+{{ block title }}Stage 3: Information{{ endblock }}
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+    .my-box ul {
+        padding-left: 20px;
+        margin-top: 10px;
+    }
+    .my-box li {
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="my-box">
+    You have been flagged as a single player and redirected to this page. This could be due to one of the following reasons:
+    <ul>
+        <li>You chose to skip Stage 2 during the waiting period for grouping.</li>
+        <li>We were unable to group you with others within 25 minutes.</li>
+        <li>You dropped out during Stage 2.</li>
+        <li>One of your team members dropped out during Stage 2.</li>
+        <li>You or one of your team members could not see or hear all other participants in the video meeting.</li>
+    </ul>
+
+    Unfortunately, we cannot assign you additional payout for Stage 2. However, you will be paid for Stage 1 and Stage 3. Further, if you extended your waiting time for Stage 2 and/or spend time in Stage 2, we will compensate you for that.
+    The final payout structure will be displayed at the end of Stage 3.
+    <br><br>
+    Please proceed with Stage 3 of the experiment.
+</div>
+
+<br/>
+
+<p>{{ next_button }}</p>
+
+{{ endblock }}

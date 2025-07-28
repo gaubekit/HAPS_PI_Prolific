@@ -1,0 +1,158 @@
+{{ block title }}
+    Video Meeting Behavior Preferences
+{{ endblock }}
+
+{{ block content }}
+<!-- load library for Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+<!-- Page layout -->
+<style>
+
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .outer-container {
+        width: 100%;
+        height: 550px;
+        display: flex;
+    }
+
+    /* left container is used for the chart */
+    .left-container {
+        width: 60%;
+        height: 100%;
+        display: flex;
+        overflow: auto;
+        padding: 5px;
+        flex-direction: column;
+    }
+
+    .right-container {
+        width: 40%;
+        height: 100%;
+        padding: 20px;
+        overflow-y: auto;
+        font-family: Arial, sans-serif;
+        font-size: 13px; /* kleinere Grundschrift */
+    }
+
+    .right-container h3 {
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-size: 13px; /* kleinerer Überschriftentext */
+    }
+
+    .right-container p {
+        margin: 0 0 12px 0;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* Chart Canvas */
+    #myRadarChart {
+        width: 100% !important;
+        height: 500px !important; /* feste Größe für Diagramm */
+    }
+</style>
+
+
+<div class="outer-container">
+    <div class="left-container">
+        <div id="radarChartContainer">
+            <canvas id="myRadarChart"></canvas>
+        </div>
+    </div>
+
+    <div class="right-container">
+        <h3><strong>Ensuring Compliance with Rules</strong></h3>
+        <p>My goal is to adhere to all <u>regulations</u>, <u>laws</u>, and formal <u>obligations</u> in the meeting and <u>encourage others</u> to do the same.</p>
+
+        <h3><strong>Advocating for Justice and Fairness</strong></h3>
+        <p>I want to promote <u>equality</u>, <u>justice</u>, and the <u>protection</u> of all people by <u>emphasizing these values</u> in the discussion.</p>
+
+        <h3><strong>Demonstrating Openness and Understanding</strong></h3>
+        <p>I strive to <u>create</u> an inclusive and <u>respectful atmosphere</u> by <u>accepting</u> and <u>actively supporting</u> different <u>opinions</u> and <u>perspectives</u>.</p>
+
+        <h3><strong>Presenting Success in the Meeting</strong></h3>
+        <p>I want to <u>present myself professionally</u> and <u>competently</u> to highlight my <u>status</u> and <u>success according to societal standards</u>.</p>
+
+        <h3><strong>Exercising Influence and Control</strong></h3>
+        <p>I want to <u>lead</u> and <u>influence the meeting’s direction</u>, <u>ensuring my perspectives shape key decisions</u>.</p>
+
+        <h3><strong>Maintaining My Public Image</strong></h3>
+        <p>I want to <u>ensure that my public reputation remains intact</u> by <u>avoiding mistakes</u> and <u>protecting myself</u> from potential <u>embarrassment</u>.</p>
+    </div>
+
+</div>
+
+<!-- Script for Line Chart with bipolar scale -->
+<script>
+    function createLineChart(total) {
+        let ctx = document.getElementById('myRadarChart').getContext('2d');
+        let myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ session.vm_goal_labels }},
+                datasets: [
+                    {
+                        label: 'own',
+                        data: js_vars.own, // Werte zwischen -3 und 3 erwartet
+                        fill: true,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        lineTension: 0 // scharfe Knicke für Waben-Effekt
+                    },
+                    /* weitere Datensätze können hier ergänzt werden */
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: -3,
+                            max: 3,
+                            stepSize: 1
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Bewertung (-3 bis 3)'
+                        },
+                        gridLines: {
+                            zeroLineColor: 'black',
+                            zeroLineWidth: 2
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Kriterien'
+                        }
+                    }]
+                },
+                legend: {
+                    position: 'top'
+                },
+                tooltips: {
+                    enabled: true
+                }
+            }
+        });
+    }
+
+    createLineChart(5);
+</script>
+
+{{ next_button }}
+
+{{ endblock }}

@@ -1,0 +1,260 @@
+{{ block title }}
+    Stage 2: Goal Conflicts
+{{ endblock }}
+
+{{ block content }}
+<!-- Chart.js für Radar Chart -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    .outer-container {
+        width: 100%;
+        height: 550px;
+        display: flex;
+    }
+
+    .left-container {
+        width: 60%;
+        height: 100%;
+        display: flex;
+        overflow: auto;
+        padding: 5px;
+        flex-direction: column;
+    }
+
+    .right-container {
+        width: 40%;
+        height: 100%;
+        padding: 20px;
+        overflow-y: auto;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+
+        display: flex;            /* Flexbox aktivieren */
+        justify-content: center;  /* horizontal zentrieren */
+        align-items: center;      /* vertikal zentrieren */
+        text-align: center;       /* Text zentrieren, falls mehrzeilig */
+    }
+
+    .right-container h3 {
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-size: 13px;
+    }
+
+    .right-container p {
+        margin: 0 0 12px 0;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    #myRadarChart {
+        width: 100% !important;
+        height: 500px !important;
+    }
+</style>
+
+<div class="my-box">
+    <p>
+        We matched you with two other participants. As before, the blue line shows how your video meeting goals look like in a multidimensional visualization.
+        Additionally, the red line shows on average the meeting goals of your two team members, respectivly.
+    </p>
+
+    <div class="outer-container">
+        <div class="left-container">
+            <div id="radarChartContainer">
+                <canvas id="myRadarChart"></canvas>
+            </div>
+        </div>
+
+        <div class="right-container">
+            Please take a moment to consider your goals and your team members goals.
+        </div>
+    </div>
+
+    <br><br>
+    <p><b>On the next page, you will have to wait until your two members are ready, before the video meeting starts </b>.</p>
+
+    <script>
+        // Erklärungstexte der Ziele
+        let goalDescriptions = {{ session.vm_goal_description }};
+
+        // Plugin für gestrichelte konzentrische Kreise nur bei -3,0,3
+        const customGridLinesPlugin = {
+            beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                const scale = chart.scales['scale'];
+
+                ctx.save();
+                ctx.strokeStyle = '#ccc';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+
+                const showLinesAt = [-3, 0, 3];
+                showLinesAt.forEach(val => {
+                    const y = scale.getDistanceFromCenterForValue(val);
+                    ctx.beginPath();
+                    ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
+                    ctx.stroke();
+                });
+
+                ctx.restore();
+            }
+        };
+
+        // Plugin für gestrichelte radiale Linien nur von -3 bis 3
+        const customRadialLinesPlugin = {
+            beforeDraw: function(chart) {
+                const ctx = chart.ctx;
+                const scale = chart.scales['scale'];
+                const centerX = scale.xCenter;
+                const centerY = scale.yCenter;
+
+                ctx.save();
+                ctx.strokeStyle = '#ccc';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+
+                const totalAxes = scale.pointLabels.length;
+                for (let i = 0; i < totalAxes; i++) {
+                    const angle = scale.getIndexAngle(i) - Math.PI / 2;
+
+                    const rMin = scale.getDistanceFromCenterForValue(-3);
+                    const rMax = scale.getDistanceFromCenterForValue(3);
+
+                    const startX = centerX + rMin * Math.cos(angle);
+                    const startY = centerY + rMin * Math.sin(angle);
+                    const endX = centerX + rMax * Math.cos(angle);
+                    const endY = centerY + rMax * Math.sin(angle);
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+        };
+
+        // Plugin für custom Tick Labels (nur einmal zwischen erster und zweiter radialer Linie)
+        const customTickLabelsPlugin = {
+            afterDraw: function(chart) {
+                const ctx = chart.ctx;
+                const scale = chart.scales['scale'];
+                const centerX = scale.xCenter;
+                const centerY = scale.yCenter;
+                const pointLabelsCount = scale.pointLabels.length;
+                const ticksToShow = [-3, 0, 3];
+
+                ctx.save();
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                // Wir nehmen den Winkel zwischen der ersten und zweiten radialen Linie
+                // (also zwischen Index 0 und 1)
+                let angle1 = scale.getIndexAngle(0) - Math.PI / 2;
+                let angle2 = scale.getIndexAngle(1) - Math.PI / 2;
+                let midAngle = (angle1 + angle2) / 2;
+
+                ticksToShow.forEach(val => {
+                    let r = scale.getDistanceFromCenterForValue(val);
+                    let x = centerX + r * Math.cos(midAngle);
+                    let y = centerY + r * Math.sin(midAngle);
+
+                    ctx.fillText(val, x, y);
+                });
+
+                ctx.restore();
+            }
+        };
+
+        function createRadarChart(total) {
+            let ctx = document.getElementById('myRadarChart').getContext('2d');
+            let myRadarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: {{ session.vm_goal_labels }},
+                    datasets: [
+                        {
+                            label: 'Your Goals',
+                            data: js_vars.own,
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                            fill: false
+                        },
+                        {
+                            label: 'Average Goals of Others',
+                            data: js_vars.other,
+                            backgroundColor: 'transparent',
+                            borderColor: 'rgba(255, 99, 132, 1)', // rot
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scale: {
+                        ticks: {
+                            min: -4,
+                            max: 3,
+                            stepSize: 1,
+                            beginAtZero: false,
+                            display: false
+                        },
+                        pointLabels: {
+                            padding: 20
+                        },
+                        gridLines: {
+                            display: false
+                        },
+                        angleLines: {
+                            display: false
+                        }
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltipItems, data) {
+                                let index = tooltipItems[0].index;
+                                return data.labels[index];
+                            },
+                            label: function(tooltipItem, data) {
+                                let index = tooltipItem.index;
+                                return goalDescriptions[index];
+                            }
+                        }
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    }
+                },
+                plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin]
+            });
+        }
+
+        createRadarChart(5);
+    </script>
+</div>
+
+<br/>
+{{ next_button }}
+
+{{ endblock }}

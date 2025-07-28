@@ -1,0 +1,23 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Pre-Study: Prolific ID{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+<div class="my-box">
+
+    <p> Thank you for giving consent and taking some time for the technical checks. We about to start the study with the next page. </p>
+    <br/>
+    {{ formfields }}
+    <br/>
+</div>
+<br/>
+{{ next_button }}
+
+{{ endblock }}

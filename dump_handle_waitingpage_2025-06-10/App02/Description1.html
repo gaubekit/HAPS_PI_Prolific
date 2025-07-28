@@ -1,0 +1,26 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Preparing Weakest Link Game{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+
+    <p> Now, please imagine that you have to work with this team on a group project. <br>
+        On the next screen, we will show you the payoff table of the Weakest Link Game (as introduced earlier) and ask you to decide how many hours (out of your 40-hour workweek) you would like to allocate to the team project.<br><br>
+
+        Please note that the minimum number of hours contributed by any team member determines the overall success of the project—and therefore your payoff.<br>
+        Depending on the behavior of others, it might be more beneficial to invest more time in the team project or to focus on your individual tasks.
+    </p>
+</div>
+<br/>
+{{ next_button }}
+
+{{ endblock }}

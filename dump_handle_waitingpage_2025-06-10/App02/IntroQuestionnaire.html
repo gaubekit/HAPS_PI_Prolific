@@ -1,0 +1,68 @@
+{{ block content }}
+{% block css %}
+<link rel="stylesheet" type="text/css" >
+{{ block title }}Round survey{{ endblock }}
+{% endblock %}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+<div class="my-box">
+
+<div class="container">
+
+  <div class="row justify-content-center">
+
+    <div class="col-md-12">
+      <div class="card border-0 shadow-sm mt-12" style="background-color: #f8f9fa;">
+        <div class="card-body">
+          <h2 class="card-title text-center"></h2>
+          <p class="card-text">
+              Thank you for making your choice. We will inform you about the choices of the others and your payout in end of the experiment. <br/>
+              Please reflect your choice in the Weakest Link Game and <b> Please indicate how much you agree </b> with the following statements on a scale from 1 to 6. <br/><br/>
+
+                  <table class="table" style="text-align: center;  vertical-align: middle;">
+                        <tr>
+                            <td style="width: 40%;"></td>
+                            <td style="width: 10%;">not at all</td>
+                            <td style="width: 10%;"></td>
+                            <td style="width: 10%;"></td>
+                            <td style="width: 10%;"></td>
+                            <td style="width: 10%;"></td>
+                            <td style="width: 10%;">very much</td>
+                        </tr>
+                <tr>
+                    <td style="width: 40%;"></td>
+                    <td style="width: 10%;">1</td>
+                    <td style="width: 10%;">2</td>
+                    <td style="width: 10%;">3</td>
+                    <td style="width: 10%;">4</td>
+                    <td style="width: 10%;">5</td>
+                    <td style="width: 10%;">6</td>
+                </tr>
+                {{ for field in form }}
+
+                <tr>
+                        <td style="text-align: left;">{{ field.label }}</td>
+                        {{ for choice in field }}
+                            <td>{{ choice }}</td>
+                        {{ endfor }}
+                    </tr>
+                {{ endfor }}
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<br>
+
+{{next_button}}
+
+
+{{ endblock }}

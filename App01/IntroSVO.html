@@ -1,0 +1,113 @@
+{{ block title }}
+Stage 1: Introduction for Allocating Additional Payout
+{{ endblock }}
+
+{% block content %}
+
+<!-- Styling for content box -->
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<!-- Load MathJax -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<!-- Content Box -->
+<div class="my-box">
+    <p>
+        On the next page, you will make a series of decisions about allocating additional payout between yourself and another participant.
+        This other participant is one of the people you will meet in stage 2, but <b>you will not know which one</b>.
+        Therefore, we refer to this person as <b>the other</b> and inform you at the very end of the experiment about your earning.
+    </p>
+
+    <p>
+        <b>All of your choices are completely confidential.</b>
+    </p>
+
+    <p>
+        Your decisions and the decisions made by the other person will influence the additional payout for both of you.
+        There are no right or wrong answers, please simply choose according to your personal preferences.
+        You will indicate your preferred distribution using a slider:
+    </p>
+
+    <!-- Slider image -->
+    <div style="text-align: center; margin: 20px 0;">
+        <img src="{{ static 'images/scale.jpg' }}" width="90%" alt="Allocation slider example" />
+    </div>
+
+    <p>
+        In the example above, a participant chose to allocate <b>50 ECU</b> to themselves and <b>40 ECU</b> to the other.
+        If the other person would allocate 50 ECU to you, you would receive a total of 90 ECU, and the other person would receive 85 ECU.
+    </p>
+
+    <p>
+        Your additional payout for stage 1 will be calculated as the average of six paired decisions.
+        This includes your six choices and the six choices of the other person:
+    </p>
+
+    <!-- Label and formula side-by-side -->
+    <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+        <div style="font-weight: bold; text-align: right;">
+            <center>Additional Payout<br>(for Stage 1)</center>
+        </div>
+        <div>
+            \[
+            = \frac{
+            \text{Your Q1} + \text{Other's Q1} + \text{Your Q2} + \text{Other's Q2} + \ldots + \text{Your Q6} + \text{Other's Q6}
+            }{6}
+            \]
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 45; // set minimum page time
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // Initialer Countdown-Text
+        countdownEl.textContent = secondsLeft;
+
+        // Countdown aktualisieren jede Sekunde
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+
+{% block global_styles %}
+<style>
+
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+        .my-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #ffffff;
+            text-align: center;
+            position: relative;
+        }
+        .rotating-time {
+            display: inline-block;
+            font-size: 24px;
+            margin-top: 20px;
+            animation: rotate 2s linear infinite;
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+    <div class="my-box">
+        <h2>Please wait until your team members arrive.</h2>
+        <p id="player-count"> {{ subsession.waitCount }} out of 4 players have arrived.</p>
+        <div class="rotating-time">⏳</div>
+
+    </div>
+
+
+<script>
+    function reloadPage() {
+        setTimeout(function() {
+            location.reload();
+        }, 5000); // Reload interval from js_vars
+    }
+    window.onload = reloadPage;
+</script>
+{% endblock %}

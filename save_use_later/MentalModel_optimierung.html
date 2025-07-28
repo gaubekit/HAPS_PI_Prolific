@@ -1,0 +1,177 @@
+{{ block title }}Stage 1: Questionnaire 1/2{{ endblock }}
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        background-color: #f9f9f9;
+        font-family: sans-serif;
+    }
+
+    .slider-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+        padding: 10px 0;
+        border-top: 1px solid #ccc;
+        column-gap: 40px;
+    }
+
+    .slider-grid:first-child {
+        border-top: none;
+    }
+
+    .slider-section {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .slider-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .slider-line span {
+        width: 50px;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    .slider-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .custom-slider {
+        width: 100%;
+        margin: 0;
+        z-index: 2;
+        position: relative;
+        background: transparent;
+        height: 8px;
+    }
+
+    .ticks {
+        position: absolute;
+        top: 10px;
+        width: 100%;
+        height: 20px;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .ticks span {
+        height: 12px;
+        width: 1px;
+        background: #000;
+        display: inline-block;
+    }
+
+    .tick-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8em;
+        margin-top: 4px;
+    }
+
+    input[type=range] {
+        -webkit-appearance: none;
+        background: transparent;
+        width: 100%;
+        height: 8px;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+        background: #ccc;
+        height: 8px;
+        border-radius: 4px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        margin-top: -6px;
+        cursor: pointer;
+        position: relative;
+        z-index: 3;
+    }
+
+    input[type=range]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        background: #007bff;
+        border-radius: 50%;
+        cursor: pointer;
+        position: relative;
+        z-index: 3;
+    }
+
+    input[type=range]::-moz-range-track {
+        background: #ccc;
+        height: 8px;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="my-box">
+    <p>Please take a moment to reflect on virtual collaborative behavior as a spectrum between competition and cooperation.
+       Adjust the two sliders below to indicate your personal stance.</p>
+
+    <p><b>Usually, when working virtually in a team,...</b></p>
+
+    <!-- Slider 1 -->
+    <div class="slider-grid">
+        <div>..regardless of what I expect from others, my own goal is to:.</div>
+        <div class="slider-section">
+            <div><strong>Goal</strong></div>
+            <div class="slider-line">
+                <span>compete</span>
+                <div class="slider-container">
+                    <input type="range" name="collaborative_goal" min="-3" max="3" step="1" class="custom-slider persist">
+                    <div class="ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="tick-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>0</span><span>1</span><span>2</span><span>3</span>
+                    </div>
+                </div>
+                <span>cooperate</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slider 2 -->
+    <div class="slider-grid">
+        <div>..regardless of my own goals, I expect my team members to:</div>
+        <div class="slider-section">
+            <div><strong>Expectations</strong></div>
+            <div class="slider-line">
+                <span>compete</span>
+                <div class="slider-container">
+                    <input type="range" name="collaboration_expectations" min="-3" max="3" step="1" class="custom-slider persist">
+                    <div class="ticks">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="tick-labels">
+                        <span>-3</span><span>-2</span><span>-1</span><span>0</span><span>1</span><span>2</span><span>3</span>
+                    </div>
+                </div>
+                <span>cooperate</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+<p>{{ next_button }}</p>
+
+{{ endblock }}

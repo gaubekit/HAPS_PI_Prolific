@@ -1,0 +1,96 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Pre-Study: Checking Requirements{{ endblock }}
+
+{{ block content }}
+
+ <style>
+      /* Applying Roboto font to all elements */
+      .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+ </style>
+     <div class="my-box">
+
+    <p>
+        On the following pages, we will check whether you can participate in this Study.
+        <br/>
+        <b>Before you can continue, please confirm the following: </b> <br/>(If you do not confirm all three statements, you cannot proceed with this study.)
+    </p>
+         <!-- Each of the following three lines are checkboxes. The user needs to check all three in order to proceed
+         with the study. -->
+         <div class="checkbox-container">
+            <input type="checkbox" id="willingToInteract" onchange="updateWillingToInteract(this.checked)">
+            <label for="willingToInteract" class="checkbox-label"> <b>I AM WILLING TO INTERACT WITH OTHER PARTICIPANTS IN A VIRTUAL TEAM MEETING.</b></label> <br/>
+
+            <input type="checkbox" id="willingToBePaid" onchange="updateWillingToBePaid(this.checked)">
+            <label for="willingToBePaid" class="checkbox-label">   <b>I UNDERSTAND THAT I WILL ONLY BE PAID IF I COMPLETE THE WHOLE STUDY.</b></label><br/>
+
+            <input type="checkbox" id="camMicStatus" onchange="updateCamMicStatus(this.checked)">
+            <label for="camMicStatus" class="checkbox-label">  <b>MY CAMERA AND MICROPHONE SHOULD BE WORKING PROPERLY.</b></label><br/>
+            </div>
+
+        <input id="hiddenWillingToInteract" type="hidden" name="willingToInteract" value="0"/>
+        <input id="hiddenWillingToBePaid" type="hidden" name="willingToBePaid" value="0"/>
+        <input id="hiddenCamMicStatus" type="hidden" name="camMicStatus" value="0"/>
+
+        <div id="proceedStudy" style="display:none;">
+        <!-- The following text is only displayed while not all three checkboxes have been checked. -->
+            <br/>
+            <p>
+                 To proceed with the study, you need to confirm all three statements. If you do not want to confirm all three statements, you cannot proceed with the study. In this case, please go back to Prolific and return your submission.
+            </p>
+
+        </div>
+
+    <script>
+        function updateWillingToInteract(isChecked) {
+            var hiddenWillingToInteract = document.getElementById("hiddenWillingToInteract");
+            hiddenWillingToInteract.value = isChecked ? 1 : 0;
+            checkCheckboxes();
+        }
+         function updateWillingToBePaid(isChecked) {
+            var hiddenWillingToBePaid = document.getElementById("hiddenWillingToBePaid");
+            hiddenWillingToBePaid.value = isChecked ? 1 : 0;
+            checkCheckboxes();
+        }
+
+         function updateCamMicStatus(isChecked) {
+            var hiddenCamMicStatus = document.getElementById("hiddenCamMicStatus");
+            hiddenCamMicStatus.value = isChecked ? 1 : 0;
+            checkCheckboxes();
+        }
+         function checkCheckboxes() {
+             const checkbox1 = document.getElementById("hiddenWillingToInteract");
+            const checkbox2 = document.getElementById("hiddenWillingToBePaid");
+            const checkbox3 = document.getElementById("hiddenCamMicStatus");
+            const nextButton = document.querySelector(".otree-btn-next.btn.btn-primary");
+            const proceedText = document.getElementById("proceedStudy");
+             if (checkbox1.value==="1"  && checkbox2.value==="1"   && checkbox3.value==="1"  ) {
+
+                 nextButton.style.display = "block";
+                 proceedText.style.display ="none";
+             } else {
+                  nextButton.style.display = "none";
+                  proceedText.style.display ="block";
+             }
+         }       // Attach change event listeners to checkboxes
+
+    </script>
+
+    </div>
+
+<!-- MESSAGE FOR ANUJA (Done): ADD EVENT LISTENERS TO EACH CHECKBOX, SO THE NEXT BUTTON IS ONLY DISPLAYED WHEN ALL THREE
+     CHECKBOXES ARE CHECKED. -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        checkCheckboxes();
+        }
+    );
+</script>
+ <br/>
+{{ next_button }}
+
+{{ endblock }}
+

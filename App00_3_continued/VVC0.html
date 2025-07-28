@@ -1,0 +1,236 @@
+{{ extends 'global/Page.html' }}
+
+{{ block title }}Pre-Study: Checking Virtual Video Call{{ endblock }}
+
+{{ block content }}
+
+<style>
+    body {
+        zoom: 90%;
+    }
+
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .row {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .column {
+        float: left;
+        width: 100%;
+        height: 80vh;
+        box-sizing: border-box;
+    }
+
+    #meet {
+        width: 100%;
+        height: 100%;
+    }
+
+    @media (max-width: 600px) {
+        .row {
+            max-width: 100%;
+        }
+
+        .column {
+            float: none;
+            width: 100%;
+            height: auto;
+        }
+    }
+
+    .confirmation-section {
+        margin-top: 30px;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .confirmation-section label {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    .confirmation-section input[type="checkbox"] {
+        margin-top: 4px;
+        transform: scale(1.2);
+        cursor: pointer;
+    }
+
+    .note {
+        font-weight: normal;
+        font-size: 0.9em;
+        color: #555;
+        margin-left: 30px;
+        margin-top: 5px;
+    }
+
+    #next-button-container {
+        display: none;
+        margin-top: 30px;
+        text-align: left;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+
+<!-- Everything except the next button goes in this box -->
+<div class="my-box">
+
+    <div id="message"></div>
+    On this page, we check whether the video meeting works properly and take care of the crucial set-up steps.
+    Therefore, please follow the instructions 1 to 3 and confirm, that everything works:
+    <br><br>
+
+    <p><strong>1) Please select a virtual background:</strong><br>
+    <img src="{{ static 'images/Baground_2.jpg' }}" width="10%" alt="background icon"><br>
+    In the "Virtual backgrounds" pop-up, choose one of the provided images. Then click <strong>Apply</strong> to return to the video meeting.
+    </p>
+
+    <p><strong>2) Ensure your audio output, microphone, and camera are working properly.</strong><br>
+    Use the toolbar at the bottom of the meeting window to select devices as needed.
+    </p>
+
+    <p><strong>3) If your camera or microphone is not working:</strong><br>
+    Make sure browser permissions are granted (e.g., “Allow while using this site” in the address bar).
+    </p>
+
+    <!-- Video container -->
+    <div class="row">
+        <div class="column">
+            <div id="meet"></div>
+        </div>
+    </div>
+
+    <!-- Confirmation checkboxes -->
+    <div class="confirmation-section">
+
+        <!-- Background confirmation -->
+        <label>
+            <input type="checkbox" id="cb-background">
+            I confirm that I have selected the correct background for the video meeting.
+        </label>
+        <div class="note">
+            Note: If you accidentally selected the wrong background, press F5 to reload the page and choose the correct one.
+        </div>
+
+        <!-- Audio confirmation -->
+        <label>
+            <input type="checkbox" id="cb-audio">
+            I confirm that my speaker (audio output) is working.
+        </label>
+        <div class="note">
+            Note: Click the arrow (^) next to the microphone icon, check the "Speaker" section, hover over your selected device and click the test button. You should hear a test tone.
+        </div>
+
+        <!-- Microphone confirmation -->
+        <label>
+            <input type="checkbox" id="cb-mic">
+            I confirm that my microphone is working.
+        </label>
+        <div class="note">
+            Note: Click the arrow (^) next to the microphone icon, check the "Microphone" section. Speak into your mic and watch for the input level bar to move.
+        </div>
+
+        <!-- Video confirmation -->
+        <label>
+            <input type="checkbox" id="cb-video">
+            I confirm that I can see myself in the video meeting.
+        </label>
+        <div class="note">
+            Note: You should see yourself, but your real background should not be visible.
+        </div>
+    </div>
+
+</div> <!-- End .my-box -->
+
+<!-- Next button outside the box -->
+<div id="next-button-container">
+    {{ next_button }}
+</div>
+
+<!-- Jitsi Meet API -->
+<script src="https://haps-meeting.k8s.iism.kit.edu/external_api.js"></script>
+
+<script>
+    const domain = "haps-meeting.k8s.iism.kit.edu";
+    const displayName = "P" + {{ player.id_in_group }};
+
+    const options = {
+        roomName: "Video Meeting" + {{ player.group_id }} + {{ player.id_in_group }},
+        parentNode: document.querySelector('#meet'),
+        configOverwrite: {
+            prejoinConfig: { enabled: false },
+            disableSelfView: false,
+            startWithAudioMuted: false,
+            startWithVideoMuted: false,
+            filmstrip: { disableResizable: true },
+            participantsPane: {
+                hideModeratorSettingsTab: true,
+                hideMoreActionsButton: true,
+                hideMuteAllButton: true
+            },
+            resolution: 480,
+            disableAEC: false,
+            disableNS: false,
+            constraints: {
+                video: {
+                    height: { ideal: 480, max: 480, min: 240 }
+                }
+            },
+            disableSimulcast: false,
+            enableLayerSuspension: true
+        },
+        interfaceConfigOverwrite: {
+            TOOLBAR_BUTTONS: ['microphone', 'camera', 'fodeviceselection'],
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_MEETING_NAME: false,
+            SHOW_MEETING_TIMER: false,
+            TILE_VIEW_MAX_COLUMNS: 2,
+            TILE_VIEW_ENABLED: true,
+            PARTICIPANT_MENU_BUTTONS: []
+        },
+        userInfo: {
+            displayName: displayName
+        }
+    };
+
+    const api = new JitsiMeetExternalAPI(domain, options);
+
+    api.addEventListener('videoConferenceJoined', () => {
+        api.executeCommand('setTileView', true);
+        setTimeout(() => {
+            api.executeCommand('toggleVirtualBackgroundDialog');
+        }, 1000);
+    });
+
+    // Handle checkbox logic
+    const checkboxIds = ['cb-background', 'cb-audio', 'cb-mic', 'cb-video'];
+    const checkboxes = checkboxIds.map(id => document.getElementById(id));
+    const nextButtonContainer = document.getElementById('next-button-container');
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            if (cb.checked) {
+                cb.disabled = true;
+            }
+            const allChecked = checkboxes.every(c => c.checked);
+            if (allChecked) {
+                nextButtonContainer.style.display = 'block';
+            }
+        });
+    });
+</script>
+
+{{ endblock }}

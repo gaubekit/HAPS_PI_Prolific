@@ -1,0 +1,33 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Thank you for participating in this experiment.{{ endblock }}
+{{ block content }}
+<style>
+.my-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+</style>
+
+<div class="my-box">
+
+    We would like to thank you very much for participating in this study. <br/> <br/>
+
+    In this study, you earned {{ final_payoff }} ECU. <br/> <br/>
+
+    <b>your payoff = (fixed payoff + additional payoff) * attention check fail cost factor</b><br/> <br/>
+
+    The fixed payoff is {{ fixed_payoff }} ECU <br/> <br/>
+
+    The additional payout consists of your earnings in the Social Value Orientation (SVO) Slider and in the Weakest Link Game <br/><br/>
+
+    Because we were not able to match you with somebody within 10 minutes, you will receive twice your SVO Choice of {{ svo_self }} ECU.
+    Instead of the Weakest Link Game payout you receive 200 ECU as compensation.
+    Taken together your additional payoff sums up to {{ additional_payoff }} ECU.<br/><br/>
+
+    In the questionnaires you failed {{ attention_fail }} out of 4 attention checks. You loose 20% payoff (max 80%) per failed attention check. <br/>
+    Your attention fail cost factor (1 - failed checks / 5) is {{ attention_fail_cost }}.
+
+</div>
+<br/>
+{{ endblock }}

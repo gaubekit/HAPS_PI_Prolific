@@ -1,0 +1,29 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Pre-Study: Welcome{{ endblock }}
+
+
+{{ block content }}
+<style xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+label {
+  display: inline-block;
+}
+.my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+}
+</style>
+
+
+<div class="my-box">
+<label>
+    <p> Thank you for your interest in our study.<br><br>
+        The goal of the study is to investigate collaboration in virtual teams. Therefore, you have to interact with other participants. You will be paid a fixed compensation of <span style="color: orange;"><b>GBP (£) 6.00</b></span> for participating and receive a potential bonus of up to <span style="color: orange;"><b>£10.00</b></span>.
+        <br><br>
+        The study will take approximately <span style="color: orange;"><b>60 minutes</b></span>, after entering your Prolific-ID.</p>
+    <p> Before that, we would like to start with some further information and technical checks.</p>
+</label>
+</div>
+<br/><br/>
+{{next_button}}
+{{ endblock }}

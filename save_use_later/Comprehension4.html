@@ -1,0 +1,58 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Description of Team Task{{ endblock }}
+
+{{ block content }}
+
+    <style>
+        .my-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+
+<div class="my-box">
+
+    <div class="container">
+      <h2 class="card-title text-center">Comprehension Questions (4/4)</h2>
+
+                {{ include_sibling 'PayoffTable.html'}}
+
+
+                <br>
+                <p><strong>What does your compensation depend on? Please select <u>all</u> applicable options.</strong></p>
+                <label><input type="checkbox" name="comprehension4a" class="form-check-input"/>&nbsp; &nbsp; Number of hours you work on Project A.</label>
+                <br>
+                <label><input type="checkbox" name="comprehension4b" class="form-check-input"/>&nbsp; &nbsp; Total number of hours worked by the team on Project A.</label>
+                <br>
+                <label><input type="checkbox" name="comprehension4c" class="form-check-input"/>&nbsp; &nbsp; Fewest number of hours worked by a member of your team on Project A.</label>
+                <br>
+                <br>
+
+              {{ if form.comprehension4a.errors }}
+                <div class="alert alert-danger">
+                    {{ form.comprehension4a.errors.0 }}
+                </div>
+                {{ else }}
+                {{ if form.comprehension4b.errors }}
+                <div class="alert alert-danger">
+                    {{ form.comprehension4b.errors.0 }} </div>
+                {{ else }}
+                {{ if form.comprehension4c.errors }}
+                <div class="alert alert-danger">
+                    {{ form.comprehension4c.errors.0 }}
+                    </div>
+                {{ endif }}
+                {{ endif }}
+                {{ endif }}
+
+    </div>
+
+    <br>
+    </div>
+
+
+  <br/>
+{{next_button }}
+
+{{ endblock }}

@@ -1,0 +1,52 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Pre-Study: Checking Browser{{ endblock }}
+
+{{ block content }}
+
+ <style>
+      /* Applying Roboto font to all elements */
+      .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+
+    </style>
+     <div class="my-box">
+
+    <p>
+        You can only participate in the study if you use <b>a Chrome, an Edge, or an Opera browser</b>.
+        <br/> <br/>
+        If you fulfill this criterion, you should be able to continue to the next page by pressing the Next-Button below.
+        <br><br>
+        However, <b>if you are currently not using a Chrome, an Edge, or an Opera browser</b>, the next button is not available and you can't proceed.
+        In this case, please copy the link of the current page, and open it in a Chrome, an Edge, or an Opera browse and close this current tab afterwards.
+        After completing these steps, you should be able to continue with the study in the other browser (Chrome, Edge or Opera) by clicking the Next-Button.
+    </p>
+
+    </div>
+
+<script>
+     document.addEventListener("DOMContentLoaded", function() {
+          const nextButton = document.querySelector(".otree-btn-next.btn.btn-primary");
+           nextButton.style.display = "none";
+        // Function to detect if the browser is Chrome, Opera, or Edge
+            function isSupportedBrowser() {
+                const userAgent = navigator.userAgent.toLowerCase();
+                // Check if the browser is Chrome, Opera, or Edge
+                  if (userAgent.indexOf("chrome") > -1 || userAgent.indexOf("opr") > -1 || userAgent.indexOf("edg") > -1) {
+                      return true; // Supported browser
+                } else {
+                      return false; // Not a supported browser
+                }
+            }      // Enable the button if the browser is Chrome, Opera, or Edge
+          if (isSupportedBrowser()) {
+              nextButton.style.display = "block";
+          }
+
+    });
+</script>
+  <br/>
+{{next_button}}
+{{ endblock }}
+

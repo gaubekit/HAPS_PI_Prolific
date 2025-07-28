@@ -1,0 +1,62 @@
+
+{{ block title }}
+Stage 1: Introduction for Allocating Some Additional Payout
+{{ endblock }}
+
+{% block content %}
+
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+
+    <p>
+    On the next page you will be making a series of decisions about allocating resources between you and one of the two other participants you will meet late on in the experiment.
+    We will <b>not tell you</b> with which of the two persons we match your of the next page to calculate the additional payoff, meaning you will not know from which persons you affect the additional payout and not no by which persons answers your additional payout is affected.
+
+    Therfore, we will refer to the other person as <b>the other</b> .
+
+    </br></br>
+    <b>All of your choices are completely confidential.</b>
+    </br></br>
+    For each of the six questions presented on the next page, please indicate the distribution you prefer most by marking the respective position along the <b>midline</b>.
+    You can only make one mark for each question.
+    </p>
+
+    <br>
+    Your decisions, and the decision of the other, will affect the additional experiment payout for both yourself and the other person.
+    In the example below, a person has chosen to distribute money so that he/she receives <b>50 ECU</b>,
+    while the unknown other person receives <b> 40 ECU</b>:
+    <br/><br/>
+
+    <div style="text-align: center;">
+        <img src="{{ static 'images/scale.jpg' }}" width="90%" />
+    </div>
+    <br><br>
+    <p>
+        As you can see, your choices will influence both the amount of money you receive as well as the amount of money the other receives.
+        There are no right or wrong answers, this is all about personal preferences.
+    </p>
+    <br>
+     <p>
+
+        To your fixed payout we add what you earn in this task as additional payout.
+        This will be the money you allocated to yourself plus the money the other allocated for you, averaged over all six decisions.
+
+        (your choice Q1 + others choice Q1 + your choice Q2 + others choice Q2 + ... + your choice Q6 + other choice Q6) / 6
+
+ <br>
+</div>
+
+<br/>
+
+<p>{{ next_button }}</p>
+
+{% endblock %}
+
