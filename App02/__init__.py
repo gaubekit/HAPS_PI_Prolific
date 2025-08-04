@@ -55,8 +55,19 @@ def make_field(label):
 
 
 class Player(BasePlayer):
+    # was used in my approach of video meeting
     video_ready = models.BooleanField(default=False)
 
+    # Hardcoding treatment-number for VVC page -> we use only the "control-Method" version
+    treatmentNumber = models.IntegerField(initial=0, blank=True)
+
+    # Anujas version of see-hear
+    seeHear = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1'], [2, '2']], label='',
+                                  attrs={"invisible": True}, default=2)
+    attentionCheck = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1']], label='',
+                                         attrs={"invisible": True}, default=0)
+
+    # my version of see-hear - not used right now
     see_others = models.BooleanField(
         default=False,
         blank=True,
@@ -382,10 +393,23 @@ class VideoMeeting(Page):
     #         player.participant.single_player = True
 
 
+class VVC(Page):
+    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static ..srsly, why coding this dirty? :(
+    form_model = 'player'
+    timeout_seconds = 540
+    form_fields = ['seeHear', 'treatmentNumber', 'attentionCheck']
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        # TODO: Hardcoded for testing, because optInConsent is written in App01 and I have no "is_dropout" logic
+        player.participant.optInConsent = 1
+
+        return dict(optInConsent=player.participant.optInConsent, is_dropout=False)
+
+
 class PostVideoMeetingQuestionnaireI(Page):
     form_model = 'player'
     form_fields = ['see_others', 'hear_others', 'good_quality']
-
 
     @staticmethod
     def get_timeout_seconds(player):
@@ -412,7 +436,7 @@ class PostVideoMeetingQuestionnaireII(Page):
             ## How much do you feel like doing nothing after this video conference?
             ## How much do you feel too tired to do other things after this video conference?
 
-            # Emotional Fatigue domain from ZEF-Scale
+            # Emotional Fatigue domain from ZEF-Scale - Note: not incorporated
             ## How emotionally drained do you feel after this video conference?
             ## How irritable do you feel after this video conference?
             ## How moody do you feel after this video conference?
@@ -542,9 +566,11 @@ page_sequence = [
     WaitPage1,
     TreatmentB,  # TODO: add TreatmentA and control structure
     WaitPage2,
-    VideoMeeting,
+    VVC,
+    # VideoMeeting, # TODO the version I created,
     # WaitPage3,
-    PostVideoMeetingQuestionnaireI,  # TODO: Allow for "soft dropout" afterwards -> only flag the drop out person -> what to do with WLG payout?
+    # PostVideoMeetingQuestionnaireI,  # TODO -> Note: my control for hear-see, but we use the multi-design-shit now
+    # TODO: Allow for "soft dropout" afterwards -> only flag the drop out person -> what to do with WLG payout?
     # WaitPage4,
     PostVideoMeetingQuestionnaireII,  # TODO: NASA-TLX 1 item and ZEF Subscale social/general
     WaitPage3, # --> brauche ich eigentlich nicht, oder? wobei ich irgendwann halt schon wissen muss, was die anderen ausgewählt haben?

@@ -1,0 +1,15 @@
+/* Strong selector to override Bootstrap container */
+body .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0 auto;
+}
+
+/* Optional: remove padding from the body content */
+body .otree-body {
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 0 auto;
+}
