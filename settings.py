@@ -3,9 +3,9 @@ from os import environ
 SESSION_CONFIG_DEFAULTS = dict(real_world_currency_per_point=1, participation_fee=0)
 SESSION_CONFIGS = [dict(name='HAPS_PI_Prolific', num_demo_participants=3,
                         app_sequence=[
-                            # 'App00_1_consent',  # Browser check and study information
-                            # 'App00_2_exit',  # check for consent
-                            # 'App00_3_continued',  # Audio and Video-Check, Prolific ID
+                            'App00_1_consent',  # Browser check and study information
+                            'App00_2_exit',  # check for consent
+                            'App00_3_continued',  # Audio and Video-Check, Prolific ID
                             'App01',  # Study Information, SVO, -> Stage 1 (individual)
                             'App01_waiting',  # Wait for 3 active players, 5 x 5 minutes waiting time
                             'App02',  # SpiderGraph(+ WOOP) -> Stage 2 (group)
