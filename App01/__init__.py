@@ -48,8 +48,8 @@ class C(BaseConstants):
 
 
         # # Example used for picture (screenshot) in SVO Introduction
-        # C17=[30, 35, 40, 45, 50, 55, 60, 65, 70],  # you
-        # C27=[80, 70, 60, 50, 40, 30, 20, 10, 0],  # other
+        C17=[30, 35, 40, 45, 50, 55, 60, 65, 70],  # you
+        C27=[80, 70, 60, 50, 40, 30, 20, 10, 0],  # other
 
     )
 
