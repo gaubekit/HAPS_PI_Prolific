@@ -33,11 +33,11 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     q_continue_waiting = models.StringField(
         choices=[
-            ['Yes', 'Yes - I want to wait additional 5 minutes and be compensated for the extra waiting time'],
+            ['Yes', 'Yes - I want to wait an additional 5 minutes and be compensated for the extra waiting time.'],
             ['No',
-             'No - I don\'t want to wait any longer, continue with stage 3 and, waive of the payout from stage 2'],
+             'No - I don\'t want to wait any longer, continue with Stage 3, and waive the bonus payoff from Stage 2.'],
         ],
-        label='<b>Do you like to wait additional 5 minutes for stage 2?</b>'
+        label='<b>Do you like to wait an additional 5 minutes for stage 2?</b>'
     )
     single_player = models.BooleanField(initial=False)
 
