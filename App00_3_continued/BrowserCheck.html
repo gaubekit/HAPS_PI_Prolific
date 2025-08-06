@@ -15,13 +15,27 @@
      <div class="my-box">
 
     <p>
-        You can only participate in the study if you use <b>a Chrome, an Edge, or an Opera browser</b>.
+        You can only participate in this study if you use <b> a Chrome, an Edge, or an Opera browser</b>.
         <br/> <br/>
-        If you fulfill this criterion, you should be able to continue to the next page by pressing the Next-Button below.
-        <br><br>
-        However, <b>if you are currently not using a Chrome, an Edge, or an Opera browser</b>, the next button is not available and you can't proceed.
-        In this case, please copy the link of the current page, and open it in a Chrome, an Edge, or an Opera browse and close this current tab afterwards.
-        After completing these steps, you should be able to continue with the study in the other browser (Chrome, Edge or Opera) by clicking the Next-Button.
+        <ul>
+         <li>If you are currently <b>not</b> using a Chrome, an Edge, or an Opera browser,</li><br/>
+         <ul>
+         <li><b>Please copy the link of the current page, and open it in a Chrome, an Edge, or an Opera browser</b>. <br/><br/>Otherwise, you cannot proceed with this study.</li><br/>
+          <li>Please remember to <b><u>close</u></b> this current tab. </li><br/>
+             <br/>
+        </ul>
+
+
+       <li>For Chrome users, if you are currently <b>not</b> using the latest update (137.0.xx.xx) or higher, <br/><br/></li>
+        <ul>
+            <li>Please copy the link of the current page on your clipboard, <b>update your Chrome version by clicking on Chrome's settings </b> and open it in a new Chrome browser window after the update.
+             <br/><br/>Otherwise, you cannot proceed with this study.</li>
+        <br/>
+              <li>Please remember to <b><u>close</u></b> this current tab. </li><br/>
+        </ul>
+
+         <li>Afterwards, please click on the "Next" button in the <b><u>permitted</u></b> browser to proceed with the study.</li>
+            </ul>
     </p>
 
     </div>
@@ -35,6 +49,15 @@
                 const userAgent = navigator.userAgent.toLowerCase();
                 // Check if the browser is Chrome, Opera, or Edge
                   if (userAgent.indexOf("chrome") > -1 || userAgent.indexOf("opr") > -1 || userAgent.indexOf("edg") > -1) {
+                      if (userAgent.indexOf("chrome") > -1) {
+                            // Extract Chrome version number
+                            let match = userAgent.match(/chrome\/(\d+)\./); // Extracts major version like 137
+                            if (match && parseInt(match[1]) >= 137) {
+                                return true; // Chrome version is supported
+                            } else {
+                                return false; // Chrome version is too old
+                            }
+                        }
                       return true; // Supported browser
                 } else {
                       return false; // Not a supported browser
@@ -44,9 +67,43 @@
               nextButton.style.display = "block";
           }
 
-    });
+          measureInternetSpeed();
+
+             function measureInternetSpeed() {
+                const image = new Image();
+                const imageSizeBytes = 54290; // Adjust this to the actual file size
+                const startTime = new Date().getTime();
+
+                    image.onload = () => {
+                        const endTime = new Date().getTime();
+                        const durationSeconds = (endTime - startTime) / 1000;
+                        const bitsLoaded = imageSizeBytes * 8;
+                        const speedBps = bitsLoaded / durationSeconds;
+                        const speedKbps = speedBps / 1024;
+                        const speedMbps = speedKbps / 1024;
+
+                        const roundedSpeed = Math.round(speedMbps * 100) / 100; // Round to 2 decimal places
+
+                        if (roundedSpeed) {
+                            console.log("Speed (Mbps):", roundedSpeed);
+                            liveSend({ internet_speed: roundedSpeed });  // <--- Send speed to oTree server
+                        } else {
+                            console.log("Could not measure speed");
+                        }
+                    };
+
+                    image.onerror = () => {
+                        console.error("Error loading image for speed test");
+                        liveSend({ internet_speed: null });
+                    };
+                    // Avoid caching
+                    image.src = "{% static 'black.jpeg' %}" + "?cache_bust=" + new Date().getTime();
+                }
+            });
+
+
 </script>
+
   <br/>
 {{next_button}}
 {{ endblock }}
-

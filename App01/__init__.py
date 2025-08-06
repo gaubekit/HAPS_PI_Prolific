@@ -6,8 +6,6 @@ c = cu
 doc = ('''
 
 This App contains
-- General Information (stage1. stage2. stage3)
-- Payoff
 - social value orientation and general mental model
 - main video meeting preferences
 - Introduction to Spider Graph and WOOP
@@ -117,9 +115,7 @@ class Player(BasePlayer):
 
 
 # In the following the Pages of APP01 are defined
-class GeneralInformation(Page): # TODO: Text anpassen
-    """ Giving general information about Stage1, Stage2 and Stage3"""
-    form_model = 'player'
+
 
 
 class IntroSVO(Page):
@@ -326,7 +322,6 @@ class IntroductionSpiderGraph(Page):
 
 
 page_sequence = [
-    GeneralInformation,
     IntroSVO,
     SurveySVO,
     MentalModel,

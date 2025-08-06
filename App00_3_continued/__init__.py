@@ -9,6 +9,8 @@ doc = """
 - Checking Audio and Video (test)
 - Test call to adjust background
 - Prolific ID
+- General Information (stage1. stage2. stage3)
+- Payoff Information
 """
 
 
@@ -92,9 +94,22 @@ class EnterProlificId(Page):
     form_fields = ['ProlificId']
 
 
+class GeneralInformation(Page):
+    """ Giving general information about Stage1, Stage2 and Stage3"""
+    form_model = 'player'
+
+
+class PayoffInformation(Page):
+    """ Giving general information about Stage1, Stage2 and Stage3"""
+    form_model = 'player'
+
+
 page_sequence = [
     ConfirmAudioVideoInteract,
     BrowserCheck,
     # AudioVideoCheck, # not needed with the VVCO check
     VVC0,
-    EnterProlificId]
+    EnterProlificId,
+    GeneralInformation,
+    PayoffInformation
+   ]

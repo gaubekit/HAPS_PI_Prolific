@@ -1,0 +1,87 @@
+{{ extends 'global/Page.html' }}
+{{ block title }} Pre-Study: Payoff Information{{ endblock }}
+
+{{ block content }}
+
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+
+    We use the currency "Experimental Currency Unit (ECU)" for the study. It will be converted into <b>GBP (£)</b> for payoff at the end of the study. <b> In this study, 10 ECU = £0.20.</b>
+    <br/> <br/>
+    <b>The payoff scheme is as follows: </b><br/><br/>
+    <ul>
+
+        <li>As initially stated, your payoff consist of a fixed compensation and a bonus payoff.</li>
+        <li>If you <u>not</u> complete the study, you will receive a fixed compensation of £1.50.</li>
+        <li>If you complete the study, you will receive a fixed compensation of £6.</li>
+        <br>
+        <li>In Stage 1, you can earn a bonus up to £3,58</li>
+        <li>In Stage 2, you can earn a bonus up to £8</li>
+        <li>Your Bonus will depend on the decisions you and others made.</li>
+        <li>Detailed information about the bonus payoff structure are stated explicitly on the respective pages.</li>
+        <br>
+        <li>If we are not able to match you within 5 minutes with a team for Stage 2, you will have the opportunity to extend the waiting time by 5 additional minutes and receive a bonus of £0.6 (max. 4 times = £2,4).</li>
+        <li>If we are not able to match you within 25 minutes, or you decided to not extend waiting time, you will skip Stage 2, receive no bonus for Stage 2, and continue with Stage 3.</li>
+        <li>If a team forms and somebody else (except you) drops out during Stage 2, we can not assign you a bonus for Stage 2. In this case, you will receive a compensation of £3, and continue with Stage 3.<br></li>
+        <br>
+        <li>At the end of the study you receive detailed information about your payoff.</li>
+        <li>None of the participants will know how much another participant has been paid.</li>
+
+    </ul>
+
+
+</div>
+
+<br/>
+
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 30; // adjust timeout here
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // Initialer Countdown-Text
+        countdownEl.textContent = secondsLeft;
+
+        // Countdown aktualisieren jede Sekunde
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
+
+{{ endblock }}

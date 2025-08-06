@@ -1,5 +1,5 @@
 {{ extends 'global/Page.html' }}
-{{ block title }} General Information and Procedure{{ endblock }}
+{{ block title }} Pre-Study: Information Study Structure{{ endblock }}
 
 {{ block content }}
 
@@ -12,25 +12,23 @@
 </style>
 
 <div class="my-box">
-    This study consist of <b>three stages</b>:
+    This study consist of <b>three Stages</b>:
 
     <div style="margin-left: 20px; margin-top: 10px;">
         <ul>
             <li>
-                <b>In stage 1</b>, you answer questions and earn additional payout. You can proceed at your own pace.
+                <b>In Stage 1</b>, you will be asked to answer initial questionnaires individually, and earn some bonus payout.
             </li>
             <li>
-                <b>In stage 2</b>, you will join a team, get to know your team members for a joint 7-minutes virtual meeting and earn additional payout. You and your team members proceed in the same pace.
+                <b>In Stage 2</b>, you will join a team with two other participants, get to know your team members in a 7-minutes video meeting, perform some tasks, and earn some bonus payout.
             </li>
             <li>
-                <b>In stage 3</b>, you will be asked to complete three questionnaires. You can proceed at your own pace.
+                <b>In Stage 3</b>, you will be asked to complete questionnaires individually.
             </li>
         </ul>
     </div>
 
-    <b><u>Additional Payout:</u></b><br> Your additional payout is determined by your choices and the choices of your team members in stage 1 and stage 2. It will be explicitly state which answers to witch questions affect the additional payout.
-    <br/><br>
-    In case there are any technical problems with the team(-forming) process in stage 2, you will be compensated for the additional time you spent in the study.
+    Note: On each page, the NEXT-button will become available after a certain time. Please <u>do not refresh</u> the pages.
 </div>
 
 
@@ -49,7 +47,7 @@
 </div>
 
 <script>
-    const timeout_seconds = 30; // zentral konfigurierbar
+    const timeout_seconds = 30; // adjust timeout here
 
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
