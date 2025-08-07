@@ -287,7 +287,7 @@ class IntroductionSpiderGraph(Page):
 #
 #
 # class StudyIntroduction2(Page):
-#     """ This Page Explains the Payout of the WLG"""
+#     """ This Page Explains the payoff of the WLG"""
 #     form_model = 'player'
 #
 #

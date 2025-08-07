@@ -42,7 +42,7 @@ class EligibilityCheck(Page):  # TODO: no -> ask if you really dont like to part
 
 
 class ConsentFormA(Page):
-    """ Welcome, Coal, Payout Information, Approximated Time """
+    """ Welcome, Coal, payoff Information, Approximated Time """
     form_model = 'player'
 
     @staticmethod

@@ -9,7 +9,7 @@ doc = """
 - Checking Audio and Video (test)
 - Test call to adjust background
 - Prolific ID
-- General Information (stage1. stage2. stage3)
+- General Information (Stage1. Stage2. Stage3)
 - Payoff Information
 """
 
@@ -50,7 +50,7 @@ def ProlificId_error_message(player: Player, value):
 
 # PAGES
 class ConfirmAudioVideoInteract(Page):
-    """ Get the confirmation for Audio/Video/Cam, Interaction in VM and Payout """
+    """ Get the confirmation for Audio/Video/Cam, Interaction in VM and payoff """
     form_model = 'player'
     form_fields = ['willingToInteract', 'willingToBePaid', 'camMicStatus']
 

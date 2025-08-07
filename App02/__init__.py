@@ -21,7 +21,7 @@ Once players joined a group they are flagged as assigned_to_group
 Once players decide to continue with Stage 3 after a waiting period (5 minutes) or are in round 5 (+ 4 times waiting) 
 without forming a group, participants are flagged as single player and be forwarded to App03
 
-How often participants agree to additional wait time will be counted and considered in the payout.
+How often participants agree to additional wait time will be counted and considered in the payoff.
 TODO: Count how far they proceed in Stage two for compensation
 """)
 
@@ -220,7 +220,7 @@ class MyWaitPage(WaitPage):
 
     @staticmethod
     def after_all_players_arrive(group: Group):
-        """Matching players for the SVO payout"""
+        """Matching players for the SVO payoff"""
         players = group.get_players()
 
         players[0].participant.svo_other = players[2].participant.svo_to_other
@@ -347,10 +347,10 @@ class TreatmentB(Page): # TODO add WOOP
     #         player.participant.single_player = True
 
 
-class WaitPage2(WaitPage):  # TODO: payout mechanismus für "zeit in stage 2" verbracht? Kompensation für Zeit?
+class WaitPage2(WaitPage):  # TODO: payoff mechanismus für "zeit in Stage 2" verbracht? Kompensation für Zeit?
     """
     This Page ensures that all participants arrive to the same time on the video meeting page and the dropout time
-    starts simultaneously. If a dropout happens, all group-members will be forwarded to stage 3
+    starts simultaneously. If a dropout happens, all group-members will be forwarded to Stage 3
     """
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -483,7 +483,7 @@ class Decision1(Page):  # TODO: Adjust instructions etc
     def vars_for_template(player: Player):
         return dict(round_num=player.round_number)
 
-    # TODO add logic for payout structure and droput
+    # TODO add logic for payoff structure and droput
     # @staticmethode
     # def before_next_page(player, timeout_happened
     #    pass
@@ -537,7 +537,7 @@ class PostCoordinationQuestionnaire(Page):
 #         for p in group.get_players():
 #             p.payoff_hypo_subround1 = C.ENDOWMENT + (10 * group.groupMin) - (5 * p.ownDecision_subround1)
 #
-#             # participant variables for payout info
+#             # participant variables for payoff info
 #             p.participant.wlg_payoff = p.payoff_hypo_subround1
 #             p.participant.wlg_min_choice = group.groupMin
 #             p.participant.wlg_own_choice = p.ownDecision_subround1
@@ -570,7 +570,7 @@ page_sequence = [
     # VideoMeeting, # TODO the version I created,
     # WaitPage3,
     # PostVideoMeetingQuestionnaireI,  # TODO -> Note: my control for hear-see, but we use the multi-design-shit now
-    # TODO: Allow for "soft dropout" afterwards -> only flag the drop out person -> what to do with WLG payout?
+    # TODO: Allow for "soft dropout" afterwards -> only flag the drop out person -> what to do with WLG payoff?
     # WaitPage4,
     PostVideoMeetingQuestionnaireII,  # TODO: NASA-TLX 1 item and ZEF Subscale social/general
     WaitPage3, # --> brauche ich eigentlich nicht, oder? wobei ich irgendwann halt schon wissen muss, was die anderen ausgewählt haben?

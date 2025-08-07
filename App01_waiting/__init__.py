@@ -37,7 +37,7 @@ class Player(BasePlayer):
             ['No',
              'No - I don\'t want to wait any longer, continue with Stage 3, and waive the bonus payoff from Stage 2.'],
         ],
-        label='<b>Do you like to wait an additional 5 minutes for stage 2?</b>'
+        label='<b>Do you like to wait an additional 5 minutes for Stage 2?</b>'
     )
     single_player = models.BooleanField(initial=False)
 

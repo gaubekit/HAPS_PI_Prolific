@@ -328,11 +328,11 @@ class SurveyPVQ6(Page):
         player.stimulation = pvq_scale_calc(player.pvq10, player.pvq28, player.pvq43)
 
 
-        # TODO: Payout Logic anpassen!!!!
+        # TODO: payoff Logic anpassen!!!!
 
         # # payoff calculation
         # if player.participant.svo_other:
-        #     # if a team could form, take the svo self, svo other and WLG payout
+        #     # if a team could form, take the svo self, svo other and WLG payoff
         #     player.additional_payoff = (player.participant.svo_self
         #                                       + player.participant.svo_other
         #                                       + player.participant.wlg_payoff)
@@ -347,7 +347,7 @@ class SurveyPVQ6(Page):
         # player.participant.total_payoff = player.total_payoff
         # print(player.total_payoff)
         # player.participant.attention_fail = player.attention_check
-        # player.attention_fail_cost = round(1 - (player.attention_check / 5), 2)  # reduce payout up 80 % (20 % per failed attention check)
+        # player.attention_fail_cost = round(1 - (player.attention_check / 5), 2)  # reduce payoff up 80 % (20 % per failed attention check)
         # player.participant.attention_fail_cost = player.attention_fail_cost
         # player.final_payoff = player.total_payoff * player.attention_fail_cost
         # player.participant.final_payoff = round(player.final_payoff, 2)

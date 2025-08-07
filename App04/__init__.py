@@ -2,7 +2,7 @@ from otree.api import *
 
 c = cu
 
-doc = ' Thank You + Payout, depending on Consent und Team forming yes/no'
+doc = ' Thank You + payoff, depending on Consent und Team forming yes/no'
 
 
 class C(BaseConstants):
