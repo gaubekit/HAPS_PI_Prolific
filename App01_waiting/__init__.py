@@ -4,7 +4,7 @@ import time
 
 doc = """
 - 5 rounds
-- timer WAIT_SECONDS (e.g waiting 5minutes per round)
+- timer WAIT_SECONDS (e.g waiting 5 minutes per round)
 - timeout -> next page -> asking: extend waiting time or skip to Stage II
     - next round or next page
 - if 3 participants ACTIVE (for the last 800ms) on live page -> forward exactly THIS 3 players to the next app
@@ -33,9 +33,9 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     q_continue_waiting = models.StringField(
         choices=[
-            ['Yes', 'Yes - I want to wait an additional 5 minutes and be compensated for the extra waiting time.'],
+            ['Yes', 'Yes, I want to wait an additional 5 minutes and be compensated for the extra waiting time.'],
             ['No',
-             'No - I don\'t want to wait any longer, continue with Stage 3, and waive the bonus payoff from Stage 2.'],
+             'No, I don\'t want to wait any longer, continue with Stage 3, and waive the bonus payoff from Stage 2.'],
         ],
         label='<b>Do you like to wait an additional 5 minutes for Stage 2?</b>'
     )
@@ -96,7 +96,7 @@ class RollingMatching(Page):
 class NoMatch(Page):
     """
     This page informs in the last round(=C.NUM_ROUND) players,
-    that we were not able to group them in C.NUM_ROUNDS * C.WAIT_SECONDS.
+    that we were unable to group them in C.NUM_ROUNDS * C.WAIT_SECONDS.
 
     Therefore, the player is forwarded to Stage 3 (App03)
 

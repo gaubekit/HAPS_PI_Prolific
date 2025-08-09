@@ -3,7 +3,7 @@ from otree.api import *
 
 
 doc = """
-    This App handles Stage 3 of the Experiment, where the individuals continue on their own.
+    This App handles Stage 3 of the study, where the individuals continue on their own.
     If any particpants where labeled as dropout (because of unsufficant video quality or dropout in the team) they will
     arrive on the Singleplayer Landingpage and continue afterwards as everyone else with..
     
