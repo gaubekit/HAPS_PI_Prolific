@@ -1,0 +1,160 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Stage 2: Coordination Game - Introduction{{ endblock }}
+
+{{ block styles }}
+<style>
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .selected:not(:first-child) {
+        background-color: rgba(255, 0, 0, 0.6);
+        font-weight: bolder;
+        color: white !important;
+        transition: background-color 0.3s ease;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+</style>
+{{ endblock }}
+
+{{ block content }}
+
+<div class="my-box">
+
+    <div class="container">
+        <h2 class="card-title text-center">Introduction</h2>
+        <br>
+        <b>Imagine</b> that you and the other two members of your group belong to a virtual team of a firm.
+        <br><br>
+        On the next page, you will be asked how many hours, out of your 40-hour work week, you would be willing to allocate to a team project with <b>the team you just met</b>.
+        <br><br>
+        The team project directly competes with an individual project. Meaning, any hours (out of the 40) you not allocate to the team project will be automatically allocated to your individual project.
+        <br><br>
+        <b>The success of the team project and the individual project will determine your bonus payoff of Stage 2.</b>
+        <br><br>
+        The success of the individual project only depends on the hours you allocate to it (all hours you do not allocate to the team project).
+        The success of the team project, however, not only depends on the hours you allocate to it, but also on the <b>minimum</b> number of hours allocated by any of your teammates.
+        <br><br>
+        The team project is more valuable than the individual project, and the more hours you allocate to the team project, the higher are your potential earnings. However, if only one team member contributes fewer hours to the team project than you do,
+        prioritizing the individual project could have been more beneficial.
+        <br><br>
+        The <b> payoff table</b> below shows how your earnings are determined, depending on <span style="color:  hsl(204, 100%, 42%)"> your choices</span> and the <span style="color: red;">minimum choice of any team member</span>
+        <br><br>
+        <b>Please take a moment to consider the payoff structure in the table below.</b>
+        <br><br>
+        If you scroll further down, you will find also some comprehension questions. After answering those questions correctly, you will be able to continue with the study.
+        <br><br><br>
+    </div>
+
+    <div class="container">
+        <h2 class="card-title text-center">Payoff Table</h2>
+        {{ include_sibling 'PayoffTable.html' }}
+
+        <br>
+        Please try out the radio buttons. If you click on them, the possible earning corresponding to your current choice will be highlighted in the table.
+        <br>
+
+        <div class="radio-group">
+            Hours you allocate to team project:
+            <label><input type="radio" name="choice" value="0"> 0 hour</label>
+            <label><input type="radio" name="choice" value="10"> 10 hours</label>
+            <label><input type="radio" name="choice" value="20"> 20 hours</label>
+            <label><input type="radio" name="choice" value="30"> 30 hours</label>
+            <label><input type="radio" name="choice" value="40"> 40 hours</label>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="card-title text-center">Comprehension Questions</h2>
+
+        {{ formfield 'comprehension1' }}
+        {{ formfield 'comprehension2' }}
+        {{ formfield 'comprehension3' }}
+
+        <br>
+        <p><strong>What does your compensation depend on? Please select <u>all</u> applicable options.</strong></p>
+        <label><input type="checkbox" name="comprehension4a" class="form-check-input"/>&nbsp; &nbsp; Number of hours you work on Project A.</label>
+        <br>
+        <label><input type="checkbox" name="comprehension4b" class="form-check-input"/>&nbsp; &nbsp; Total number of hours worked by the team on Project A.</label>
+        <br>
+        <label><input type="checkbox" name="comprehension4c" class="form-check-input"/>&nbsp; &nbsp; Fewest number of hours worked by a member of your team on Project A.</label>
+        <br><br>
+
+        {{ if form.comprehension4a.errors }}
+        <div class="alert alert-danger">
+            {{ form.comprehension4a.errors.0 }}
+        </div>
+        {{ else }}
+        {{ if form.comprehension4b.errors }}
+        <div class="alert alert-danger">
+            {{ form.comprehension4b.errors.0 }}
+        </div>
+        {{ else }}
+        {{ if form.comprehension4c.errors }}
+        <div class="alert alert-danger">
+            {{ form.comprehension4c.errors.0 }}
+        </div>
+        {{ endif }}
+        {{ endif }}
+        {{ endif }}
+    </div>
+
+    <br>
+</div>
+
+<br/>
+{{ next_button }}
+
+{{ endblock }}
+
+{{ block scripts }}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    let row = document.querySelector("tbody").children[3];
+    let rowA = Array.from(row.children);
+    rowA.shift();
+
+    function updateSelection(rowIndex) {
+        rowA.forEach(el => el.classList.remove("selected"));
+        row = document.querySelector("tbody").children[rowIndex];
+        rowA = Array.from(row.children);
+        rowA.shift();
+        rowA.forEach(el => el.classList.add("selected"));
+    }
+
+    // Kein Highlight zu Beginn – erst bei Auswahl
+
+    const radios = document.querySelectorAll('input[name="choice"]');
+    radios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            switch (this.value) {
+                case "0":
+                    updateSelection(1);
+                    break;
+                case "10":
+                    updateSelection(2);
+                    break;
+                case "20":
+                    updateSelection(3);
+                    break;
+                case "30":
+                    updateSelection(4);
+                    break;
+                case "40":
+                    updateSelection(5);
+                    break;
+            }
+        });
+    });
+});
+</script>
+
+{{ endblock }}

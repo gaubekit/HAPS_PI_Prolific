@@ -41,7 +41,8 @@ class VideoMeeting(Page):
         print(all_ready)
         return {0: all_ready}
 
-
+class VMtest(Page):
+    form_model = 'player'
 
 class VVC(Page):
     form_model = 'player'
@@ -61,5 +62,5 @@ class VVC(Page):
 
 
 page_sequence = [
-    VideoMeeting,
+    VMtest,
 ]

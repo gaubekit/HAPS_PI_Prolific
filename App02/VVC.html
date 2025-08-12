@@ -195,7 +195,7 @@
 
 </style>
 {% endblock %}
-{{ block title }} Virtual Team Meeting {{ endblock }}
+{{ block title }}Stage 2: Virtual Team Meeting {{ endblock }}
 {{ block content }}
 
 <div id="myHeader" class="otree-title page-header"></div>
@@ -254,6 +254,7 @@
     </div>
 
 <div id = "description"  type = "hidden" class="my-box1">
+<h2 class="card-title text-left">Stage2: Questionnaires 1/3</h2>
  <div class="my-box">
     <p><b>Please choose the closest option about the quality of the virtual team meeting:</b></p>
     <form>
@@ -584,7 +585,7 @@
                         console.log('Display Audio uploaded successfully.');
 
                         nextBtn.style.display = "block";
-                            document.getElementById('message').innerHTML = '<p><b> The video meeting is now terminated. <br/> We will now proceed to Part 2. </b></p>';
+                            document.getElementById('message').innerHTML = '<p><b> The video meeting is now terminated. <br/> We will now proceed.</b></p>';
                         document.getElementById('progressBarContainer').style.visibility = 'hidden';
                             document.getElementById('progressBarContainer').style.display = 'none';
                             document.getElementById('progressBar').style.visibility = 'hidden';

@@ -85,7 +85,7 @@
     }
 </style>
 
-<!-- Description, Video Meeting, Control Questions -->
+<!-- Everything except the next button goes in this box -->
 <div class="my-box">
 
     <div id="message"></div>
@@ -164,12 +164,12 @@
 <script src="https://haps-meeting.k8s.iism.kit.edu/external_api.js"></script>
 
 <script>
-    const domain = "haps-meeting.k8s.iism.kit.edu";
+ const domain = "haps-meeting.k8s.iism.kit.edu";
     const TN_name = "P" + {{ player.id_in_group }};
 
     const options = {
-        roomName: "Video Meeting" + {{ player.id_in_group }},// This is the name of the room, with player's group ID
-        parentNode: document.querySelector('#meet'), // Now, you declare here which element should parent your stream.
+        roomName: "Video Meeting" + {{ player.group_id }},
+        parentNode: document.querySelector('#meet'),
         configOverwrite: {
             prejoinConfig: {
                 enabled: false
@@ -186,8 +186,8 @@
                 hideMuteAllButton: true
             },
             resolution: 480,
-            disableAEC: false, // Acoustic Echo Cancellation
-            disableNS: false, // Noise Suppression
+            disableAEC: false,
+            disableNS: false,
             constraints: {
                 video: {
                     height: {
@@ -199,7 +199,7 @@
             },
             disableSimulcast: false,
             enableLayerSuspension: true
-        }, // You can turn on or off config elements with this prop.
+        },
         interfaceConfigOverwrite: {
             TOOLBAR_BUTTONS: ['microphone', 'camera', 'fodeviceselection'],
             SHOW_JITSI_WATERMARK: false,
@@ -216,22 +216,15 @@
 
     const api = new JitsiMeetExternalAPI(domain, options);
 
-    // The function below turns on the Tile View every time a participant joins. Practically it makes Tile View the default mode
-    // Set the virtual background
     api.addEventListener('videoConferenceJoined', () => {
         api.executeCommand('setTileView', true);
-        setTimeout(() => {
-                   <!-- HTML content to display if participant is a dropout -->
 
-                    api.executeCommand('toggleVirtualBackgroundDialog');
-
-        }, 1000);
+        // Hintergrund automatisch auf "blur" setzen
+        api.executeCommand('toggleBackgroundEffect', {
+            enabled: true,
+            selectedEffect: 'blur',
+        });
     });
-
-    // Insert 'myself' text in the correct column
-    const playerId = {{ player.id_in_group }};
-    console.debug (playerId);
-    console.debug(playerId === 1);
 
     // Handle checkbox logic
     const checkboxIds = ['cb-background', 'cb-audio', 'cb-mic', 'cb-video'];
