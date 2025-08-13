@@ -1,5 +1,5 @@
 {{ extends 'global/Page.html' }}
-{{ block title }}Stage 2: Questionnaire 2/3{{ endblock }}
+{{ block title }}Stage 2: Questionnaires 2/3{{ endblock }}
 
 {{ block content }}
 
@@ -136,6 +136,37 @@
 
     <p><b>Please consider the 8 questions below and adjust the sliders accordingly:</b></p>
     <br>
+        <!-- Zoom Fatigue & Exhaustion - General 1 -->
+    <div class="slider-section">
+        <div class="question-text">How much do you dread having to do things after this video conference?</div>
+        <div class="slider-wrapper">
+            <span class="slider-label">not at all</span>
+            <div class="slider-container">
+                <div class="slider-ticks">
+                    {% for i in range(-10, 11) %}
+                        {% if i == -10 or i == 0 or i == 10 %}
+                            <span class="tick-strong"></span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="slider-labels">
+                    {% for i in range(-10, 11) %}
+                        <span>
+                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+                <input type="range" name="zfe_general_1" min="-10" max="10" step="1" class="persist">
+            </div>
+            <span class="slider-label">extremely</span>
+        </div>
+    </div>
+
+
+    <br>
+
 
     <!-- NASA TLX Question 2 -->
     <div class="slider-section">
@@ -160,36 +191,6 @@
                     {% endfor %}
                 </div>
                 <input type="range" name="nasatlx_1" min="-10" max="10" step="1" class="persist">
-            </div>
-            <span class="slider-label">very high</span>
-        </div>
-    </div>
-
-    <br>
-
-    <!-- NASA TLX Question 2 -->
-    <div class="slider-section">
-        <div class="question-text">How hurried or rushed was the pace of this video conference?</div>
-        <div class="slider-wrapper">
-            <span class="slider-label">very low</span>
-            <div class="slider-container">
-                <div class="slider-ticks">
-                    {% for i in range(-10, 11) %}
-                        {% if i == -10 or i == 0 or i == 10 %}
-                            <span class="tick-strong"></span>
-                        {% else %}
-                            <span></span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="slider-labels">
-                    {% for i in range(-10, 11) %}
-                        <span>
-                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
-                        </span>
-                    {% endfor %}
-                </div>
-                <input type="range" name="nasatlx_2" min="-10" max="10" step="1" class="persist">
             </div>
             <span class="slider-label">very high</span>
         </div>
@@ -225,6 +226,68 @@
         </div>
     </div>
 
+
+    <br>
+
+    <!-- Zoom Fatigue & Exhaustion - General 2 -->
+    <div class="slider-section">
+        <div class="question-text">How much do you feel like doing nothing after this video conference?</div>
+        <div class="slider-wrapper">
+            <span class="slider-label">not at all</span>
+            <div class="slider-container">
+                <div class="slider-ticks">
+                    {% for i in range(-10, 11) %}
+                        {% if i == -10 or i == 0 or i == 10 %}
+                            <span class="tick-strong"></span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="slider-labels">
+                    {% for i in range(-10, 11) %}
+                        <span>
+                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+                <input type="range" name="zfe_general_2" min="-10" max="10" step="1" class="persist">
+            </div>
+            <span class="slider-label">extremely</span>
+        </div>
+    </div>
+
+
+    <br>
+
+    <!-- NASA TLX Question 2 -->
+    <div class="slider-section">
+        <div class="question-text">How hurried or rushed was the pace of this video conference?</div>
+        <div class="slider-wrapper">
+            <span class="slider-label">very low</span>
+            <div class="slider-container">
+                <div class="slider-ticks">
+                    {% for i in range(-10, 11) %}
+                        {% if i == -10 or i == 0 or i == 10 %}
+                            <span class="tick-strong"></span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="slider-labels">
+                    {% for i in range(-10, 11) %}
+                        <span>
+                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+                <input type="range" name="nasatlx_2" min="-10" max="10" step="1" class="persist">
+            </div>
+            <span class="slider-label">very high</span>
+        </div>
+    </div>
+
     <br>
 
     <!-- Zoom Fatigue & Exhaustion - Social 2 -->
@@ -257,96 +320,6 @@
 
     <br>
 
-    <!-- Zoom Fatigue & Exhaustion - Social 3 -->
-    <div class="slider-section">
-        <div class="question-text">How much do you need time by yourself after this video conference?</div>
-        <div class="slider-wrapper">
-            <span class="slider-label">not at all</span>
-            <div class="slider-container">
-                <div class="slider-ticks">
-                    {% for i in range(-10, 11) %}
-                        {% if i == -10 or i == 0 or i == 10 %}
-                            <span class="tick-strong"></span>
-                        {% else %}
-                            <span></span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="slider-labels">
-                    {% for i in range(-10, 11) %}
-                        <span>
-                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
-                        </span>
-                    {% endfor %}
-                </div>
-                <input type="range" name="zfe_social_3" min="-10" max="10" step="1" class="persist">
-            </div>
-            <span class="slider-label">extremely</span>
-        </div>
-    </div>
-
-    <br>
-
-    <!-- Zoom Fatigue & Exhaustion - General 1 -->
-    <div class="slider-section">
-        <div class="question-text">How much do you dread having to do things after this video conference?</div>
-        <div class="slider-wrapper">
-            <span class="slider-label">not at all</span>
-            <div class="slider-container">
-                <div class="slider-ticks">
-                    {% for i in range(-10, 11) %}
-                        {% if i == -10 or i == 0 or i == 10 %}
-                            <span class="tick-strong"></span>
-                        {% else %}
-                            <span></span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="slider-labels">
-                    {% for i in range(-10, 11) %}
-                        <span>
-                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
-                        </span>
-                    {% endfor %}
-                </div>
-                <input type="range" name="zfe_general_1" min="-10" max="10" step="1" class="persist">
-            </div>
-            <span class="slider-label">extremely</span>
-        </div>
-    </div>
-
-    <br>
-
-    <!-- Zoom Fatigue & Exhaustion - General 2 -->
-    <div class="slider-section">
-        <div class="question-text">How much do you feel like doing nothing after this video conference?</div>
-        <div class="slider-wrapper">
-            <span class="slider-label">not at all</span>
-            <div class="slider-container">
-                <div class="slider-ticks">
-                    {% for i in range(-10, 11) %}
-                        {% if i == -10 or i == 0 or i == 10 %}
-                            <span class="tick-strong"></span>
-                        {% else %}
-                            <span></span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="slider-labels">
-                    {% for i in range(-10, 11) %}
-                        <span>
-                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
-                        </span>
-                    {% endfor %}
-                </div>
-                <input type="range" name="zfe_general_2" min="-10" max="10" step="1" class="persist">
-            </div>
-            <span class="slider-label">extremely</span>
-        </div>
-    </div>
-
-    <br>
-
     <!-- Zoom Fatigue & Exhaustion - General 3 -->
     <div class="slider-section">
         <div class="question-text">How much do you feel too tired to do other things after this video conference?</div>
@@ -370,6 +343,37 @@
                     {% endfor %}
                 </div>
                 <input type="range" name="zfe_general_3" min="-10" max="10" step="1" class="persist">
+            </div>
+            <span class="slider-label">extremely</span>
+        </div>
+    </div>
+
+
+    <br>
+
+    <!-- Zoom Fatigue & Exhaustion - Social 3 -->
+    <div class="slider-section">
+        <div class="question-text">How much do you need time by yourself after this video conference?</div>
+        <div class="slider-wrapper">
+            <span class="slider-label">not at all</span>
+            <div class="slider-container">
+                <div class="slider-ticks">
+                    {% for i in range(-10, 11) %}
+                        {% if i == -10 or i == 0 or i == 10 %}
+                            <span class="tick-strong"></span>
+                        {% else %}
+                            <span></span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="slider-labels">
+                    {% for i in range(-10, 11) %}
+                        <span>
+                            {% if i > 0 %}&nbsp;{{ i }}{% else %}{{ i }}{% endif %}
+                        </span>
+                    {% endfor %}
+                </div>
+                <input type="range" name="zfe_social_3" min="-10" max="10" step="1" class="persist">
             </div>
             <span class="slider-label">extremely</span>
         </div>

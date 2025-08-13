@@ -61,29 +61,28 @@ Stage 1: Introduction - Bonus Allocation by Preference
 
 <br>
 
-<div>
-    <!-- Countdown-Hinweis -->
-    <div id="countdown-container">
-        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
-    </div>
-
-    <!-- Next-Button erst nach Zeit -->
-    <div id="next-container" style="display: none;">
-        <p>{{ next_button }}</p>
-    </div>
+<!-- Countdown -->
+<div id="countdown-container">
+    <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
 </div>
 
+<!-- Next-Button -->
+<div id="next-container" style="display: none;">
+    <p>{{ next_button }}</p>
+</div>
+
+
 <script>
-    const timeout_seconds = 45; // set minimum page time
+    const timeout_seconds = 45; // set minimum time
 
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
         let secondsLeft = timeout_seconds;
 
-        // Initialer Countdown-Text
+        // initial countdown-text
         countdownEl.textContent = secondsLeft;
 
-        // Countdown aktualisieren jede Sekunde
+        // update countdown
         const countdownInterval = setInterval(() => {
             secondsLeft -= 1;
             countdownEl.textContent = secondsLeft;

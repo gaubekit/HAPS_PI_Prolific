@@ -42,8 +42,8 @@
     </ul>
 
 
-    The <b> payoff table</b> below shows how your bonus Payoff for Stage 2 is determined, depending on <span style="color:  rgba(54, 162, 235, 1);"> your choices</span> (rows) and the <span style="color: rgba(255, 99, 132, 1);;">minimum choice of any team member</span> (columns).
-    Selecting your contribution to the team project via radio buttons will highlight the relevant rows, with the potential bonus payoff you can earn depending on the minimum contribution of any team member (columns).
+    The <b> payoff table</b> below shows how your bonus payoff for Stage 2 is determined, depending on <span style="color:  rgba(54, 162, 235, 1);"> your choices</span> (rows) and the <span style="color: rgba(255, 99, 132, 1);;">minimum choice of any team member</span> (columns).
+    Selecting your contribution to the team project via the radio buttons will highlight the corresponding row in the payoff table.<br><br>
 
     <h3 class="card-title text-center">Payoff Table</h3>
     {{ include_sibling 'PayoffTable.html' }}
@@ -63,9 +63,7 @@
 <br/>
 {{ next_button }}
 
-{{ endblock }}
 
-{{ block scripts }}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     let row = document.querySelector("tbody").children[3];

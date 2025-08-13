@@ -1,47 +1,9 @@
 {{ block title }}
-    Weakest Link Game
+Stage 2: Decision - Bonus Allocation by Success
 {{ endblock }}
 
 {{ block styles }}
 <style>
-    .slider {
-        appearance: none;
-        width: 100%;
-        background: #d3d3d3;
-        border-radius: 5px;
-        outline: none;
-        opacity: 0.7;
-        -webkit-transition: .2s;
-        transition: opacity .2s;
-    }
-
-    .slider:hover {
-        opacity: 1;
-    }
-
-    .slider::-webkit-slider-thumb {
-        width: 25px;
-        height: 25px;
-        background: #0d6efd;
-        cursor: pointer;
-    }
-
-    .slider::-moz-range-thumb {
-        width: 25px;
-        height: 25px;
-        background: #0d6efd;
-        cursor: pointer;
-        border-radius: 25px;
-    }
-
-    .slider::-ms-thumb {
-        width: 25px;
-        height: 25px;
-        background: #0d6efd;
-        cursor: pointer;
-        border-radius: 25px;
-    }
-
     .btn-primary {
         float: left;
         display: none;
@@ -50,53 +12,57 @@
         border-color: #0d6efd
     }
 
-    datalist {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
+    .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
     }
 
     .selected:not(:first-child) {
-        background-color: rgba(255, 0, 0, 0.6);;
+        background-color: rgba(255, 0, 0, 0.6);
         font-weight: bolder;
         color: white !important;
+        transition: background-color 0.3s ease;
     }
-     .my-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
-        }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+    }
 </style>
 {{ endblock }}
 
 {{ block content }}
 
+<div class="my-box">
+    On this page you must make the decision that determine your bonus payoff for Stage 2.
+    The 'Next'-Button will become available after selecting <span style="color: rgba(54, 162, 235, 1);">your preferred contribution</span> to the team project via radio button.
+    Identical to the previous pages, the payoff table shows your potential bonus payoff, depending on the <span style="color: rgba(255, 99, 132, 1);">minimum contribution of any team member</span>.
+    <br><br>
+    {{ include_sibling 'PayoffTable.html' }}
     <br>
+    <b> Please decide now how many hours you would like to allocate to the team project:</b>
+    <br>
+    <label for="ownDecision0">
+        <input type="radio" id="ownDecision0" name="ownDecision_subround1" value="0"> 0 &nbsp;&nbsp;
+    </label>
+    <label for="ownDecision10">
+        <input type="radio" id="ownDecision10" name="ownDecision_subround1" value="10"> 10 &nbsp;&nbsp;
+    </label>
+    <label for="ownDecision20">
+        <input type="radio" id="ownDecision20" name="ownDecision_subround1" value="20"> 20 &nbsp;&nbsp;
+    </label>
+    <label for="ownDecision30">
+        <input type="radio" id="ownDecision30" name="ownDecision_subround1" value="30"> 30 &nbsp;&nbsp;
+    </label>
+    <label for="ownDecision40">
+        <input type="radio" id="ownDecision40" name="ownDecision_subround1" value="40"> 40 &nbsp;&nbsp;
+    </label>
 
-       <div class="my-box">
-    <fieldset>
-        <p> Please now decide how many hours you would like to work on the team project. The remaining hours will be allocated to your individual project. Keep in mind that this choice will determine your bonus payoff of Stage 2. </p>
-          {{ include_sibling 'PayoffTable.html' }}
-        <br/>
-        <p> Please choose one of the following options:</p>
-        <label for="ownDecision0">
-            <input type="radio" id="ownDecision0" name="ownDecision_subround1" value="0"> 0 &nbsp;&nbsp;
-        </label>
-        <label for="ownDecision10">
-            <input type="radio" id="ownDecision10" name="ownDecision_subround1" value="10"> 10 &nbsp;&nbsp;
-        </label>
-        <label for="ownDecision20">
-            <input type="radio" id="ownDecision20" name="ownDecision_subround1" value="20"> 20 &nbsp;&nbsp;
-        </label>
-        <label for="ownDecision30">
-            <input type="radio" id="ownDecision30" name="ownDecision_subround1" value="30"> 30 &nbsp;&nbsp;
-        </label>
-        <label for="ownDecision40">
-            <input type="radio" id="ownDecision40" name="ownDecision_subround1" value="40"> 40 &nbsp;&nbsp;
-        </label>
-    </fieldset>
-        </div>
-        <br/>
+</div>
+<br>
+
  {{ next_button }}
 
 

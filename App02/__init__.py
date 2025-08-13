@@ -122,14 +122,11 @@ class Player(BasePlayer):
     comp3_check = models.IntegerField(initial=0)
     comp4_check = models.IntegerField(initial=0)
     comprehension1 = models.IntegerField(
-        label='<br><strong>What would be your compensation if you work 0 hours on the team project '
-              'and the lowest contribution of a team member to the team project is 10 hours?</strong>', min=0, max=400)
+        label='<b>You contribute 0 hours and the minimum contribution by any team member is 10 hours:</b>', min=0, max=400)
     comprehension2 = models.IntegerField(
-        label='<br><strong>What would be your compensation if you work 20 hours on the team project '
-              'and the lowest contribution of a team member to the team project is 10 hours?</strong>', min=0, max=400)
+        label='<b>You contribute 20 hours and the minimum contribution by any team member is 10 hours:</b>', min=0, max=400)
     comprehension3 = models.IntegerField(
-        label='<br><strong>What would be your compensation if you work 40 hours on the team project '
-              'and the lowest contribution of a team member to the team project is 30 hours?</strong>', min=0, max=400)
+        label='<b>You contribute 40 hours and the minimum contribution by any team member is 30 hours:</b>', min=0, max=400)
     comprehension4a = models.BooleanField(
         default=False,
         label='',
@@ -407,7 +404,7 @@ class VVC(Page):
         return dict(optInConsent=player.participant.optInConsent, is_dropout=False)
 
 
-class PostVideoMeetingQuestionnaireI(Page):
+class PostVideoMeetingQuestionnaireI(Page):  # TODO This was replaced by the functionality in VVC -> How to Control for dropout?
     form_model = 'player'
     form_fields = ['see_others', 'hear_others', 'good_quality']
 
@@ -461,12 +458,16 @@ class WaitPage3(WaitPage):
 
 class IntroWLG(Page):
     form_model = 'player'
+
+
+class ComprehensionWLG(Page):
+    form_model = 'player'
     form_fields = ['comprehension1', 'comprehension2',
                    'comprehension3', 'comprehension4a',
                    'comprehension4b', 'comprehension4c']
 
 
-class Decision1(Page):  # TODO: Adjust instructions etc
+class DecisionWLG(Page):  # TODO: Adjust instructions etc
     form_model = 'player'
     form_fields = ['ownDecision_subround1']
 
@@ -575,6 +576,7 @@ page_sequence = [
     PostVideoMeetingQuestionnaireII,  # TODO: NASA-TLX 1 item and ZEF Subscale social/general
     WaitPage3, # --> brauche ich eigentlich nicht, oder? wobei ich irgendwann halt schon wissen muss, was die anderen ausgewählt haben?
     IntroWLG,
-    Decision1,
+    ComprehensionWLG,
+    DecisionWLG,
     PostCoordinationQuestionnaire,
 ]

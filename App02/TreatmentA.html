@@ -86,171 +86,147 @@
     <p><b>On the next page, you will have to wait until your two members are ready, before the video meeting starts </b>.</p>
 
     <script>
-        // Erklärungstexte der Ziele
-        let goalDescriptions = {{ session.vm_goal_description }};
+    const goalDescriptions = {{ session.vm_goal_description }};
 
-        // Plugin für gestrichelte konzentrische Kreise nur bei -3,0,3
-        const customGridLinesPlugin = {
-            beforeDraw: function(chart) {
-                const ctx = chart.ctx;
-                const scale = chart.scales['scale'];
+    const customGridLinesPlugin = {
+        beforeDraw(chart) {
+            const ctx = chart.ctx;
+            const scale = chart.scales['scale'];
+            ctx.save();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            [-3, 0, 3].forEach(val => {
+                const y = scale.getDistanceFromCenterForValue(val);
+                ctx.beginPath();
+                ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+    };
 
-                ctx.save();
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
-
-                const showLinesAt = [-3, 0, 3];
-                showLinesAt.forEach(val => {
-                    const y = scale.getDistanceFromCenterForValue(val);
-                    ctx.beginPath();
-                    ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
-                    ctx.stroke();
-                });
-
-                ctx.restore();
+    const customRadialLinesPlugin = {
+        beforeDraw(chart) {
+            const ctx = chart.ctx;
+            const scale = chart.scales['scale'];
+            const cx = scale.xCenter;
+            const cy = scale.yCenter;
+            ctx.save();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            const totalAxes = scale.pointLabels.length;
+            for (let i = 0; i < totalAxes; i++) {
+                const angle = scale.getIndexAngle(i) - Math.PI / 2;
+                const rMin = scale.getDistanceFromCenterForValue(-3);
+                const rMax = scale.getDistanceFromCenterForValue(3);
+                ctx.beginPath();
+                ctx.moveTo(cx + rMin * Math.cos(angle), cy + rMin * Math.sin(angle));
+                ctx.lineTo(cx + rMax * Math.cos(angle), cy + rMax * Math.sin(angle));
+                ctx.stroke();
             }
-        };
+            ctx.restore();
+        }
+    };
 
-        // Plugin für gestrichelte radiale Linien nur von -3 bis 3
-        const customRadialLinesPlugin = {
-            beforeDraw: function(chart) {
-                const ctx = chart.ctx;
-                const scale = chart.scales['scale'];
-                const centerX = scale.xCenter;
-                const centerY = scale.yCenter;
+    const customTickLabelsPlugin = {
+        afterDraw(chart) {
+            const ctx = chart.ctx;
+            const scale = chart.scales['scale'];
+            const cx = scale.xCenter;
+            const cy = scale.yCenter;
+            ctx.save();
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const angle1 = scale.getIndexAngle(0) - Math.PI / 2;
+            const angle2 = scale.getIndexAngle(1) - Math.PI / 2;
+            const midAngle = (angle1 + angle2) / 2;
+            [-3, 0, 3].forEach(val => {
+                const r = scale.getDistanceFromCenterForValue(val) -10;
+                const x = cx + r * Math.cos(midAngle);
+                const y = cy + r * Math.sin(midAngle);
+                ctx.fillText(val, x, y);
+            });
+            ctx.restore();
+        }
+    };
 
-                ctx.save();
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
 
-                const totalAxes = scale.pointLabels.length;
-                for (let i = 0; i < totalAxes; i++) {
-                    const angle = scale.getIndexAngle(i) - Math.PI / 2;
-
-                    const rMin = scale.getDistanceFromCenterForValue(-3);
-                    const rMax = scale.getDistanceFromCenterForValue(3);
-
-                    const startX = centerX + rMin * Math.cos(angle);
-                    const startY = centerY + rMin * Math.sin(angle);
-                    const endX = centerX + rMax * Math.cos(angle);
-                    const endY = centerY + rMax * Math.sin(angle);
-
-                    ctx.beginPath();
-                    ctx.moveTo(startX, startY);
-                    ctx.lineTo(endX, endY);
-                    ctx.stroke();
-                }
-
-                ctx.restore();
-            }
-        };
-
-        // Plugin für custom Tick Labels (nur einmal zwischen erster und zweiter radialer Linie)
-        const customTickLabelsPlugin = {
-            afterDraw: function(chart) {
-                const ctx = chart.ctx;
-                const scale = chart.scales['scale'];
-                const centerX = scale.xCenter;
-                const centerY = scale.yCenter;
-                const pointLabelsCount = scale.pointLabels.length;
-                const ticksToShow = [-3, 0, 3];
-
-                ctx.save();
-                ctx.fillStyle = '#666';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-
-                // Wir nehmen den Winkel zwischen der ersten und zweiten radialen Linie
-                // (also zwischen Index 0 und 1)
-                let angle1 = scale.getIndexAngle(0) - Math.PI / 2;
-                let angle2 = scale.getIndexAngle(1) - Math.PI / 2;
-                let midAngle = (angle1 + angle2) / 2;
-
-                ticksToShow.forEach(val => {
-                    let r = scale.getDistanceFromCenterForValue(val);
-                    let x = centerX + r * Math.cos(midAngle);
-                    let y = centerY + r * Math.sin(midAngle);
-
-                    ctx.fillText(val, x, y);
-                });
-
-                ctx.restore();
-            }
-        };
-
-        function createRadarChart(total) {
-            let ctx = document.getElementById('myRadarChart').getContext('2d');
-            let myRadarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: {{ session.vm_goal_labels }},
-                    datasets: [
-                        {
-                            label: 'Your Goals',
-                            data: js_vars.own,
-                            backgroundColor: 'transparent',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 2,
-                            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-                            fill: false
+    function createRadarChart() {
+        const ctx = document.getElementById('myRadarChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: {{ session.vm_goal_labels }},
+                datasets: [
+                    {
+                        label: 'Your Own Goals',
+                        data: js_vars.own,
+                        backgroundColor: 'transparent',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                        fill: false
+                    },
+                    {
+                        label: 'Average Goals of Others',
+                        data: js_vars.other,
+                        backgroundColor: 'transparent',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scale: {
+                    ticks: {
+                        min: -4,
+                        max: 3,
+                        stepSize: 1,
+                        display: false
+                    },
+                    pointLabels: {
+                        padding: 20,
+                        fontSize: 12,
+                        fontStyle: 'normal',
+                        fontColor: '#666'
                         },
-                        {
-                            label: 'Average Goals of Others',
-                            data: js_vars.other,
-                            backgroundColor: 'transparent',
-                            borderColor: 'rgba(255, 99, 132, 1)', // rot
-                            borderWidth: 2,
-                            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                            fill: false
-                        }
-                    ]
+                    gridLines: { display: false },
+                    angleLines: { display: false }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scale: {
-                        ticks: {
-                            min: -4,
-                            max: 3,
-                            stepSize: 1,
-                            beginAtZero: false,
-                            display: false
+                tooltips: {
+                    callbacks: {
+                        title(tip, data) {
+                            return data.labels[tip[0].index];
                         },
-                        pointLabels: {
-                            padding: 20
-                        },
-                        gridLines: {
-                            display: false
-                        },
-                        angleLines: {
-                            display: false
+                        label(tip) {
+                            return goalDescriptions[tip.index];
                         }
-                    },
-                    tooltips: {
-                        callbacks: {
-                            title: function(tooltipItems, data) {
-                                let index = tooltipItems[0].index;
-                                return data.labels[index];
-                            },
-                            label: function(tooltipItem, data) {
-                                let index = tooltipItem.index;
-                                return goalDescriptions[index];
-                            }
-                        }
-                    },
-                    hover: {
-                        mode: 'nearest',
-                        intersect: true
                     }
                 },
-                plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin]
-            });
-        }
+                hover: { mode: 'nearest', intersect: true },
+                legend: {position: 'bottom', align: 'start', labels: {padding: 30}},
+                title: {
+                    display: true,
+                    text: 'Video Meeting Goals',
+                    fontSize: 18,
+                    fontStyle: 'bold',
+                    padding: 20
+                }
+            },
 
-        createRadarChart(5);
+            plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin ]
+        });
+    }
+
+    createRadarChart();
     </script>
 </div>
 

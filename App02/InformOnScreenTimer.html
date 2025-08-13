@@ -46,10 +46,10 @@
         const countdownEl = document.getElementById("countdown-timer");
         let secondsLeft = timeout_seconds;
 
-        // Initialer Countdown-Text
+        // initial countdown-text
         countdownEl.textContent = secondsLeft;
 
-        // Countdown aktualisieren jede Sekunde
+        // update countdown
         const countdownInterval = setInterval(() => {
             secondsLeft -= 1;
             countdownEl.textContent = secondsLeft;

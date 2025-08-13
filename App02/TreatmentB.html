@@ -155,7 +155,7 @@
             ctx.lineWidth = 1;
             ctx.setLineDash([5, 5]);
             [-3, 0, 3].forEach(val => {
-                const y = scale.getDistanceFromCenterForValue(val) + 10;
+                const y = scale.getDistanceFromCenterForValue(val);
                 ctx.beginPath();
                 ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
                 ctx.stroke();
@@ -163,6 +163,9 @@
             ctx.restore();
         }
     };
+
+
+
 
     const customRadialLinesPlugin = {
         beforeDraw(chart) {
@@ -203,7 +206,7 @@
             const angle2 = scale.getIndexAngle(1) - Math.PI / 2;
             const midAngle = (angle1 + angle2) / 2;
             [-3, 0, 3].forEach(val => {
-                const r = scale.getDistanceFromCenterForValue(val);
+                const r = scale.getDistanceFromCenterForValue(val) -10;
                 const x = cx + r * Math.cos(midAngle);
                 const y = cy + r * Math.sin(midAngle);
                 ctx.fillText(val, x, y);
@@ -270,13 +273,13 @@
                     }
                 },
                 hover: { mode: 'nearest', intersect: true },
-                legend: {position: 'bottom'},
+                legend: {position: 'bottom', align: 'start', labels: {padding: 30}},
                 title: {
                     display: true,
                     text: 'Video Meeting Goals',
                     fontSize: 18,
                     fontStyle: 'bold',
-                    padding: 15
+                    padding: 20
                 }
             },
 

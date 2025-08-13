@@ -114,7 +114,7 @@
 
                 const showLinesAt = [-3, 0, 3];
                 showLinesAt.forEach(val => {
-                    const y = scale.getDistanceFromCenterForValue(val) + 10;
+                    const y = scale.getDistanceFromCenterForValue(val); // + 10 weg
                     ctx.beginPath();
                     ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
                     ctx.stroke();
@@ -182,7 +182,7 @@
                 let midAngle = (angle1 + angle2) / 2;
 
                 ticksToShow.forEach(val => {
-                    let r = scale.getDistanceFromCenterForValue(val);
+                    let r = scale.getDistanceFromCenterForValue(val) -10; // -10 hinzugefügt
                     let x = centerX + r * Math.cos(midAngle);
                     let y = centerY + r * Math.sin(midAngle);
 
@@ -251,13 +251,13 @@
                         mode: 'nearest',
                         intersect: true
                     },
-                    legend: {position: 'bottom'},
+                    legend: {position: 'bottom', align: 'start', labels: {padding: 30}},
                     title: {
                         display: true,
                         text: 'Video Meeting Goals',
                         fontSize: 18,
                         fontStyle: 'bold',
-                        padding: 15
+                        padding: 20
                     }
                 },
                 plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin]
@@ -270,29 +270,28 @@
 
 <br>
 
-<div>
-    <!-- Countdown-Hinweis -->
-    <div id="countdown-container">
-        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
-    </div>
-
-    <!-- Next-Button erst nach Zeit -->
-    <div id="next-container" style="display: none;">
-        <p>{{ next_button }}</p>
-    </div>
+<!-- Countdown -->
+<div id="countdown-container">
+    <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
 </div>
 
+<!-- Next-Button -->
+<div id="next-container" style="display: none;">
+    <p>{{ next_button }}</p>
+</div>
+
+
 <script>
-    const timeout_seconds = 45; // set minimum page time
+    const timeout_seconds = 45; // set minimum time
 
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
         let secondsLeft = timeout_seconds;
 
-        // Initialer Countdown-Text
+        // initial countdown-text
         countdownEl.textContent = secondsLeft;
 
-        // Countdown aktualisieren jede Sekunde
+        // update countdown
         const countdownInterval = setInterval(() => {
             secondsLeft -= 1;
             countdownEl.textContent = secondsLeft;

@@ -136,7 +136,7 @@ Stage 3: Additional Questionnaire 3/3 (Page 1/6)
 
     We will describe over the next six pages several people.
     Please read each description carefully, think about how much that person is or is not like you and adjust the sliders accordingly.
-    Please take your time, we will enable the next button after 90 seconds.<br><br>
+    Please take your time, we will enable the next button after 60 seconds.<br><br>
     The Table below indicates the meaning of each slider position.
      <table class="table table-striped" style="text-align: center;">
         <tr>
@@ -377,32 +377,32 @@ Stage 3: Additional Questionnaire 3/3 (Page 1/6)
             </div>
         </div>
     </div>
-    <br>
-
-    <br><br>
-
-    <!-- Countdown-Hinweis -->
-    <div id="countdown-container">
-        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
-    </div>
-
-    <!-- Next-Button erst nach Zeit -->
-    <div id="next-container" style="display: none;">
-        <p>{{ next_button }}</p>
-    </div>
 </div>
 
+<br>
+
+<!-- Countdown -->
+<div id="countdown-container">
+    <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+</div>
+
+<!-- Next-Button -->
+<div id="next-container" style="display: none;">
+    <p>{{ next_button }}</p>
+</div>
+
+
 <script>
-    const timeout_seconds = 90; // zentral konfigurierbar
+    const timeout_seconds = 60; // set minimum time
 
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
         let secondsLeft = timeout_seconds;
 
-        // Initialer Countdown-Text
+        // initial countdown-text
         countdownEl.textContent = secondsLeft;
 
-        // Countdown aktualisieren jede Sekunde
+        // update countdown
         const countdownInterval = setInterval(() => {
             secondsLeft -= 1;
             countdownEl.textContent = secondsLeft;
@@ -413,6 +413,13 @@ Stage 3: Additional Questionnaire 3/3 (Page 1/6)
                 document.getElementById("next-container").style.display = "block";
             }
         }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
     });
 </script>
 
