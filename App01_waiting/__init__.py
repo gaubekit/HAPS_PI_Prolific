@@ -3,11 +3,13 @@ import time
 
 
 doc = """
-- 5 rounds
+- 5 rounds -> allow rejoin the grouping phase
 - timer WAIT_SECONDS (e.g waiting 5 minutes per round)
-- timeout -> next page -> asking: extend waiting time or skip to Stage II
-    - next round or next page
-- if 3 participants ACTIVE (for the last 800ms) on live page -> forward exactly THIS 3 players to the next app
+- timeout -> next page -> asking: extend waiting time or skip to Stage 2?
+    - yes -> next round of waiting
+    - no -> continue with Stage 3
+- if 3 participants ACTIVE (for the last 800ms) on live page -> forward exactly THIS 3 players to Stage 2
+- if no match happens after 4 extensions (25min in total) -> forward to Stage 3
 """
 
 # Global variables to track matching
@@ -123,7 +125,19 @@ class ContinueWaiting(Page):
     form_fields = ['q_continue_waiting']
 
     @staticmethod
+    def before_next_page(player, timeout_happened):
+        """ add 15 ECU compensation for additional waiting time if players decide to wait longer"""
+        if player.q_continue_waiting == 'Yes':
+            player.participant.payoff_compensation_wait += 15
+            player.participant.payoff_total = (
+                    player.participant.payoff_fix
+                    + player.participant.payoff_compensation_wait
+            )
+            print(f'added 15 ECU, compensation for waiting is now {player.participant.payoff_compensation_wait}')
+
+    @staticmethod
     def app_after_this_page(player, upcoming_apps):
+        """ forward players to stage 3 if they decide to skip stage 2"""
         if player.q_continue_waiting == 'No':
             player.participant.single_player = True
             player.single_player = True

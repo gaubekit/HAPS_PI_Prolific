@@ -1,5 +1,5 @@
 {{ extends 'global/Page.html' }}
-{{ block title }}End of Study: Feedback and payoff Information{{ endblock }}
+{{ block title }}End of Study: Feedback and Payoff Information{{ endblock }}
 {{ block content }}
 <style>
 .my-box {
@@ -11,15 +11,13 @@
 
 <div class="my-box">
 
-    We would like to thank you very much for participating in this study. <br/> <br/>
-    If you have general feedback, you can state it here:<br>
-    TODO formfield
-
-    <br><br>
+    <b>Thank you</b>, for participating in this study. <br/> <br/>
+    {{ formfield 'feedback'}}
+    <br>
 
     In this study, you earned xxTODOxx ECU. <br/> <br/>
 
-    <b>your payoff = fixed payoff + bonus payoff Stage 1 + bonus payoff Stage 2 </b>
+    <b>your payoff = fixed payoff + bonus payoff Stage 1 + bonus payoff Stage 2 </b> TODO
     <br/><br>
 
     As initially stated, the fixed payoff is xxTODOxx ECU. <br/> <br/>

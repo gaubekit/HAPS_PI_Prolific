@@ -46,8 +46,8 @@ class C(BaseConstants):
 
 
         # # Example used for picture (screenshot) in SVO Introduction
-        C17=[30, 35, 40, 45, 50, 55, 60, 65, 70],  # you
-        C27=[80, 70, 60, 50, 40, 30, 20, 10, 0],  # other
+        # C17=[30, 35, 40, 45, 50, 55, 60, 65, 70],  # you
+        # C27=[80, 70, 60, 50, 40, 30, 20, 10, 0],  # other
 
     )
 
@@ -59,14 +59,8 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     pass
 
-# TODO -> Note: note used anymore
-# def make_6_point_likert_skale_horizontal(label):
-#     return models.IntegerField(label=label, choices=[1, 2, 3, 4, 5, 6], widget=widgets.RadioSelect)
-
 
 class Player(BasePlayer):
-    # TODO -> Note: nachstehend nur für test
-    # personality_values = models.StringField()
 
     # Social Value Orientation
     q1_svo = models.IntegerField()
@@ -75,8 +69,8 @@ class Player(BasePlayer):
     q4_svo = models.IntegerField()
     q5_svo = models.IntegerField()
     q6_svo = models.IntegerField()
-    svo_self = models.FloatField()
-    svo_other = models.FloatField()
+    svo_to_self = models.FloatField()
+    svo_to_other = models.FloatField()
     svo_ratio = models.FloatField()
     svo = models.FloatField()
     svo_angle = models.FloatField()
@@ -92,7 +86,7 @@ class Player(BasePlayer):
         choices=[-3, -2, -1, 0, 1, 2, 3]
     )
 
-    # Video Meeting Behavor Preferences
+    # Video Meeting Behavior Preferences
     ## In vide meetings, it is imortant for me...
 
     ## ..to perform well, make valuable contributions, and be recognized for my efforts.
@@ -114,8 +108,7 @@ class Player(BasePlayer):
     vm_universalism_tolerance = models.IntegerField(widget=widgets.RadioSelect, choices=[-3, -2, -1, 0, 1, 2, 3]) # Diversity and Inclusion
 
 
-# In the following the Pages of APP01 are defined
-
+# PAGES
 
 
 class IntroSVO(Page):
@@ -124,7 +117,7 @@ class IntroSVO(Page):
 
 
 class SurveySVO(Page):
-    """ This Page Measures the Social Value Orientation and Calculates all Valeus"""
+    """ This Page Measures the Social Value Orientation and Calculates all Values"""
     form_model = 'player'
     form_fields = ['q1_svo', 'q2_svo', 'q3_svo', 'q4_svo', 'q5_svo', 'q6_svo']
 
@@ -140,24 +133,24 @@ class SurveySVO(Page):
         svo_values = C.svo_values
 
         # calculating SVO angle
-        player.svo_self = (svo_values['C11'][player.q1_svo - 1] +
+        player.svo_to_self = (svo_values['C11'][player.q1_svo - 1] +
                            svo_values['C12'][player.q2_svo - 1] +
                            svo_values['C13'][player.q3_svo - 1] +
                            svo_values['C14'][player.q4_svo - 1] +
                            svo_values['C15'][player.q5_svo - 1] +
                            svo_values['C16'][player.q6_svo - 1]) / 6
 
-        player.svo_other = (svo_values['C21'][player.q1_svo - 1] +
+        player.svo_to_other = (svo_values['C21'][player.q1_svo - 1] +
                             svo_values['C22'][player.q2_svo - 1] +
                             svo_values['C23'][player.q3_svo - 1] +
                             svo_values['C24'][player.q4_svo - 1] +
                             svo_values['C25'][player.q5_svo - 1] +
                             svo_values['C26'][player.q6_svo - 1]) / 6
 
-        player.svo_ratio = (player.svo_other - 50) / (player.svo_self - 50)
+        player.svo_ratio = (player.svo_to_other - 50) / (player.svo_to_self - 50)
         player.svo_angle = math.degrees(math.atan(player.svo_ratio))
 
-        # SVO angle ot categorie (altruism, prosocial, individualistic, competitive)
+        # SVO-angle to svo-category (altruism, prosocial, individualistic, competitive)
         if player.svo_ratio >= 1.5488:
             player.svo = 1
             player.svo_type = 'Altruism'
@@ -171,9 +164,8 @@ class SurveySVO(Page):
             player.svo = 4
             player.svo_type = 'Competitive'
 
-        player.participant.svo_self = round(player.svo_self, 2)
-        player.participant.svo_to_other = round(player.svo_other, 2)
-        player.participant.svo_other = None  # will be changed in App02 after a team has formed
+        player.participant.svo_to_self = round(player.svo_to_self, 2)
+        player.participant.svo_to_other = round(player.svo_to_other, 2)
 
 
 class MentalModel(Page):
@@ -239,8 +231,6 @@ class VideoMeetingBehaviorI(Page):
 class IntroductionSpiderGraph(Page):
     """ This Page introduces the Spider Graph with the own Video Meeting Goals"""
     form_model = 'player'
-    # form_fields = ['vm_achievement', 'vm_power_dominance', 'vm_face',
-    #                'vm_conformity_rules', 'vm_universalism_concern', 'vm_universalism_tolerance']
 
     @staticmethod
     def js_vars(player):
@@ -260,65 +250,15 @@ class IntroductionSpiderGraph(Page):
 
         - store arrival time at the waite page (first page in next app)
         - define a flag for single player = False, used to flag players that form no group
-        - define a flag for waiting_too_long -> used to control waiting time
-        - define a flag indicating whether the particpant already joined a team
+               - define a flag indicating whether the particpant already joined a team
         - define var for additional wait time
         """
 
-        player.participant.wait_page_arrival = time.time()
+        # player.participant.wait_page_arrival = time.time() # TODO vermutlich outdated
         player.participant.single_player = False
-        # player.participant.waiting_too_long = False
         player.participant.assigned_to_team = False
         player.participant.additional_wait_time = 0
         player.participant.confirmed_meeting = False
-
-    # @staticmethod
-    # def app_after_this_page(player, upcoming_apps):
-    #     """ Forward to App02 - to skip App02_WaitTooLong the """
-    #     return 'App02'
-
-
-
-#### the following pages not needed in this app ###
-
-# class StudyIntroduction1(Page):
-#     """ This Page Explains the Context of the WLG """
-#     form_model = 'player'
-#
-#
-# class StudyIntroduction2(Page):
-#     """ This Page Explains the payoff of the WLG"""
-#     form_model = 'player'
-#
-#
-# class Comprehension1(Page):
-#     form_model = 'player'
-#     form_fields = ['comprehension1']
-#
-#
-# class Comprehension2(Page):
-#     form_model = 'player'
-#     form_fields = ['comprehension2']
-#
-#
-# class Comprehension3(Page):
-#     form_model = 'player'
-#     form_fields = ['comprehension3']
-#
-#
-# class Comprehension4(Page):
-#     form_model = 'player'
-#     form_fields = ['comprehension4a', 'comprehension4b', 'comprehension4c']
-#
-#
-# class EndApp01(Page):
-#     """ This page informs participant about the process (next wait page)"""
-#     form_model = 'player'
-#
-#     @staticmethod
-#     def before_next_page(player, timeout_happened):
-#         """ store time when entering waitpage in participant field, to control for time on wait page"""
-#         player.participant.wait_page_arrival = time.time()
 
 
 page_sequence = [
@@ -326,15 +266,5 @@ page_sequence = [
     SurveySVO,
     MentalModel,
     VideoMeetingBehaviorI,
-    IntroductionSpiderGraph,  # Introduction Spider Graph and info about Stage 2
-
-
-    # StudyIntroduction1,
-    # StudyIntroduction2,
-    # Comprehension1,
-    # Comprehension2,
-    # Comprehension3,
-    # Comprehension4,
-    #
-    # EndApp01
+    IntroductionSpiderGraph,
 ]

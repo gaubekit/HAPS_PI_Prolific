@@ -20,7 +20,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    feedback = models.LongStringField()
+    feedback = models.LongStringField(label="If you have any feedback, you can state it here:")
 
 
 # class ThankYouExit(Page):
@@ -35,7 +35,7 @@ class Player(BasePlayer):
 
 class ThankYou(Page):
     form_model = 'player'
-    form_field = ['feedback', ]
+    form_fields = ['feedback']
 
     # @staticmethod
     # def is_displayed(player):
@@ -45,8 +45,8 @@ class ThankYou(Page):
     # @staticmethod
     # def vars_for_template(player):
     #     return dict(
-    #         svo_self=player.participant.svo_self,
-    #         svo_other=player.participant.svo_other,
+    #         svo_to_self=player.participant.svo_to_self,
+    #         svo_to_other=player.participant.svo_to_other,
     #         fixed_payoff=player.participant.fixed_payoff,
     #         additional_payoff=player.participant.additional_payoff,
     #         attention_fail_cost=player.participant.attention_fail_cost,
@@ -70,7 +70,7 @@ class ThankYou(Page):
 #     # @staticmethod
 #     # def vars_for_template(player):
 #     #     return dict(
-#     #         svo_self=player.participant.svo_self,
+#     #         svo_to_self=player.participant.svo_to_self,
 #     #         fixed_payoff=player.participant.fixed_payoff,
 #     #         additional_payoff=player.participant.additional_payoff,
 #     #         attention_fail_cost=player.participant.attention_fail_cost,

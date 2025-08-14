@@ -1,16 +1,14 @@
 from otree.api import *
 import re
-import time
 
 
 doc = """
-- checking Browser
-- Checking Audio and Video (question)
-- Checking Audio and Video (test)
-- Test call to adjust background
-- Prolific ID
-- General Information (Stage1. Stage2. Stage3)
-- Payoff Information
+    - confirm audio and video interaction 
+    - checking browser
+    - Test call to adjust background
+    - Prolific ID -> initialize participant variables for payoff
+    - Study Information about Stage1, Stage2 and Stage3
+    - Payoff Information
 """
 
 
@@ -36,11 +34,6 @@ class Player(BasePlayer):
                                           attrs={"invisible": True})
     camMicStatus = models.IntegerField(blank=False, choices=[[0, '0'], [1, '1']], label='',
                                        attrs={"invisible": True})
-    colorVideo = models.IntegerField(blank=False, label="What color was mentioned in the video?",
-                                     choices=[[0, 'Red'], [1, 'Blue'], [2, 'Green'], [3, 'Yellow']])
-    numberVideo = models.IntegerField(blank=False, label="Which number was shown in the video?",
-                                      choices=[[1, '1'], [2, '2'], [3, '3'], [4, '4'], [5, '5']])
-
 
 def ProlificId_error_message(player: Player, value):
     if not re.fullmatch(r'^[A-Za-z0-9]{24}$', value):
@@ -49,15 +42,11 @@ def ProlificId_error_message(player: Player, value):
 
 
 # PAGES
+
 class ConfirmAudioVideoInteract(Page):
     """ Get the confirmation for Audio/Video/Cam, Interaction in VM and payoff """
     form_model = 'player'
     form_fields = ['willingToInteract', 'willingToBePaid', 'camMicStatus']
-
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened):
-        if not timeout_happened:
-            player.participant.vars['wait_page_arrival'] = time.time()
 
 
 class BrowserCheck(Page):
@@ -65,26 +54,8 @@ class BrowserCheck(Page):
     form_model = 'player'
 
 
-# class AudioVideoCheck(Page): # TODO: could be deleted
-#     form_model = 'player'
-#     form_fields = ['colorVideo', 'numberVideo']
-
-    # @staticmethod
-    # def before_next_page(player: Player, timeout_happened):
-    #     if not timeout_happened:
-    #         player.participant.vars['colorVideo'] = player.colorVideo
-    #         player.participant.vars['numberVideo'] = player.numberVideo
-    #         player.participant.vars['wait_page_arrival'] = time.time()
-    #
-    # @staticmethod
-    # def app_after_this_page(player: Player, upcoming_apps):
-    #     if player.numberVideo != 2 or player.colorVideo != 3:
-    #         return 'App04'  # TODO: Handle Return differently "you cant take part without giving consent" doesnt fit the mater
-    # TODO -> Note: Muss ich bei return App04 noch irgendwas beachten, wenn diese Seite raus ist?
-
-
 class VVC0(Page):
-    """ Testing Jitsi and selecting Background """
+    """ Testing Jitsi, Selecting Background and Confirming setup"""
     form_model = 'player'
 
 
@@ -92,6 +63,19 @@ class EnterProlificId(Page):
     """ Getting Prolific ID """
     form_model = 'player'
     form_fields = ['ProlificId']
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        """
+            Participant variables for payoff are initialized to avoid key errors
+            and guarantee for 1.5 (75 ECU) in case of dropout.
+        """
+        player.participant.payoff_fix = 75
+        player.participant.payoff_bonus_svo = 0
+        player.participant.payoff_compensation_wait = 0
+        player.participant.payoff_bonus_wlg = 0
+        player.participant.payoff_compensation_wlg_dropout = 0
+        player.participant.payoff_total = player.participant.payoff_fix
 
 
 class GeneralInformation(Page):
@@ -107,7 +91,6 @@ class PayoffInformation(Page):
 page_sequence = [
     ConfirmAudioVideoInteract,
     BrowserCheck,
-    # AudioVideoCheck, # not needed with the VVCO check
     VVC0,
     EnterProlificId,
     GeneralInformation,

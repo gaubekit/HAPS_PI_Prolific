@@ -331,15 +331,15 @@ class SurveyPVQ6(Page):
         # TODO: payoff Logic anpassen!!!!
 
         # # payoff calculation
-        # if player.participant.svo_other:
+        # if player.participant.svo_to_other:
         #     # if a team could form, take the svo self, svo other and WLG payoff
-        #     player.additional_payoff = (player.participant.svo_self
-        #                                       + player.participant.svo_other
+        #     player.additional_payoff = (player.participant.svo_to_self
+        #                                       + player.participant.svo_to_other
         #                                       + player.participant.wlg_payoff)
         #
         # else:
         #     # if no team could form, compensate by 2 times svo self and 200 ECU
-        #     player.additional_payoff = (player.participant.svo_self * 2) + 200
+        #     player.additional_payoff = (player.participant.svo_to_self * 2) + 200
         #
         # player.participant.additional_payoff = round(player.additional_payoff, 2)
         # player.participant.fixed_payoff = C.FIX_PAYOFF

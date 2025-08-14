@@ -3,8 +3,8 @@ from os import environ
 SESSION_CONFIG_DEFAULTS = dict(real_world_currency_per_point=1, participation_fee=0)
 SESSION_CONFIGS = [dict(name='HAPS_PI_Prolific', num_demo_participants=3,
                         app_sequence=[
-                            'App00_1_consent',  # Browser check and study information
-                            'App00_2_exit',  # check for consent
+                            #'App00_1_consent',  # Browser check and study information
+                            #'App00_2_exit',  # check for consent
                             'App00_3_continued',  # Audio and Video-Check, Prolific ID
                             'App01',  # Study Information, SVO, -> Stage 1 (individual)
                             'App01_waiting',  # Wait for 3 active players, 5 x 5 minutes waiting time
@@ -28,15 +28,18 @@ PARTICIPANT_FIELDS = [
     'consent',
     'optInConsent',
     # control variables for experiment flow
-    'wait_page_arrival',
+    # 'wait_page_arrival',  # TODO brauche ich das?
     'additional_wait_time',
-    'assigned_to_team',
+    'assigned_to_team',  # TODO brauche ich das? -> ja, payoff handling
     'single_player',
     'confirmed_meeting',
+    'attention_fail',  # TODO Brauche ich das?
+    'attention_fail_cost',  # TODO Brauche ich das?
+    'the_other_id',
+    'other_players_ids',
     # Social Value Orientation
-    'svo_self',
+    'svo_to_self',
     'svo_to_other',
-    'svo_other',
     # goal variables for visualization
     'vm_pref_achievement',
     'vm_pref_dominance',
@@ -48,14 +51,14 @@ PARTICIPANT_FIELDS = [
     # weakest link game control variables
     'wlg_own_choice',
     'wlg_min_choice',
-    'wlg_payoff',
+    'wlg_payoff', # Todo Erstezen, siehe unten
     # payoff control variables
-    'attention_fail',
-    'attention_fail_cost',
-    'additional_payoff',
-    'fixed_payoff',
-    'total_payoff',
-    'final_payoff'
+    'payoff_fix',
+    'payoff_bonus_svo',
+    'payoff_compensation_wait',
+    'payoff_bonus_wlg',
+    'payoff_compensation_wlg_dropout',
+    'payoff_total'
 ]
 
 SESSION_FIELDS = ['vm_goal_labels',
@@ -79,4 +82,4 @@ INSTALLED_APPS = ['otree']
 OTREE_PRODUCTION=1
 
 # deactivate debug info
-DEBUG = False
+#DEBUG = False

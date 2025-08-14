@@ -26,10 +26,6 @@ class Player(BasePlayer):
                                   attrs={"invisible": True})
 
 
-def wait_for_all(group: Group):
-    pass
-
-
 class ConsentFormB2(Page):
     form_model = 'player'
     form_fields = ['confirmConsent']

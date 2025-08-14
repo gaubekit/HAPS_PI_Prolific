@@ -1,28 +1,43 @@
 from otree.api import *
-import time
+from otree.models import Participant
+import random
 
 c = cu
 
 doc = ("""
 
-This App handel Stage 2, where the participants form a group of three to:
-- See the goal preferences of the others
-    - additionally perform WOOP in the Treatment B group
-- have a 7 min video meeting
-- answer whether they were able to see the others
-(-answer tlx-short and 
+This App handel Stage 2, where 3 participants formed a team:
+- Treatment A: Spider Graph
+- Treatment B: Spider Graph + Mental Contrasting (MC)
 
-( - getting a introduction to WLG)
-(- Playing WLG one-shot)
 
-Players arrive at this app with several flags. A group is only formed when three players waiting.
-Due to the multiple rounds character player can rejoin the grouping or decide to be forwarded to Stage 3
-Once players joined a group they are flagged as assigned_to_group
-Once players decide to continue with Stage 3 after a waiting period (5 minutes) or are in round 5 (+ 4 times waiting) 
-without forming a group, participants are flagged as single player and be forwarded to App03
+- 7 min video meeting
+- Questionnaire 1/3: See / hear each other
+- Questionnaire 2/3: Nasa TLX, Zoom Fatigue & Exhaustion
+- Intro Weakest Link Game (WLG)
+- Comprehension WLG
+- Decision WLG (One-Shot)
+- Questionnaire 3/3: Mental Model (compare with initial answer) + decision reasoning (Spider Graph, MC, Video Meeting)
 
-How often participants agree to additional wait time will be counted and considered in the payoff.
-TODO: Count how far they proceed in Stage two for compensation
+
+Players only arrive in this app, if it was possible to form a team. 
+The initial wait page saves the player objects and calculates payoff_bonus_svo
+    -> upd. payoff_total = payoff_fix + payoff_bonus_svo + payoff_compensation_wait
+
+Dropout handling I:
+    - Guarantee that the video meeting completes (only situation where the participants interact in realtime)
+    - OnPage-Timer and WaitPages control the "experiment" that participants proceed in the same pase
+    -  if timeout happens -> all players are tagged as "single_player" and forwarded to Stage 3
+                          -> the participant who raised the timeout get no compensation for stage 2
+                          -> the other two will be compensated with 150 ECU (3 pound)
+                          
+Dropout handling II:
+    - Once participants completed the video meeting -> no live interaction anymore
+    - no OnPage-Timer and no WaitPages -> pace is not controlled
+    - On the very last page of Stage 3 player objects of group members will checked for WLG Decision
+        -> if decision made by all players: calculate payoff_bonus_wlg
+        -> else: payoff_bonus_wlg = 0; payoff_compensation_wlg_dropout = 150 ECU
+        
 """)
 
 
@@ -207,6 +222,8 @@ def comprehension4c_error_message(player: Player, value):
     return None
 
 
+# PAGES
+
 class MyWaitPage(WaitPage):
     """
     Page grouping participants by arrival time. Because Participants only forwarded in chunks of three,
@@ -217,12 +234,45 @@ class MyWaitPage(WaitPage):
 
     @staticmethod
     def after_all_players_arrive(group: Group):
-        """Matching players for the SVO payoff"""
-        players = group.get_players()
+        """
+        - store code of team members in participant field
+        - select one of the others for svo by random
+        - calculate payoff_bonus_svo
+        - update payoff_total
+        """
+        # for all players in the group
+        for p in group.get_players():
+            print('this is player: ', p)
+            # store the id's (code) of the other group members in a participant field "other_players_ids"
+            p.participant.other_players_ids = [pl.participant.code for pl in p.get_others_in_group()]
+            # get randomly the code of one group member
+            the_other_id = random.choice(p.participant.other_players_ids)
+            p.participant.the_other_id = the_other_id
 
-        players[0].participant.svo_other = players[2].participant.svo_to_other
-        players[2].participant.svo_other = players[1].participant.svo_to_other
-        players[1].participant.svo_other = players[0].participant.svo_to_other
+            # and search this participant in the session to get his svo
+            for other in group.session.get_participants():
+                if other.code == the_other_id:
+                    svo_from_other = other.svo_to_other
+                    break
+            try:
+                # update payoff_bonus_svo
+                p.participant.payoff_bonus_svo = (
+                    svo_from_other + p.participant.svo_to_self
+                )
+                print('SVO from other', svo_from_other, '\nSVO to self', p.participant.svo_to_self)
+
+                # updated payoff_total
+                p.participant.payoff_total = (
+                        p.participant.payoff_fix
+                        + p.participant.payoff_bonus_svo
+                        + p.participant.payoff_compensation_wait
+                )
+                print('payoff svo: ', p.participant.payoff_bonus_svo)
+                print('payoff waiting: ', p.participant.payoff_compensation_wait)
+                print('payoff total: ', p.participant.payoff_total)
+            except NameError:
+                svo_from_other = 0
+                print('Error: The Other had no svo_to_other')
 
 
 class InformOnScreenTimer(Page):
@@ -248,58 +298,59 @@ class WaitPage1(WaitPage):
         return None
 
 
-class TreatmentA(Page): # TODO: Algin this Method after Treatment B is in the final version
-    """
-    This page handles one of two treatments, and therefore includes:
-        - visualize personal and team-averaged VM goals
-
-    The treatment is handled via control-variable and a is_displayed staticmethod# TODO
-
-    """
-    form_model = 'player'
-
-    @staticmethod
-    def js_vars(player):
-        others = player.get_others_in_subsession()
-        others_vm_pref = [
-            (others[0].participant.vm_pref_achievement + others[1].participant.vm_pref_achievement) / 2,
-            (others[0].participant.vm_pref_dominance + others[1].participant.vm_pref_dominance) / 2,
-            (others[0].participant.vm_pref_face + others[1].participant.vm_pref_face) / 2,
-            (others[0].participant.vm_pref_rules + others[1].participant.vm_pref_rules) / 2,
-            (others[0].participant.vm_pref_concern + others[1].participant.vm_pref_concern) / 2,
-            (others[0].participant.vm_pref_tolerance + others[1].participant.vm_pref_tolerance) / 2,
-            ]
-
-        player.participant.others_vm_pref = others_vm_pref
-
-        return dict(
-            own=[player.participant.vm_pref_achievement,
-                 player.participant.vm_pref_dominance,
-                 player.participant.vm_pref_face,
-                 player.participant.vm_pref_rules,
-                 player.participant.vm_pref_concern,
-                 player.participant.vm_pref_tolerance],
-            other=others_vm_pref
-        )
-
-    @staticmethod
-    def get_timeout_seconds(player):
-        if player.participant.single_player:
-            return 1
-        else:
-            return 5*60
-
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        if timeout_happened:
-            player.participant.single_player = True
+class TreatmentA(Page):  # TODO: Update after Treatment B is i.o.
+    pass
+    # """
+    # This page handles one of two treatments, and therefore includes:
+    #     - visualize personal and team-averaged VM goals
+    #
+    # The treatment is handled via control-variable and a is_displayed staticmethod# TODO
+    #
+    # """
+    # form_model = 'player'
+    #
+    # @staticmethod
+    # def js_vars(player):
+    #     others = player.get_others_in_subsession()
+    #     others_vm_pref = [
+    #         (others[0].participant.vm_pref_achievement + others[1].participant.vm_pref_achievement) / 2,
+    #         (others[0].participant.vm_pref_dominance + others[1].participant.vm_pref_dominance) / 2,
+    #         (others[0].participant.vm_pref_face + others[1].participant.vm_pref_face) / 2,
+    #         (others[0].participant.vm_pref_rules + others[1].participant.vm_pref_rules) / 2,
+    #         (others[0].participant.vm_pref_concern + others[1].participant.vm_pref_concern) / 2,
+    #         (others[0].participant.vm_pref_tolerance + others[1].participant.vm_pref_tolerance) / 2,
+    #         ]
+    #
+    #     player.participant.others_vm_pref = others_vm_pref
+    #
+    #     return dict(
+    #         own=[player.participant.vm_pref_achievement,
+    #              player.participant.vm_pref_dominance,
+    #              player.participant.vm_pref_face,
+    #              player.participant.vm_pref_rules,
+    #              player.participant.vm_pref_concern,
+    #              player.participant.vm_pref_tolerance],
+    #         other=others_vm_pref
+    #     )
+    #
+    # @staticmethod
+    # def get_timeout_seconds(player):
+    #     if player.participant.single_player:
+    #         return 1
+    #     else:
+    #         return 5*60
+    #
+    # @staticmethod
+    # def before_next_page(player, timeout_happened):
+    #     if timeout_happened:
+    #         player.participant.single_player = True
 
 
 class TreatmentB(Page): # TODO add WOOP
     """
     This page handles one of two treatments, and therefore includes:
         - visualize personal and team-averaged VM goals
-        - WOOP
+        - Mental Contrasting
 
     The treatment is handled via control-variable and a is_displayed staticmethod# TODO
 
@@ -402,6 +453,8 @@ class VVC(Page):
         player.participant.optInConsent = 1
 
         return dict(optInConsent=player.participant.optInConsent, is_dropout=False)
+
+    # TODO: Fragen ob alle anderen einen background aktiviert hatten
 
 
 class PostVideoMeetingQuestionnaireI(Page):  # TODO This was replaced by the functionality in VVC -> How to Control for dropout?
