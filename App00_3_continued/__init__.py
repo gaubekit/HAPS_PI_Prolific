@@ -44,7 +44,7 @@ def ProlificId_error_message(player: Player, value):
 # PAGES
 
 class ConfirmAudioVideoInteract(Page):
-    """ Get the confirmation for Audio/Video/Cam, Interaction in VM and payoff """
+    """ Get the confirmation for Audio/Video/Cam, Interaction in Playground and payoff """
     form_model = 'player'
     form_fields = ['willingToInteract', 'willingToBePaid', 'camMicStatus']
 

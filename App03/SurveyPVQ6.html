@@ -372,22 +372,21 @@ Stage 3: Additional Questionnaire 3/3 (Page 6/6)
     </div>
 </div>
 
-    <br>
+<br>
+<!-- Control minimum-time, Next-Button and supress page refresh -->
 
-    <!-- Countdown -->
-    <div id="countdown-container">
-        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
-    </div>
+<!-- Countdown -->
+<div id="countdown-container">
+    <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+</div>
 
-    <!-- Next-Button -->
-    <div id="next-container" style="display: none;">
-        <p>{{ next_button }}</p>
-    </div>
-
+<!-- Next-Button -->
+<div id="next-container" style="display: none;">
+    <p>{{ next_button }}</p>
+</div>
 
 <script>
     const timeout_seconds = 60; // set minimum time
-
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
         let secondsLeft = timeout_seconds;

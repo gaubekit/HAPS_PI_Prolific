@@ -248,17 +248,22 @@ class IntroductionSpiderGraph(Page):
         """
         This methode provides participant-var for the next app
 
-        - store arrival time at the waite page (first page in next app)
-        - define a flag for single player = False, used to flag players that form no group
-               - define a flag indicating whether the particpant already joined a team
-        - define var for additional wait time
+            - store arrival time at the waite page (first page in next app) # TODO weg
+        - define a flag for single player = False, used to flag players that form no group or can't continue
+        - define a flag indicating whether the participant formed a team
+        - define var to track additional wait time in rolling matching
+            - confirmed meeting? # todo weg
+        - define flag indicating whether this particular player raised the dropout
+        - define flag indicating whether video_meeting_successful
         """
 
         # player.participant.wait_page_arrival = time.time() # TODO vermutlich outdated
         player.participant.single_player = False
         player.participant.assigned_to_team = False
         player.participant.additional_wait_time = 0
-        player.participant.confirmed_meeting = False
+        # player.participant.confirmed_meeting = False # TODO: kann glaube ich weg
+        player.participant.raised_dropout = False
+        player.participant.vm_success = False
 
 
 page_sequence = [

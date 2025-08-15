@@ -15,7 +15,7 @@ SESSION_CONFIGS = [dict(name='HAPS_PI_Prolific', num_demo_participants=3,
                    dict(
                        name='Testing',
                        display_name="Testing",
-                       app_sequence=['VM'],
+                       app_sequence=['Playground'],
                        num_demo_participants=3,
                    ),
                    ]
@@ -32,11 +32,13 @@ PARTICIPANT_FIELDS = [
     'additional_wait_time',
     'assigned_to_team',  # TODO brauche ich das? -> ja, payoff handling
     'single_player',
-    'confirmed_meeting',
-    'attention_fail',  # TODO Brauche ich das?
-    'attention_fail_cost',  # TODO Brauche ich das?
+    'confirmed_meeting', # TODO Brauche ich das noch?
+    'attention_fail',  # TODO Brauche ich das noch?
+    'attention_fail_cost',  # TODO Brauche ich das noch?
     'the_other_id',
     'other_players_ids',
+    'raised_dropout',
+    'vm_success',
     # Social Value Orientation
     'svo_to_self',
     'svo_to_other',

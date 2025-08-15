@@ -4,8 +4,8 @@ from otree.api import *
 
 doc = """
     This App handles Stage 3 of the study, where the individuals continue on their own.
-    If any particpants where labeled as dropout (because of unsufficant video quality or dropout in the team) they will
-    arrive on the Singleplayer Landingpage and continue afterwards as everyone else with..
+    If any participants where labeled as SinglePlayer, they arrive at the Landing Page:
+        - if single_player and
     
         - Demographics
         - Video Meeting Goals Part II
@@ -29,8 +29,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-
-    # Demographics
+    # Demographics identical to joint study
     age = models.IntegerField(label='How old are you? <br/>(Please enter a valid age between 18 and 65.)', min=18,
                               max=66, error_messages={
             'min_value': 'Please enter an age of at least 18.',
@@ -192,7 +191,7 @@ class Player(BasePlayer):
     # attention checks
     attention_check = models.IntegerField(initial=0)  # used to count attention checks
 
-    # Computed subscale scores
+    # Subscales OVQ
     universalism_nature = models.FloatField()  # Universalism-Nature: Preservation of the natural environment
     universalism_concern = models.FloatField()  # Universalism-Concern: Commitment to equality, justice, and protection for all people
     universalism_tolerance = models.FloatField()  # Universalism-Tolerance: Acceptance and understanding of those who are different from oneself
@@ -213,28 +212,49 @@ class Player(BasePlayer):
     humility = models.FloatField()  # Humility: Recognizing one’s insignificance in the larger scheme of things
     stimulation = models.FloatField()  # Stimulation: Excitement, novelty, and change
 
-    # payoff # TODO
-    total_payoff = models.FloatField()
-    additional_payoff = models.FloatField()
-    svo_payoff = models.FloatField()
-    wlg_payoff = models.FloatField()
-    attention_fail_cost = models.FloatField()
-    final_payoff = models.FloatField()
-
 
 def pvq_scale_calc(pvq1, pvq2, pvq3):
     return pvq1 + pvq2 + pvq3
+
 
 def age_error_message(player: Player, value):
     if value < 18 or value > 66:
             return "You need to be between 18 years and 66 years to participate."
     return None
 
+
 # ====================================================== PAGES ====================================================== #
+
 class LandingPageSinglePlayer(Page):
     @staticmethod
     def is_displayed(player):
+        """Players flagged as single player arrive at this page"""
         return player.participant.single_player
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        """
+        Dropout handling I -> Payoff allocation
+        =======================================
+            - the video meeting was no success
+            - data of wlg can't be used
+            - participants directly forwarded to Stage 3
+            - participants did not play the WLG
+            - no payoff_bonus_wlg possible -> compensation if not responsible
+
+        """
+        # VM not successfully
+        if player.participant.single_player and not player.participant.vm_success:
+            # but players formed a team previously and not responsible for dropout
+            if player.participant.assigned_to_team and not player.participant.raised_dropout:
+                # bonus WLG = 0 but compensation = 150
+                player.participant.payoff_bonus_wlg = 0
+                player.participant.payoff_compensation_wlg_dropout = 150
+                # update total payoff
+                player.participant.payoff_total += 150
+            else:
+                player.participant.payoff_bonus_wlg = 0
+                # bonus WLG = 0 and compensation = 0
 
 
 class QuestDemographics(Page):
@@ -296,13 +316,16 @@ class SurveyPVQ5(Page):
     form_fields = ['pvq39', 'pvq40', 'pvq41', 'pvq42', 'pvq43', 'pvq44', 'pvq45', 'pvq46', 'pvq47', 'pvq48']
 
 
-
 class SurveyPVQ6(Page):
     form_model = 'player'
     form_fields = ['pvq49', 'pvq50', 'pvq51', 'pvq52', 'pvq53', 'pvq_attention_3', 'pvq54', 'pvq55', 'pvq56', 'pvq57']
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
+        """
+            - calculate PVQ
+            - Update payoff_fix
+        """
         if player.pvq_attention_3 != 3:
             player.attention_check += 1
 
@@ -327,30 +350,14 @@ class SurveyPVQ6(Page):
         player.humility = pvq_scale_calc(player.pvq7, player.pvq38, player.pvq54)
         player.stimulation = pvq_scale_calc(player.pvq10, player.pvq28, player.pvq43)
 
+        # If participants did not drop out, this is the last page before they arrive at "ThankYou" in App04.
+        # Therefore, update payoff_fix to 200 ECU (up to this point 75 ECU in case of dropout)
+        player.participant.payoff_fix = 200
 
-        # TODO: payoff Logic anpassen!!!!
 
-        # # payoff calculation
-        # if player.participant.svo_to_other:
-        #     # if a team could form, take the svo self, svo other and WLG payoff
-        #     player.additional_payoff = (player.participant.svo_to_self
-        #                                       + player.participant.svo_to_other
-        #                                       + player.participant.wlg_payoff)
-        #
-        # else:
-        #     # if no team could form, compensate by 2 times svo self and 200 ECU
-        #     player.additional_payoff = (player.participant.svo_to_self * 2) + 200
-        #
-        # player.participant.additional_payoff = round(player.additional_payoff, 2)
-        # player.participant.fixed_payoff = C.FIX_PAYOFF
-        # player.total_payoff = C.FIX_PAYOFF + player.additional_payoff
-        # player.participant.total_payoff = player.total_payoff
-        # print(player.total_payoff)
-        # player.participant.attention_fail = player.attention_check
-        # player.attention_fail_cost = round(1 - (player.attention_check / 5), 2)  # reduce payoff up 80 % (20 % per failed attention check)
-        # player.participant.attention_fail_cost = player.attention_fail_cost
-        # player.final_payoff = player.total_payoff * player.attention_fail_cost
-        # player.participant.final_payoff = round(player.final_payoff, 2)
+        # TODO: Dropout Handling II
+        # TODO: Others? -> Update payoff WLG
+        # FRAGE: Sollte ich erstmal für alle die in APP03 landen und ein team geformt haben Compensation setzen und hier nur updaten?
 
 
 page_sequence = [

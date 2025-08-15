@@ -33,7 +33,7 @@ Dropout handling I:
                           
 Dropout handling II:
     - Once participants completed the video meeting -> no live interaction anymore
-    - no OnPage-Timer and no WaitPages -> pace is not controlled after WaitPage3
+    - no OnPage-Timer and no WaitPages -> pace is not controlled
     - On the very last page of Stage 3 player objects of group members will checked for WLG Decision
         -> if decision made by all players: calculate payoff_bonus_wlg
         -> else: payoff_bonus_wlg = 0; payoff_compensation_wlg_dropout = 150 ECU
@@ -46,10 +46,6 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
     ENDOWMENT = 200
-
-    # Central configuration of duration Video Meeting and Upload Time Limit
-    VM_DURATION = 5 * 60
-    VM_UPLOAD_DURATION = 2 * 60
 
 
 class Subsession(BaseSubsession):
@@ -65,7 +61,6 @@ class Group(BaseGroup):
 
 
 def make_field(label):
-    """ Needed for SVO-Sliders """
     return models.IntegerField(
         choices=[0, 10, 20, 30, 40],
         label=label,
@@ -74,18 +69,36 @@ def make_field(label):
 
 
 class Player(BasePlayer):
-    # Var to control Video Meeting Behavior: 1 -> no modification, 2 -> no self-view, 3 -> additional message above
-    video_meeting_behavior = models.IntegerField(initial=1, blank=True)
+    # Hardcoding treatment-number for VVC page -> we use only the "control-Method" version
+    treatmentNumber = models.IntegerField(initial=0, blank=True)
 
-    # Var to ensure that Video Meeting worked properly
+    # Anujas version of see-hear
     seeHear = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1'], [2, '2']], label='',
                                   attrs={"invisible": True}, default=2)
     attentionCheck = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1']], label='',
                                          attrs={"invisible": True}, default=0)
-    correctBackground = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1']], label='',
-                                            attrs={"invisible": True}, default=0)
 
-    # Decisions in Weakest Link game
+    # my version of see-hear - not used right now
+    see_others = models.BooleanField(
+        default=False,
+        blank=True,
+        label='I was able to see the others',
+        widget=widgets.CheckboxInput,
+    )
+    hear_others = models.BooleanField(
+        default=False,
+        blank=True,
+        label='I was able to hear the others',
+        widget=widgets.CheckboxInput,
+    )
+
+    good_quality = models.BooleanField(
+        default=False,
+        blank=True,
+        label='The video meeting quality was good enough to participate in the conversation',
+        widget=widgets.CheckboxInput,
+    )
+
     ownDecision_subround1 = make_field("Please choose one")
     payoff_hypo_subround1 = models.IntegerField()
 
@@ -207,7 +220,7 @@ def comprehension4c_error_message(player: Player, value):
 
 # PAGES
 
-class MyWaitPage(WaitPage):  # TODO Preventing players from getting stuck on wait pages: https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
+class MyWaitPage(WaitPage):     # TODO -> clarify: do we need "dropout logic"?
     """
     Page grouping participants by arrival time. Because App01_waiting guarantees for exact 3 active participants,
     we can simply use "group_by_arrival_time"
@@ -267,7 +280,6 @@ class InformOnScreenTimer(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        print("timeout_happened is true: ", player.participant.code)
         if timeout_happened:
             player.participant.single_player = True
 
@@ -395,59 +407,96 @@ class WaitPage2(WaitPage):
         return None
 
 
-class VideoMeeting(Page):
+# class VideoMeeting(Page):
+#     """
+#     This page gives instructions about the VideoMeeting,
+#     asks for consent (do not speak about personal goals or intended behavior)
+#     and enables the video meeting (jitsi) after all players has agreed
+#     """
+#     @staticmethod
+#     def live_method(player, data):
+#         player.video_ready = data
+#         all_ready = all(p.video_ready for p in player.group.get_players())
+#         print(all_ready)
+#         return {0: all_ready}
+#
+#     # TODO: activate timeout code
+#     # @staticmethod
+#     # def get_timeout_seconds(player):
+#     #     if player.participant.single_player:
+#     #         return 1
+#     #     else:
+#     #         return 9 * 60 # 7min video meeting + 2 min puffer for joining (same as in mega-study)
+#     #
+#     # @staticmethod
+#     # def before_next_page(player, timeout_happened):
+#     #     if timeout_happened:
+#     #         player.participant.single_player = True
+
+
+
+
+
+
+class VVC(Page):
     # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static ..srsly, why coding this dirty? :(
     form_model = 'player'
-    timeout_seconds = C.VM_DURATION + C.VM_UPLOAD_DURATION   # 540 7min Playground + 2min upload/Fragebögen
-    form_fields = ['seeHear', 'video_meeting_behavior', 'attentionCheck', 'correctBackground']
-
+    timeout_seconds = 540
+    form_fields = ['seeHear', 'treatmentNumber', 'attentionCheck']
 
     @staticmethod
     def vars_for_template(player: Player):
         # TODO: Hardcoded for testing, because optInConsent is written in App01 and I have no "is_dropout" logic
         player.participant.optInConsent = 1
 
-        return dict(optInConsent=player.participant.optInConsent)
+        return dict(optInConsent=player.participant.optInConsent, is_dropout=False)
+
+    # TODO: Fragen ob alle anderen einen background aktiviert hatten
+
+
+
+
+
+
+
+
+
+
+
+
+class PostVideoMeetingQuestionnaireI(Page):  # TODO This was replaced by the functionality in VVC -> How to Control for dropout?
+    form_model = 'player'
+    form_fields = ['see_others', 'hear_others', 'good_quality']
+
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.participant.single_player:
+            return 1
+        else:
+            return 5 * 60
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        print('seeHear ', player.seeHear)
-        print('attentionCheck ', player.attentionCheck)
-        print('correctBackground ', player.correctBackground)
+        if timeout_happened or not player.see_others or not player.hear_others or not player.good_quality:
+            player.participant.single_player = True
 
-
-class WaitPage3(WaitPage):
-    """
-    This Wait Page has to ensure, that dropout during the video meeting is detected.
-    """
-    pass  # TODO https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
-
-    # TODO: Flag vm_success
-
-    # @staticmethod
-    # def app_after_this_page(player, upcoming_apps):
-    #     for p in player.group.get_players():
-    #         if p.participant.single_player:
-    #             # if one of the others is a single player, all in the group are flagged as single player
-    #             player.participant.single_player = True
-    #
-    #     if player.participant.single_player:
-    #         return 'App03'
-    #     return None
 
 class PostVideoMeetingQuestionnaireII(Page):
         """
-            2 Items of Nasa-TLX (as in joint study) and 6 items Zoom Fatigue & Exhaustion (ZFE) Questionnaire
-
-            # Social Fatigue domain from ZFE-Scale | not at all - slightly - moderately - very - extremely (5)
+            # Social Fatigue domain from ZEF-Scale | not at all - slightly - moderately - very - extremely (5)
             ## How much do you tend to avoid social situations after this video conference?
             ## How much do you want to be alone after this video conference?
             ## How much do you need time by yourself after this video conference?
 
-            # Mental Fatigue domain from ZFE-Scale
+            # Mental Fatigue domain from ZEF-Scale
             ## How much do you dread having to do things after this video conference?
             ## How much do you feel like doing nothing after this video conference?
             ## How much do you feel too tired to do other things after this video conference?
+
+            # Emotional Fatigue domain from ZEF-Scale - Note: not incorporated
+            ## How emotionally drained do you feel after this video conference?
+            ## How irritable do you feel after this video conference?
+            ## How moody do you feel after this video conference?
         """
         form_model = 'player'
         form_fields = ['nasatlx_1', 'nasatlx_2', 'zfe_social_1', 'zfe_social_2',
@@ -572,21 +621,20 @@ class PostCoordinationQuestionnaire(Page):
 #         return not player.participant.assigned_to_team
 
 
-class MyPage(Page):
-    """ Only a Dummy Page for testing """
-    form_model = 'player'
-
-
 page_sequence = [
     MyWaitPage,
     InformOnScreenTimer,
     WaitPage1,
     TreatmentB,  # TODO: add TreatmentA and control structure
-    MyPage,  # Todo: only a Testpage
     WaitPage2,
-    VideoMeeting,
-    # WaitPage3, # TODO: sollte time_out haben -> Weiterleitung nach paar minuten
-    PostVideoMeetingQuestionnaireII,
+    VVC,
+    # VideoMeeting, # TODO the version I created,
+    # WaitPage3,
+    # PostVideoMeetingQuestionnaireI,  # TODO -> Note: my control for hear-see, but we use the multi-design-shit now
+    # TODO: Allow for "soft dropout" afterwards -> only flag the drop out person -> what to do with WLG payoff?
+    # WaitPage4,
+    PostVideoMeetingQuestionnaireII,  # TODO: NASA-TLX 1 item and ZEF Subscale social/general
+    WaitPage3, # --> brauche ich eigentlich nicht, oder? wobei ich irgendwann halt schon wissen muss, was die anderen ausgewählt haben?
     IntroWLG,
     ComprehensionWLG,
     DecisionWLG,
