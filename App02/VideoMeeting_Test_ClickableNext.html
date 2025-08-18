@@ -230,7 +230,7 @@
         <!-- standard grey box for content = Questionnaires -->
         <div class="my-box">
             <form>
-                <p>You will be forwarded to the next page after {{ C.VM_UPLOAD_DURATION}} seconds. Please answer the questions below:</p>
+                <p>You will be forwarded to the next page after {{ C.VM_MAX_UPLOAD_TIME}}+{C.VM_AUTO_SUBMIT_TIME} seconds. Please answer the questions below:</p>
 
                 <!-- See & Hear -->
                 <b>Please choose the closest option about the quality of the virtual team meeting:</b>
@@ -598,7 +598,7 @@
 
                 // Listen for countdown reaching the upload duration
                 $('.otree-timer__time-left').on('update.countdown', function (event) {
-                    if (event.offset.totalSeconds === {{ C.VM_UPLOAD_DURATION }}) {
+                    if (event.offset.totalSeconds === {{ C.VM_MAX_UPLOAD_TIME }}) {
                         if (audioRecorder) audioRecorder.stop();
                         if (displayRecorder) displayRecorder.stop();
 
@@ -642,8 +642,8 @@
 
                 console.log('Before timer');
                 $('.otree-timer__time-left').on('update.countdown', function (event) {
-                    if (event.offset.totalSeconds === {{ C.VM_UPLOAD_DURATION }}) {
-                        console.log('Detects timer event {{ C.VM_UPLOAD_DURATION }}');
+                    if (event.offset.totalSeconds === {{ C.VM_MAX_UPLOAD_TIME }}) {
+                        console.log('Detects timer event {{ C.VM_MAX_UPLOAD_TIME }}');
 
                         if (audioRecorder) {
                             console.log('Attempts to stop audio recorder');

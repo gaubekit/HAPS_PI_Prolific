@@ -35,6 +35,7 @@ class Player(BasePlayer):
     camMicStatus = models.IntegerField(blank=False, choices=[[0, '0'], [1, '1']], label='',
                                        attrs={"invisible": True})
 
+
 def ProlificId_error_message(player: Player, value):
     if not re.fullmatch(r'^[A-Za-z0-9]{24}$', value):
         return "Prolific ID must be exactly 24 alphanumeric characters (letters and numbers only)."
@@ -56,6 +57,10 @@ class BrowserCheck(Page):
 
 class VVC0(Page):
     """ Testing Jitsi, Selecting Background and Confirming setup"""
+    form_model = 'player'
+
+
+class VVC0_dummy(Page):  # TODO: use after 15:30 for testing (joint study conflict)
     form_model = 'player'
 
 
@@ -91,7 +96,8 @@ class PayoffInformation(Page):
 page_sequence = [
     ConfirmAudioVideoInteract,
     BrowserCheck,
-    VVC0,
+    VVC0_dummy,  # TODO: use after 15:30 for testing (joint study conflict)
+    # VVC0,  # TODO: use only until 15:00 for testing (joint study conflict)
     EnterProlificId,
     GeneralInformation,
     PayoffInformation

@@ -30,15 +30,14 @@ PARTICIPANT_FIELDS = [
     # control variables for experiment flow
     # 'wait_page_arrival',  # TODO brauche ich das?
     'additional_wait_time',
-    'assigned_to_team',  # TODO brauche ich das? -> ja, payoff handling
+    'assigned_to_team',
     'single_player',
-    'confirmed_meeting', # TODO Brauche ich das noch?
-    'attention_fail',  # TODO Brauche ich das noch?
-    'attention_fail_cost',  # TODO Brauche ich das noch?
+    # 'confirmed_meeting', # TODO Brauche ich das noch?
+    # 'attention_fail',  # TODO Brauche ich das noch?
+    # 'attention_fail_cost',  # TODO Brauche ich das noch?
     'the_other_id',
     'other_players_ids',
     'raised_dropout',
-    'vm_success',
     # Social Value Orientation
     'svo_to_self',
     'svo_to_other',
@@ -53,7 +52,6 @@ PARTICIPANT_FIELDS = [
     # weakest link game control variables
     'wlg_own_choice',
     'wlg_min_choice',
-    'wlg_payoff', # Todo Erstezen, siehe unten
     # payoff control variables
     'payoff_fix',
     'payoff_bonus_svo',

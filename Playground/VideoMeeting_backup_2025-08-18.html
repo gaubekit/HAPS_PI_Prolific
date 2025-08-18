@@ -39,14 +39,12 @@
             border: 1px solid #ccc;
             padding: 10px;
             background-color: #f9f9f9;
-            max-width: 1000px;
-            margin: 0 auto;
         }
 
         /* because there is my-box in the only call of my-box1 (function displayed yes/no), no border, padding, background is needed */
         .my-box1 {
             /* border: 1px solid #ccc; */
-            /* padding: 10px; */
+            /* padding: 10px; '/
             /* background-color: #f9f9f9; */
             display:none;
         }
@@ -191,30 +189,30 @@
             <div id="progressBar" style="width: 0%; height: 30px; background-color: cornflowerblue;"></div>
         </div>
 
-        <br/>
+    </div>
+
+    <br/>
 
 
-        <!-- Container contains Video meeting (id=meet) -->
-        <div id="videopanel" class="row">
-            <!-- In case of player.video_meeting_behavior 3 an extra container with instructions is displayed -->
-            {% if player.video_meeting_behavior == 3 %}
-                <div id="container" class="column top">
-                      <div id = "messageTreatment" class="center-container">
-                          <br/> <b><h2>Focus on engaging with others in the meeting, and communicate with them.</h2></b><br/>
-                      </div>
-                </div>
-            {% endif %}
+    <!-- Container contains Video meeting (id=meet) -->
+    <div id="videopanel" class="row">
+        <!-- In case of player.video_meeting_behavior 3 an extra container with instructions is displayed -->
+        {% if player.video_meeting_behavior == 3 %}
+            <div id="container" class="column top">
+                  <div id = "messageTreatment" class="center-container">
+                      <br/> <b><h2>Focus on engaging with others in the meeting, and communicate with them.</h2></b><br/>
+                  </div>
+            </div>
+        {% endif %}
 
-            <!-- Video meeting with different style (hight) depending on player.video_meeting_behavior -->
-            <div id="meet"
-                 {% if player.video_meeting_behavior == 2 %}
-                     style="height: 40vh; border: 1px solid #000;"
-                 {% else %}
-                     style="height: 80vh; border: 1px solid #000;"
-                 {% endif %}
-            ></div>
-        </div>
-
+        <!-- Video meeting with different style (hight) depending on player.video_meeting_behavior -->
+        <div id="meet"
+             {% if player.video_meeting_behavior == 2 %}
+                 style="height: 40vh; border: 1px solid #000;"
+             {% else %}
+                 style="height: 80vh; border: 1px solid #000;"
+             {% endif %}
+        ></div>
     </div>
 
 
@@ -393,6 +391,7 @@
             api.executeCommand('setTileView', true);
         });
 
+        // ===== GLOBAL VARIABLES =====
         // vars for media stream
         let audioStream;
         let displayStream;
@@ -406,6 +405,7 @@
         let recordedDisplayAudioChunks= [];
 
 
+        // Wait until the DOM is fully loaded before executing
         document.addEventListener('DOMContentLoaded', async function () {
         /*
             This event listener waits until the DOM content is fully loaded before executing.

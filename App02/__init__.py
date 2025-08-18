@@ -1,5 +1,4 @@
 from otree.api import *
-from otree.models import Participant
 import random
 
 c = cu
@@ -20,21 +19,22 @@ This App handel Stage 2, where 3 participants formed a team:
 - Questionnaire 3/3: Mental Model (compare with initial answer) + decision reasoning (Spider Graph, MC, Video Meeting)
 
 
-Players only arrive in this app, if it was possible to form a team. 
-The initial wait page saves the player objects and calculates payoff_bonus_svo
+Players only arrive in this app, if it was possible to form a team. (flag "assigned_to_team" = True)
+The initial wait saves the player codes of the group members and calculates payoff_bonus_svo
     -> upd. payoff_total = payoff_fix + payoff_bonus_svo + payoff_compensation_wait
 
-Dropout handling I:
+Dropout Handling I:
     - Guarantee that the video meeting completes (only situation where the participants interact in realtime)
     - OnPage-Timer and WaitPages control the "experiment" that participants proceed in the same pase
     -  if timeout happens -> all players are tagged as "single_player" and forwarded to Stage 3
-                          -> the participant who raised the timeout get no compensation for stage 2
-                          -> the other two will be compensated with 150 ECU (3 pound)
+                          -> the participant who raised the timeout is tagged as "raised_timeout" and
+                             get no compensation for Stage 2 (calculated at the end of Stage 3)
+                          -> the other two will be compensated with 150 ECU (3 pound) (at the end of Stage 3)
                           
-Dropout handling II:
+Dropout Handling II:
     - Once participants completed the video meeting -> no live interaction anymore
     - no OnPage-Timer and no WaitPages -> pace is not controlled after WaitPage3
-    - On the very last page of Stage 3 player objects of group members will checked for WLG Decision
+    - On the very last page of Stage 3 player code of group members will checked for WLG Decision
         -> if decision made by all players: calculate payoff_bonus_wlg
         -> else: payoff_bonus_wlg = 0; payoff_compensation_wlg_dropout = 150 ECU
         
@@ -48,20 +48,22 @@ class C(BaseConstants):
     ENDOWMENT = 200
 
     # Central configuration of duration Video Meeting and Upload Time Limit
-    VM_DURATION = 5 * 60
-    VM_UPLOAD_DURATION = 2 * 60
+    VM_DURATION = 3 * 60  # TODO 7 minutes
+    VM_UPLOAD_DURATION = 2 * 60  # TODO 2 minutes
 
 
 class Subsession(BaseSubsession):
     pass
 
 
-# TODO -> Clarify: do I need this?
 class Group(BaseGroup):
-    groupMin = models.IntegerField(
-        min=0, max=40, initial=40
-    )
-    randomNumber = models.IntegerField()
+     pass
+
+# TODO -> not needed anymore -> calculation in app03 without this logic
+#     groupMin = models.IntegerField(
+#         min=0, max=40, initial=40
+#     )
+#     randomNumber = models.IntegerField()
 
 
 def make_field(label):
@@ -143,7 +145,7 @@ class Player(BasePlayer):
         widget=widgets.CheckboxInput,
         blank=True)
 
-
+# HELP FUNCTIONS
 # Functions for error messages in comprehension questions
 def comprehension1_error_message(player: Player, value):
     if value != 200:
@@ -207,21 +209,22 @@ def comprehension4c_error_message(player: Player, value):
 
 # PAGES
 
-class MyWaitPage(WaitPage):  # TODO Preventing players from getting stuck on wait pages: https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
+class MyWaitPage(WaitPage):
     """
     Page grouping participants by arrival time. Because App01_waiting guarantees for exact 3 active participants,
     we can simply use "group_by_arrival_time"
     """
+    # TODO Preventing players from getting stuck on wait pages: https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
 
     group_by_arrival_time = True
 
     @staticmethod
     def after_all_players_arrive(group: Group):
         """
-        - store code of team members in participant field
-        - select one of the others for svo by random
-        - calculate payoff_bonus_svo
-        - update payoff_total
+            - store code of team members in participant field
+            - select one of the others for svo by random
+            - calculate payoff_bonus_svo
+            - update payoff_total
         """
         # for all players in the group
         for p in group.get_players():
@@ -331,11 +334,11 @@ class TreatmentA(Page):  # TODO: Update after Treatment B is i.o.
 
 class TreatmentB(Page): # TODO add WOOP
     """
-    This page handles one of two treatments, and therefore includes:
-        - visualize personal and team-averaged Playground goals
-        - Mental Contrasting
+        This page handles one of two treatments, and therefore includes:
+            - visualize personal and team-averaged Playground goals
+            - Mental Contrasting
 
-    The treatment is handled via control-variable and a is_displayed staticmethod# TODO
+        The treatment is handled via control-variable and a is_displayed staticmethod# TODO
 
     """
     form_model = 'player'
@@ -380,8 +383,8 @@ class TreatmentB(Page): # TODO add WOOP
 
 class WaitPage2(WaitPage):
     """
-    This Page ensures that all participants arrive to the same time on the video meeting page and the dropout time
-    starts simultaneously. If a dropout happens, all group-members will be forwarded to Stage 3
+        This Page ensures that all participants arrive to the same time on the video meeting page and the dropout time
+        starts simultaneously. If a dropout happens, all group-members will be forwarded to Stage 3
     """
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -396,11 +399,10 @@ class WaitPage2(WaitPage):
 
 
 class VideoMeeting(Page):
-    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static ..srsly, why coding this dirty? :(
+    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static
     form_model = 'player'
-    timeout_seconds = C.VM_DURATION + C.VM_UPLOAD_DURATION   # 540 7min Playground + 2min upload/Fragebögen
-    form_fields = ['seeHear', 'video_meeting_behavior', 'attentionCheck', 'correctBackground']
-
+    timeout_seconds = C.VM_DURATION + C.VM_UPLOAD_DURATION   # 540 7min VM + 2min upload/Questionnaire
+    form_fields = ['seeHear', 'correctBackground', 'attentionCheck', 'video_meeting_behavior']
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -415,25 +417,71 @@ class VideoMeeting(Page):
         print('attentionCheck ', player.attentionCheck)
         print('correctBackground ', player.correctBackground)
 
+        if not player.attentionCheck:
+            print('player raised dropout by not indicating that he is human')
+            player.participant.single_player = True
+            player.participant.raised_dropout = True
+
+        elif not player.seeHear:
+            print('could not seeHear others')
+            player.participant.single_player = True
+
+
+class VideoMeeting_dummy(Page):
+    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static
+    form_model = 'player'
+    timeout_seconds = C.VM_UPLOAD_DURATION
+    form_fields = ['seeHear', 'correctBackground', 'attentionCheck', 'video_meeting_behavior']
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        # TODO: Hardcoded for testing, because optInConsent is written in App01 and I have no "is_dropout" logic
+        player.participant.optInConsent = 1
+
+        return dict(optInConsent=player.participant.optInConsent)
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        print('seeHear ', player.seeHear)
+        print('attentionCheck ', player.attentionCheck)
+        print('correctBackground ', player.correctBackground)
+
+        if not player.attentionCheck:
+            print('player raised dropout by not indicating that he is human')
+            player.participant.single_player = True
+            player.participant.raised_dropout = True
+
+        elif not player.seeHear:
+            print('could not seeHear others')
+            player.participant.single_player = True
+
 
 class WaitPage3(WaitPage):
     """
-    This Wait Page has to ensure, that dropout during the video meeting is detected.
+        Three active players joining the Video Meeting at the same time (WaitPage2). They are automatically
+        forwarded after C.VM_DURATION + C.VM_UPLOAD_DURATION, landing on this Page.
+        If a player do not confirm that he is "human", this players will be labeled as "raised_dropout"
+        and as "single_player" in the before_next_page methode. Also, players date do not seeHear  all others are
+        labeled as "single_player"
+
+        Therefore, this WaitPage have only to check whether someone in the group was labeled as single player.
+        In this case, all players of the group are labeled as single player and forwarded to Stage 3.
     """
-    pass  # TODO https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
 
-    # TODO: Flag vm_success
+    @staticmethod
+    def after_all_players_arrive(group):
+        """ Check whether one of the players was labeled as single player. If so, all are labeled as single player """
+        if any(p.participant.single_player for p in group.get_players()):
+            for p in group.get_players():
+                p.participant.single_player = True
 
-    # @staticmethod
-    # def app_after_this_page(player, upcoming_apps):
-    #     for p in player.group.get_players():
-    #         if p.participant.single_player:
-    #             # if one of the others is a single player, all in the group are flagged as single player
-    #             player.participant.single_player = True
-    #
-    #     if player.participant.single_player:
-    #         return 'App03'
-    #     return None
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        """ In case of dropout, all players skip the Weakest Link game and continue with Stage 3 """
+        if player.participant.single_player:
+            return 'App03'
+        return None
+
 
 class PostVideoMeetingQuestionnaireII(Page):
         """
@@ -454,19 +502,6 @@ class PostVideoMeetingQuestionnaireII(Page):
                        'zfe_social_3', 'zfe_general_1', 'zfe_general_2', 'zfe_general_3']
 
 
-class WaitPage3(WaitPage):
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        for p in player.group.get_players():
-            if p.participant.single_player:
-                # if one of the others is a single player, all in the group are flagged as single player
-                player.participant.single_player = True
-
-        if player.participant.single_player:
-            return 'App03'
-        return None
-
-
 class IntroWLG(Page):
     form_model = 'player'
 
@@ -478,102 +513,36 @@ class ComprehensionWLG(Page):
                    'comprehension4b', 'comprehension4c']
 
 
-class DecisionWLG(Page):  # TODO: Adjust instructions etc
+class DecisionWLG(Page):
     form_model = 'player'
     form_fields = ['ownDecision_subround1']
 
-    @staticmethod
-    def is_displayed(player):
-        return player.participant.assigned_to_team
+    # @staticmethod  # TODO: Do I need this?
+    # def is_displayed(player):
+    #     return player.participant.assigned_to_team
+
+    # @staticmethod  # TODO: Do I need this?
+    # def live_method(player: Player, data):
+    #     if "ownDecision_subround1" in data:
+    #         player.ownDecision_subround1 = data["ownDecision_subround1"]
+
+    # @staticmethod  # TODO: Do I need this?
+    # def vars_for_template(player: Player):
+    #     return dict(round_num=player.round_number)
 
     @staticmethod
-    def live_method(player: Player, data):
-        if "ownDecision_subround1" in data:
-            player.ownDecision_subround1 = data["ownDecision_subround1"]
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        return dict(round_num=player.round_number)
-
-    # TODO add logic for payoff structure and droput
-    # @staticmethode
-    # def before_next_page(player, timeout_happened
-    #    pass
+    def before_next_page(player, timeout_happened):
+        """ Save decision in participant field. Calculation is done in App03/SurveyPVQ6 before_next_page() """
+        print('WLG own decision: ', player.ownDecision_subround1)
+        player.participant.wlg_own_choice = player.ownDecision_subround1
 
 
 class PostCoordinationQuestionnaire(Page):
     form_model = 'player'
-    form_fields = ['impact_goal', 'impact_expectation','impact_spider_graph','impact_video_meeting','impact_woop']
-
-########### old pages #############
-#
-# class Description1(Page):
-#     @staticmethod
-#     def is_displayed(player):
-#         return player.participant.assigned_to_team
-#
-#
-
-#
-#
-# class CalculatePayoff1(WaitPage):
-#     body_text = "Please wait until your team members have made their decision."
-#
-#     @staticmethod
-#     def is_displayed(player):
-#         return not player.participant.assigned_to_team
-#
-#     def vars_for_template(self): # TODO staticmethodes?
-#         # Get the number of players who have arrived (decided) in the group
-#         arrived_players = [p for p in self.group.get_players() if p.field_maybe_none('ownDecision_subround1') is not None]
-#         waiting_count = len(arrived_players)
-#
-#         return {
-#             'reload_interval': 5000,  # 5000 milliseconds = 5 seconds
-#             'waiting_count': waiting_count
-#         }
-#
-#     def get_template_name(self):
-#         return 'global/MyWaitPage.html'
-#
-#     def js_vars(self):
-#         return {
-#             'reload_interval': 5000  # 5000 milliseconds = 5 seconds
-#         }
-#
-#     @staticmethod
-#     def after_all_players_arrive(group: Group):
-#         # Calculate group minimum and individual payoffs
-#         group.groupMin = min(p.ownDecision_subround1 for p in group.get_players())
-#
-#         for p in group.get_players():
-#             p.payoff_hypo_subround1 = C.ENDOWMENT + (10 * group.groupMin) - (5 * p.ownDecision_subround1)
-#
-#             # participant variables for payoff info
-#             p.participant.wlg_payoff = p.payoff_hypo_subround1
-#             p.participant.wlg_min_choice = group.groupMin
-#             p.participant.wlg_own_choice = p.ownDecision_subround1
-#
-#
-# class IntroQuestionnaire(Page):
-#     form_model = 'player'
-#     form_fields = ['team_goal', 'team_expectation']
-#
-#     @staticmethod
-#     def is_displayed(player):
-#         return not player.participant.assigned_to_team
-#
-#
-# class EndApp02(Page):
-#     form_model = 'player'
-#
-#     @staticmethod
-#     def is_displayed(player):
-#         return not player.participant.assigned_to_team
+    form_fields = ['impact_goal', 'impact_expectation', 'impact_spider_graph', 'impact_video_meeting', 'impact_woop']
 
 
-class MyPage(Page):
-    """ Only a Dummy Page for testing """
+class MyPage(Page):  # TODO: only for testing reasons
     form_model = 'player'
 
 
@@ -581,11 +550,13 @@ page_sequence = [
     MyWaitPage,
     InformOnScreenTimer,
     WaitPage1,
-    TreatmentB,  # TODO: add TreatmentA and control structure
-    MyPage,  # Todo: only a Testpage
+    # Treatment A, # TODO
+    TreatmentB,
+    MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
     WaitPage2,
-    VideoMeeting,
-    # WaitPage3, # TODO: sollte time_out haben -> Weiterleitung nach paar minuten
+    # VideoMeeting  # TODO
+    VideoMeeting_dummy,  # TODO
+    WaitPage3,
     PostVideoMeetingQuestionnaireII,
     IntroWLG,
     ComprehensionWLG,

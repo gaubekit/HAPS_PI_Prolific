@@ -22,6 +22,14 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     feedback = models.LongStringField(label="If you have any feedback, you can state it here:")
 
+    payoff_fix_pound = models.FloatField()
+    payoff_bonus_svo_pound = models.FloatField()
+    payoff_compensation_wait_pound = models.FloatField()
+    payoff_bonus_wlg_pound = models.FloatField()
+    payoff_compensation_wlg_dropout_pound = models.FloatField()
+    payoff_tota_pound = models.FloatField()
+
+
 
 # class ThankYouExit(Page):
 #     form_model = 'player'
@@ -41,22 +49,36 @@ class ThankYou(Page):
     # def is_displayed(player):
     #     return player.participant.consent == 1 and not player.participant.single_player
 
-    # TODO: get payoff information from participants field and display it on page
-    # @staticmethod
-    # def vars_for_template(player):
-    #     return dict(
-    #         svo_to_self=player.participant.svo_to_self,
-    #         svo_to_other=player.participant.svo_to_other,
-    #         fixed_payoff=player.participant.fixed_payoff,
-    #         additional_payoff=player.participant.additional_payoff,
-    #         attention_fail_cost=player.participant.attention_fail_cost,
-    #         wlg_own_choice=player.participant.wlg_own_choice,
-    #         wlg_min_choice=player.participant.wlg_min_choice,
-    #         wlg_payoff=player.participant.wlg_payoff,
-    #         total_payoff=player.participant.total_payoff,
-    #         final_payoff=player.participant.final_payoff,
-    #         attention_fail=player.participant.attention_fail
-    #     )
+    @staticmethod
+    def vars_for_template(player):
+        payoff_fix_pound = 0
+        payoff_bonus_svo_pound = 0
+        payoff_compensation_wait_pound = 0
+        payoff_bonus_wlg_pound = 0
+        payoff_compensation_wlg_dropout_pound = 0
+        payoff_tota_pound = 0
+
+        svo_to_self = 0
+        svo_from_other = 0
+        wlg_own_choice = 0
+        wlg_min_choice = 0
+        raised_dropout = 0
+        additional_wait_time = 0
+
+
+        return dict(
+            svo_to_self=player.participant.svo_to_self,
+            svo_to_other=player.participant.svo_to_other,
+            fixed_payoff=player.participant.fixed_payoff,
+            additional_payoff=player.participant.additional_payoff,
+            attention_fail_cost=player.participant.attention_fail_cost,
+            wlg_own_choice=player.participant.wlg_own_choice,
+            wlg_min_choice=player.participant.wlg_min_choice,
+            wlg_payoff=player.participant.wlg_payoff,
+            total_payoff=player.participant.total_payoff,
+            final_payoff=player.participant.final_payoff,
+            attention_fail=player.participant.attention_fail
+        )
 
 
 # class ThankYouByPass(Page):

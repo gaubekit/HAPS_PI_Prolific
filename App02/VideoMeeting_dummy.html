@@ -1,0 +1,239 @@
+{{ extends 'global/Page.html' }}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'global.css' %}">
+        <style>
+        .column {
+            float: left;
+            height: 80vh; /* Responsive height */
+        }
+
+        .top {
+            height: 5vh;
+            border: 1px solid #000; /* Optional styling */
+            box-sizing: border-box;
+            width: 100%;
+            padding-bottom: 3%;
+        }
+
+        /* Row style with maximum width and responsive adjustments */
+        .row {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        #meet {
+            width: 100%;
+            height: 80vh; /* Set the height to 100% of the viewport height */
+        }
+
+        .my-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* because there is my-box in the only call of my-box1 (function displayed yes/no), no border, padding, background is needed */
+        .my-box1 {
+            /* border: 1px solid #ccc; */
+            /* padding: 10px; */
+            /* background-color: #f9f9f9; */
+
+        }
+
+        .center-container {
+          display: flex;
+          justify-content: center; /* horizontal center */
+          align-items: center;     /* vertical center */
+          text-align: center;
+          line-height: 1.5;
+          width: 100%;
+        }
+
+        label {
+            display: inline-block;
+        }
+
+        .radio-container {
+            margin-top: 10px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            margin-right: 10px; /* 10px left margin for each option */
+        }
+        .radio-option input {
+            margin-right: 10px;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 1200px) {
+            .row { max-width: 1200px; }
+        }
+        @media (max-width: 1000px) {
+            .row { max-width: 1000px; }
+        }
+        @media (max-width: 800px) {
+            .row { max-width: 800px; }
+        }
+        @media (max-width: 600px) {
+            .row { max-width: 600px; }
+            .column {
+                float: none;
+                width: 100%;
+                height: 80vh; /* Adjust height to auto for small screens */
+            }
+        }
+
+        .collapsible-container {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          background-color: #f1f1f1;
+          padding: 10px;
+          border-radius: 5px;
+          width: fit-content;
+        }
+        .icon {
+          font-weight: bold;
+          margin-right: 10px;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          border: 1px solid #666;
+          border-radius: 3px;
+          font-size: 14px;
+          background-color: white;
+        }
+        .content {
+
+          padding: 10px;
+          margin-top: 5px;
+          background-color: #f9f9f9;
+          border-left: 3px solid #ccc;
+        }
+
+         #progressBar {
+            width: 0%;
+            height: 30px;
+            background-color: #4CAF50;
+            transition: width 0.5s ease-in-out; /* Smooth transition for the width change */
+        }
+    </style>
+{% endblock %}
+
+{{ block title }}Stage 2: Virtual Team Meeting {{ endblock }}
+
+{{ block content }}
+    <!-- The following container shows Questionnaire 1/3 for C.VM_DURATION, after the Video Meeting is over -->
+    <!-- Container is initially hidden and will be displayed after the video meeting elapsed-->
+    <div id = "description" class="my-box1">
+        <br>
+        <!-- Separate heading before my-box -->
+        <h2 class="card-title text-left">Stage 2: Questionnaires 1/3</h2>
+
+        <br>
+
+        <!-- standard grey box for content = Questionnaires -->
+        <div class="my-box">
+            <form>
+                <p>You will be forwarded to the next page after {{ C.VM_UPLOAD_DURATION}} seconds. Please answer the questions below:</p>
+
+                <!-- See & Hear -->
+                <b>Please choose the closest option about the quality of the virtual team meeting:</b>
+                <div class="radio-container">
+                <div class="radio-option">
+                  <input type="radio" id="see_yes" name="seehearyes" value="yes" onchange="updateSeeHearQuestion(this.value)">
+                  <label for="see_yes">I could hear and see both of the other two team members.</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="see_maybe" name="seehearyes" value="maybe" onchange="updateSeeHearQuestion(this.value)">
+                  <label for="see_maybe">I could <i>mostly</i> hear and understand the others, despite minor audio or video interruptions.</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="see_no" name="seehearyes" value="no" onchange="updateSeeHearQuestion(this.value)">
+                  <label for="see_no">I could not hear and see one or both of the other two team members throughout the call.</label>
+                </div>
+                </div>
+                <br>
+
+                <!-- Virtual Background -->
+                <b>Did all Participants use the same virtual background for the video meeting?:</b>
+                <div class="radio-container">
+                <div class="radio-option">
+                  <input type="radio" id="bg_yes" name="virtualbackgroundYes" value="yes" onchange="updateBackgroundCheck(this.value)">
+                  <label for="bg_yes">Yes, all participants used the same virtual background</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="bg_no" name="virtualbackgroundYes" value="no" onchange="updateBackgroundCheck(this.value)">
+                  <label for="bg_no">No, <u>not</u> all participants used the same virtual background</label>
+                </div>
+                </div>
+
+                <br>
+                <!-- Attention Check -->
+                <b>Please confirm the following statement:</b>
+                <div class="radio-option">
+                <input type="radio" id="attnCheck" name="attentionCheckYes" value="yes" onchange="updateAttentionCheck(this.value)">
+                <label for="attnCheck">I confirm that I am human, and will continue participating in this study.</label>
+                </div>
+
+                <!-- Hidden Inputs -->
+                <input id="hiddenSeeHear" type="hidden" name="seeHear" value="2"/>
+                <input id="hiddenAttentionCheck" type="hidden" name="attentionCheck" value="0"/>
+                <input id="hiddenBackgroundCheck" type="hidden" name="correctBackground" value="1"/>
+            </form>
+
+            <!-- JS for backend-update seeHear, BackgroundCheck, AttentionCheck -->
+            <script>
+            function updateSeeHearQuestion(selectedValue) {
+                var seeHear = document.getElementById("hiddenSeeHear");
+                if (selectedValue === 'yes') {
+                    seeHear.value = 1;
+                } else if (selectedValue === 'no') {
+                 seeHear.value = 0;
+                } else if (selectedValue === 'maybe') {
+                    seeHear.value = 2;
+                } else {
+                    seeHear.value = 2;
+                }
+            }
+
+            function updateBackgroundCheck(selectedValue) {
+                var correctBackground = document.getElementById("hiddenBackgroundCheck");
+                if (selectedValue === 'yes') {
+                    correctBackground.value = 1;
+                } else {
+                    correctBackground.value = 0;
+                }
+            }
+
+            function updateAttentionCheck(selectedValue) {
+                var attentionCheck = document.getElementById("hiddenAttentionCheck");
+                if (selectedValue === 'yes') {
+                    attentionCheck.value = 1;
+                } else {
+                    attentionCheck.value = 0;
+                }
+              }
+            </script>
+        </div>
+    </div>
+
+
+    {{ next_button }}
+
+{{ endblock }}

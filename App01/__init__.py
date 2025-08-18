@@ -263,7 +263,6 @@ class IntroductionSpiderGraph(Page):
         player.participant.additional_wait_time = 0
         # player.participant.confirmed_meeting = False # TODO: kann glaube ich weg
         player.participant.raised_dropout = False
-        player.participant.vm_success = False
 
 
 page_sequence = [

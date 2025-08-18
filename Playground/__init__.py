@@ -40,6 +40,64 @@ class Player(BasePlayer):
 
 
 # PAGES
+class WaitPageGroup(WaitPage):
+    group_by_arrival_time = True
+
+
+class MyPage0(Page):
+    """ Only a Dummy Page for testing """
+    form_model = 'player'
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.participant.single_player = False
+        player.participant.raised_dropout = False
+        if player.id_in_group == 1:
+            print('\n\n\n')
+            print(' New Round ')
+            print('===========')
+
+
+class MyPage(Page):
+    """ Only a Dummy Page for testing """
+    form_model = 'player'
+
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.participant.single_player:
+            return 1
+        else:
+            return 60
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            print(player, ' tagged as raised_dropout')
+            player.participant.single_player = True
+            player.participant.raised_dropout = True
+
+
+class WaitPage3(WaitPage):  # TODO https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
+    """
+    This Wait Page has to ensure, that dropout during the video meeting is detected.
+    """
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        for p in player.group.get_players():
+            if p.participant.raised_dropout:
+                # if one of the others is a single player, all in the group are flagged as single player
+                player.participant.single_player = True
+
+        if player.participant.single_player:
+            print('player tagged as single player')
+        return None
+
+
+class MyPage2(Page):
+    """ Only a Dummy Page for testing """
+    form_model = 'player'
+
 # class VideoMeeting(Page):
 #     """
 #     This page gives instructions about the VideoMeeting,
@@ -57,6 +115,7 @@ class Player(BasePlayer):
 #
 # class VMtest(Page):
 #     form_model = 'player'
+
 
 class VideoMeetingTest(Page):
     # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static ..srsly, why coding this dirty? :(
@@ -97,5 +156,11 @@ class VideoMeetingTest(Page):
 
 
 page_sequence = [
-    VideoMeetingTest,
+    WaitPageGroup,
+    MyPage0,
+    MyPage,
+    WaitPage3,
+    MyPage2,
+
+    #VideoMeetingTest,
 ]

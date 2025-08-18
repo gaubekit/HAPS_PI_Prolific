@@ -244,17 +244,23 @@ class LandingPageSinglePlayer(Page):
 
         """
         # VM not successfully
-        if player.participant.single_player and not player.participant.vm_success:
-            # but players formed a team previously and not responsible for dropout
-            if player.participant.assigned_to_team and not player.participant.raised_dropout:
-                # bonus WLG = 0 but compensation = 150
-                player.participant.payoff_bonus_wlg = 0
-                player.participant.payoff_compensation_wlg_dropout = 150
-                # update total payoff
-                player.participant.payoff_total += 150
+        if player.participant.single_player:
+
+            # The payoff for the WLG is 0
+            player.participant.payoff_bonus_wlg = 0
+
+            # If the player raised the dropout he will not be compensated
+            if player.participant.raised_dropout:
+                player.participant.payoff_compensation_wlg_dropout = 0
+                # If he is not responsible for the dropout, he is compensated with 150 ECU
             else:
-                player.participant.payoff_bonus_wlg = 0
-                # bonus WLG = 0 and compensation = 0
+                player.participant.payoff_compensation_wlg_dropout = 150
+
+        player.participant.payoff_total = (
+                player.participant.payoff_fix + player.participant.payoff_compensation_wait
+                + player.participant.payoff_bonus_svo + player.participant.payoff_payoff_bonus_wlg
+                + player.participant.payoff_compensation_wlg_dropout
+        )
 
 
 class QuestDemographics(Page):
@@ -354,10 +360,58 @@ class SurveyPVQ6(Page):
         # Therefore, update payoff_fix to 200 ECU (up to this point 75 ECU in case of dropout)
         player.participant.payoff_fix = 200
 
+        # WLG Payout and Dropout Handling
+        # If players never formed a team they receive no wlg_bonus and no wlg_compensation
+        if not player.participant.assigned_to_team:
+            player.participant.payoff_bonus_wlg = 0
+            player.participant.payoff_compensation_wlg_dropout = 0
 
-        # TODO: Dropout Handling II
-        # TODO: Others? -> Update payoff WLG
-        # FRAGE: Sollte ich erstmal für alle die in APP03 landen und ein team geformt haben Compensation setzen und hier nur updaten?
+        # Otherwise we try to access his wlg_choice.
+        else:
+            try:
+                own_decision = player.participant.wlg_own_choice
+
+                # if this is possible, we try to access the wlg_choice of his team members
+                try:
+                    wlg_decisions = []
+
+                    # get WLG Decision of other players
+                    for other in player.session.get_participants():
+                        if other.code in player.participant.other_players_ids:
+                            print(other.code)
+                            print(other.wlg_own_choice)
+                            wlg_decisions.append(other.wlg_own_choice)
+                        if len(wlg_decisions) >= 2:
+                            # stop loop after both players are found
+                            break
+
+                    wlg_decisions.append(own_decision)
+                    print('all decisions: ', wlg_decisions)
+                    wlg_min_choice = min(wlg_decisions)
+                    player.participant.wlg_min_choice = wlg_min_choice
+                    player.participant.payoff_bonus_wlg = 200 + (10 * wlg_min_choice) - (5 * own_decision)
+                    player.participant.payoff_compensation_wlg_dropout = 0
+
+                except NameError:
+                    print('raised NameError: one of the others made no wlg_own_choice')
+                    # If a NameError is raised this means, that one of the others made no wlg_own_choice
+                    # If he was already tagged as single player, the VM was not completed (compensation already set)
+                    if not player.participant.single_player:
+                        print('Dropout after VM completed, setting compensation_wlg_dropout = 150, bonus_wlg = 0')
+                        player.participant.payoff_bonus_wlg = 0
+                        player.participant.payoff_compensation_wlg_dropout = 150
+
+            except NameError:
+                print('player joined a team, did not complete the wlg, but arrives here -> player dropped out '
+                      'and was flagged as single player. The wlg_bonus and compensation was set on the landing_page')
+                pass
+
+        # update payoff_total
+        player.participant.payoff_total = (
+                player.participant.payoff_fix + player.participant.payoff_compensation_wait
+                + player.participant.payoff_bonus_svo + player.participant.payoff_bonus_wlg
+                + player.participant.payoff_compensation_wlg_dropout
+        )
 
 
 page_sequence = [
