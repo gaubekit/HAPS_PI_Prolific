@@ -554,8 +554,8 @@ page_sequence = [
     TreatmentB,
     MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
     WaitPage2,
-    # VideoMeeting  # TODO
-    VideoMeeting_dummy,  # TODO
+    VideoMeeting,  # TODO
+    # VideoMeeting_dummy,  # TODO
     WaitPage3,
     PostVideoMeetingQuestionnaireII,
     IntroWLG,
