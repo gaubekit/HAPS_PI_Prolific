@@ -30,7 +30,6 @@ class Player(BasePlayer):
     payoff_tota_pound = models.FloatField()
 
 
-
 # class ThankYouExit(Page):
 #     form_model = 'player'
 #     form_field = ['feedback',]
@@ -39,9 +38,7 @@ class Player(BasePlayer):
 #     def is_displayed(player):
 #         return player.participant.consent == 0
 
-
-
-class ThankYou(Page):
+class ThankYou(Page): # TODO
     form_model = 'player'
     form_fields = ['feedback']
 
