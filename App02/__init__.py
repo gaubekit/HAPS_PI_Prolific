@@ -214,7 +214,11 @@ class MyWaitPage(WaitPage):
     Page grouping participants by arrival time. Because App01_waiting guarantees for exact 3 active participants,
     we can simply use "group_by_arrival_time"
     """
-    # TODO Preventing players from getting stuck on wait pages: https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html
+
+    # Note: players can't get stuck on a wait page, if the previous page has a time_out functionallity
+    # This case is special, theoretically 3 player should be automatically forwarded - but is there a chance to
+    # set a timeout on this page?: https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html#use-group-by-arrival-time
+    # TODO def wait_too_long -> 30 secondes and def group_by_arrival_time_method(subsession, waiting_players)
 
     group_by_arrival_time = True
 
@@ -223,7 +227,7 @@ class MyWaitPage(WaitPage):
         """
             - store code of team members in participant field
             - select one of the others for svo by random
-            - calculate payoff_bonus_svo
+            - update payoff_bonus_svo
             - update payoff_total
         """
         # for all players in the group

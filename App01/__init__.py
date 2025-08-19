@@ -167,6 +167,12 @@ class SurveySVO(Page):
         player.participant.svo_to_self = round(player.svo_to_self, 2)
         player.participant.svo_to_other = round(player.svo_to_other, 2)
 
+        # set fist part of payoff:
+        player.participant.payoff_bonus_svo = player.participant.svo_to_self
+        print('set own svo payoff: ',  player.participant.payoff_bonus_svo)
+        player.participant.payoff_total = player.participant.payoff_fix + player.participant.payoff_bonus_svo
+        print('updated total payoff: ', player.participant.payoff_total)
+
 
 class MentalModel(Page):
     """ This Page assesses the mental model -> Expectations VS Goal"""
