@@ -166,6 +166,7 @@ class SurveySVO(Page):
 
         player.participant.svo_to_self = round(player.svo_to_self, 2)
         player.participant.svo_to_other = round(player.svo_to_other, 2)
+        player.participant.svo_from_other = 0
 
         # set fist part of payoff:
         player.participant.payoff_bonus_svo = player.participant.svo_to_self

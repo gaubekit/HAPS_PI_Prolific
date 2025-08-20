@@ -40,6 +40,7 @@ PARTICIPANT_FIELDS = [
     'raised_dropout',
     # Social Value Orientation
     'svo_to_self',
+    'svo_from_other',
     'svo_to_other',
     # goal variables for visualization
     'vm_pref_achievement',

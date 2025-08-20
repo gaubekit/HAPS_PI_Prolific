@@ -235,16 +235,23 @@ class MyWaitPage(WaitPage):
             print('this is player: ', p)
             # store the id's (code) of the other group members in a participant field "other_players_ids"
             p.participant.other_players_ids = [pl.participant.code for pl in p.get_others_in_group()]
-            # get randomly the code of one group member
-            the_other_id = random.choice(p.participant.other_players_ids)
-            p.participant.the_other_id = the_other_id
 
-            # and search this participant in the session to get his svo
-            for other in group.session.get_participants():
-                if other.code == the_other_id:
-                    svo_from_other = other.svo_to_other
-                    break
             try:
+                # get randomly the code of one group member
+                the_other_id = random.choice(p.participant.other_players_ids)
+                p.participant.the_other_id = the_other_id
+
+                # and search this participant in the session to get his svo
+                for other in group.session.get_participants():
+                    if other.code == the_other_id:
+                        svo_from_other = other.svo_to_other
+                        break
+
+            except IndexError:
+                p.participant.the_other_id = None
+
+            try:
+                p.participant.svo_from_other = svo_from_other
                 # update payoff_bonus_svo
                 p.participant.payoff_bonus_svo = round(svo_from_other + p.participant.svo_to_self, 2)
                 print('SVO from other', svo_from_other, '\nSVO to self', p.participant.svo_to_self,
@@ -336,7 +343,7 @@ class TreatmentA(Page):  # TODO: Update after Treatment B is i.o.
     #         player.participant.single_player = True
 
 
-class TreatmentB(Page): # TODO add WOOP
+class TreatmentB(Page):  # TODO add WOOP
     """
         This page handles one of two treatments, and therefore includes:
             - visualize personal and team-averaged Playground goals

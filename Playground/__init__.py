@@ -50,8 +50,8 @@ class MyPage0(Page):
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        player.participant.single_player = False
-        player.participant.raised_dropout = False
+        #player.participant.single_player = False
+        #player.participant.raised_dropout = False
         if player.id_in_group == 1:
             print('\n\n\n')
             print(' New Round ')

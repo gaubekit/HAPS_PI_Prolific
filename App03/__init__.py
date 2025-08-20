@@ -392,8 +392,8 @@ class SurveyPVQ6(Page):
                     player.participant.payoff_bonus_wlg = 200 + (10 * wlg_min_choice) - (5 * own_decision)
                     player.participant.payoff_compensation_wlg_dropout = 0
 
-                except NameError:
-                    print('raised NameError: one of the others made no wlg_own_choice')
+                except KeyError:
+                    print('raised KeyError: one of the others made no wlg_own_choice')
                     # If a NameError is raised this means, that one of the others made no wlg_own_choice
                     # If he was already tagged as single player, the VM was not completed (compensation already set)
                     if not player.participant.single_player:
@@ -401,7 +401,7 @@ class SurveyPVQ6(Page):
                         player.participant.payoff_bonus_wlg = 0
                         player.participant.payoff_compensation_wlg_dropout = 150
 
-            except NameError:
+            except KeyError:
                 print('player joined a team, did not complete the wlg, but arrives here -> player dropped out '
                       'and was flagged as single player. The wlg_bonus and compensation was set on the landing_page')
                 pass
