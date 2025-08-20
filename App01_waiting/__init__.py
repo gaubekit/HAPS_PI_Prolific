@@ -110,7 +110,6 @@ class NoMatch(Page):
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
         if player.round_number == C.NUM_ROUNDS:
-            player.participant.additional_wait_time = player.round_number - 1
             player.participant.single_player = True
             player.single_player = True
             return 'App03'
@@ -127,7 +126,10 @@ class ContinueWaiting(Page):
     @staticmethod
     def before_next_page(player, timeout_happened):
         """ add 15 ECU compensation for additional waiting time if players decide to wait longer"""
+
         if player.q_continue_waiting == 'Yes':
+            # update additional_wait_time
+            player.participant.additional_wait_time = player.round_number
             player.participant.payoff_compensation_wait += 15
             player.participant.payoff_total = (
                     player.participant.payoff_fix
@@ -141,7 +143,6 @@ class ContinueWaiting(Page):
         if player.q_continue_waiting == 'No':
             player.participant.single_player = True
             player.single_player = True
-            player.participant.additional_wait_time = player.round_number - 1
             return 'App03'
         return None
 

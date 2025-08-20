@@ -563,11 +563,11 @@ page_sequence = [
     WaitPage1,
     # Treatment A, # TODO
     TreatmentB,
-    MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
+    # MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
     WaitPage2,
-    VideoMeeting,  # TODO
-    # VideoMeeting_dummy,  # TODO
-    WaitPage3,
+    VideoMeeting_dummy,  # TODO
+    # VideoMeeting,  # TODO
+    # WaitPage3,
     PostVideoMeetingQuestionnaireII,
     IntroWLG,
     ComprehensionWLG,

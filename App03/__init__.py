@@ -243,22 +243,24 @@ class LandingPageSinglePlayer(Page):
             - no payoff_bonus_wlg possible -> compensation if not responsible
 
         """
-        # VM not successfully
-        if player.participant.single_player:
+        # The payoff for the WLG is 0
+        player.participant.payoff_bonus_wlg = 0
+        player.participant.payoff_compensation_wlg_dropout = 0
 
-            # The payoff for the WLG is 0
-            player.participant.payoff_bonus_wlg = 0
+        print('set payoff_bonus_wlg = 0')
+        print('set payoff_compensation_wlg_dropout = 0')
 
-            # If the player raised the dropout he will not be compensated
-            if player.participant.raised_dropout:
-                player.participant.payoff_compensation_wlg_dropout = 0
-                # If he is not responsible for the dropout, he is compensated with 150 ECU
-            else:
-                player.participant.payoff_compensation_wlg_dropout = 150
+        # Dropout in Stage 2 (VM not successful) and player not responsible for dropout
+        if player.participant.assigned_to_team and not player.participant.raised_dropout:
+            # If he is not responsible for the dropout, he is compensated with 150 ECU
+            player.participant.payoff_compensation_wlg_dropout = 150
+
+            print('player is not directly responsible for the dropout')
+            print('update payoff_compensation_wlg_dropout = 150')
 
         player.participant.payoff_total = (
                 player.participant.payoff_fix + player.participant.payoff_compensation_wait
-                + player.participant.payoff_bonus_svo + player.participant.payoff_payoff_bonus_wlg
+                + player.participant.payoff_bonus_svo + player.participant.payoff_bonus_wlg
                 + player.participant.payoff_compensation_wlg_dropout
         )
 

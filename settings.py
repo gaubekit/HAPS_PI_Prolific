@@ -10,7 +10,8 @@ SESSION_CONFIGS = [dict(name='HAPS_PI_Prolific', num_demo_participants=3,
                             'App01_waiting',  # Wait for 3 active players, 5 x 5 minutes waiting time
                             'App02',  # SpiderGraph(+ WOOP) -> Stage 2 (group)
                             'App03',  # Questionnaires -> Stage 3 (individual)
-                            'App04'  # payoff & ThankYou
+                            'App04',  # payoff & ThankYou
+                            'App05',  # redirect to prolific
                               ]),
                    dict(
                        name='Testing',

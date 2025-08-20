@@ -19,7 +19,6 @@
     .radio-group {
         display: flex;
         gap: 20px;
-        margin-top: 20px;
     }
 </style>
 {{ endblock }}
@@ -29,28 +28,33 @@
 <div class="my-box">
 
     <b>Imagine</b> that <span style="color: rgba(54, 162, 235, 1);">you</span> and <span style="color: rgba(255, 99, 132, 1);">the other two members</span> you just met belong to a virtual team of a firm.
-    <b>On a separate page</b>, all of you will make a decision about how many hours, out of a 40-hour work week, you would like to allocate to a joint team project:
+    All of you will make a decision about how many hours, out of a 40-hour work week, you would like to allocate to a joint team project. However, the team project competes with an individual project, as follows:
     <br><br>
 
     <ul>
-        <li>The team project directly competes with an individual project.</li>
-        <li>Any hours (out of the 40) you not allocate to the team project will be automatically allocated to your individual project.   </li>
-        <li>The success of the team project and the individual project will determine your bonus payoff for Stage 2.</li>
-        <li>The team project is more valuable than the individual project.</li>
         <li>The success of the team project, depends on the <b>minimum</b> contribution of any team member.</li>
         <li>The success of the individual project only depends on the hours you allocate to it.</li>
+        <li>Any hours (out of the 40) you do not allocate to the team project will be automatically allocated to your individual project.</li>
+
+        <br<br>
+        <li>The team project is more valuable than the individual project, depending on the minimum contribution.</li>
+
+
     </ul>
 
 
-    The <b> payoff table</b> below shows how your bonus payoff for Stage 2 is determined, depending on <span style="color:  rgba(54, 162, 235, 1);"> your choices</span> (rows) and the <span style="color: rgba(255, 99, 132, 1);;">minimum choice of any team member</span> (columns).
-    Selecting your contribution to the team project via the radio buttons will highlight the corresponding row in the payoff table.<br><br>
+    The success of the projects is determined by <span style="color:  rgba(54, 162, 235, 1);"> your choices</span> (rows) and the <span style="color: rgba(255, 99, 132, 1);;">minimum choice of any team member</span> (columns).
+    The <b> payoff table</b> below shows how your bonus payoff for Stage 2 is calculated:
+    <br><br>
 
-    <h3 class="card-title text-center">Payoff Table</h3>
+    <h4 style="text-align: center;">Payoff Table</h4>
     {{ include_sibling 'PayoffTable.html' }}
 
+    Selecting your contribution to the team project via the radio buttons will highlight the corresponding row in the payoff table.
+    <br><br><b>Try out now:</b>
 
     <div class="radio-group">
-         <span><b>Try out</b> the radio buttons:</span>
+        <span><span style="color:  rgba(54, 162, 235, 1);">Your</span> contribution:</span>
         <label><input type="radio" name="choice" value="0"> 0 hour</label>
         <label><input type="radio" name="choice" value="10"> 10 hours</label>
         <label><input type="radio" name="choice" value="20"> 20 hours</label>

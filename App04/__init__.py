@@ -106,7 +106,12 @@ class ThankYouI(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.participant.consent == 0
+        try:
+            return player.participant.consent == 0
+        # Players that not eligible (willing to use Chrome etc.) raise TypeError(None) and enter this page
+        # these are also forwarded to App05 and not reach ThankYouII etc.
+        except TypeError:
+            return True
 
     @staticmethod
     def vars_for_template(player):
@@ -136,6 +141,9 @@ class ThankYouII(Page):
     @staticmethod
     def is_displayed(player):
         return player.participant.consent == 1
+
+
+
 
 
 class ThankYou(Page):
@@ -181,5 +189,7 @@ class ThankYou(Page):
 #     #         attention_fail=player.participant.attention_fail
 #     #     )
 
-page_sequence = [ThankYou, ]
+page_sequence = [
+    ThankYouI,
+    ThankYouII, ]
 # page_sequence = [ThankYou, ThankYouByPass, ThankYouExit]

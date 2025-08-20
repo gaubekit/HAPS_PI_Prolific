@@ -1,0 +1,25 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}End: Thank You{{ endblock }}
+
+{{ block content }}
+    <style>
+    .my-box {
+                border: 1px solid #ccc;
+                padding: 10px;
+                background-color: #f9f9f9;
+            }
+    </style>
+
+    <div class="my-box">
+        Thank you for your interest in this study. <br><br>
+        However, you are unfortunately not eligible to participate in this study as long you are not willing/able to
+        use the required browsers and give your consent.
+        <br><br>
+        <b>You are hence requested to leave the study now.</b>
+        <br><br>
+        On the next Page, you can return to Prolific.
+    <br/>
+    </div>
+    <br
+    {{ next_button }}
+{{ endblock }}

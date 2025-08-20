@@ -21,34 +21,39 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    consent = models.IntegerField(blank=False, choices=[[0, '0'], [1, '1']], label='Consent',
-                                  attrs={"invisible": True})
-    eligibility = models.IntegerField(blank=False, choices=[[0, '0'], [1, '1']], label='Eligibility',
-                                      attrs={"invisible": True})
+    consent = models.IntegerField(
+        label='<b>Do you want to participate?</b>',
+        blank=False,
+        choices=[(1, "Yes, I want to participate."), (0, "No, I do not want to participate.")],
+        widget=widgets.RadioSelect
+    )
+
+    eligibility = models.IntegerField(
+        label='<b>Are you able and willing to use a Chrome, Edge or Opera browser in this study?</b>',
+        blank=False,
+        choices=[(1, "Yes"), (0, "No")],
+        widget=widgets.RadioSelectHorizontal
+    )
+
     optInConsent = models.IntegerField(blank=True, initial=0, choices=[[0, '0'], [1, '1']], label='Opt-In Consent',
                                        attrs={"invisible": True})
 
 
 # PAGES
-class EligibilityCheck(Page):  # TODO: no -> ask if you really dont like to participate - maybe reuse app00_2_exit
+class EligibilityCheck(Page):
     form_model = 'player'
     form_fields = ['eligibility']
 
     @staticmethod
     def app_after_this_page(player: Player, upcoming_apps):
         if player.eligibility == 0:
-            player.participant.consent = 0  # set consent = 0 -> no consent to control exit pages
+            player.participant.consent = 0
             return 'App04'
 
 
 class ConsentFormA(Page):
     """ Welcome, Coal, payoff Information, Approximated Time """
     form_model = 'player'
-
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        """ set single player var for waite page - will be changed to True, if no group forms"""
-        player.participant.single_player = False
 
 
 class ConsentFormA2(Page):

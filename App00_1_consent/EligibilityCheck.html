@@ -4,57 +4,27 @@
 {{ block title }}Pre-Study: Eligibility Check{{ endblock }}
 
 {{ block content }}
-<style>
-label {
-  display: inline-block;
-}
-.my-box {
-        border: 1px solid #ccc;
-        padding: 10px;
-        background-color: #f9f9f9;
-}
-</style>
-
-
-<div class="my-box">
-<label>
-    <p>Before we start, kindly note that you can only participate in this study if you are able and willing to use a Chrome, Edge or Opera browser. If you are unable or willing to use one of these three browsers, you cannot proceed with this study.<p/>
-
-    <p><b>Are you able and willing to use a Chrome, Edge or Opera browser in this study?</b></p>
-
-
-    <!-- The following are the radio buttons with 'Yes' or 'No' options. If the user clicks 'No', they are not
-     eligible to take part in the study. -->
-    <form>
-        <div class="radio-container">
-            <div class="radio-option">
-                <input type="radio" id="yes" name="eligibilityCheck" value="yes" onchange="updateParticipation(this.value)">
-                <label for="yes">Yes</label>
-            </div>
-            <div class="radio-option">
-                <input type="radio" id="no" name="eligibilityCheck" value="no" onchange="updateParticipation(this.value)">
-                <label for="no">No</label>
-            </div>
-            <input id="hiddenEligibility" type="hidden" name="eligibility" value="0"/>
-        </div>
-    </form>
-
-<script>
-   function updateParticipation(selectedValue) {
-        var eligibility = document.getElementById("hiddenEligibility");
-        eligibility.value = selectedValue === 'yes' ? 1 : 0;
+    <style>
+    label {
+      display: inline-block;
     }
+    .my-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+    }
+    </style>
 
 
+    <div class="my-box">
+        <p>Before we start, kindly note that you can only participate in this study if you are able and willing to use a Chrome, Edge or Opera browser. If you are unable or willing to use one of these three browsers, you cannot proceed with this study.<p/>
 
+        {{ formfields }}
 
-</script>
+    </div>
 
-</label>
-</div>
-{{ formfield_errors 'eligibility' }}
-<br>
+    <br>
 
-{{ next_button }}
+    {{ next_button }}
 
- {{ endblock }}
+{{ endblock }}
