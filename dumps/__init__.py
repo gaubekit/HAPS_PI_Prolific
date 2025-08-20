@@ -99,7 +99,7 @@ class Player(BasePlayer):
         widget=widgets.CheckboxInput,
     )
 
-    ownDecision_subround1 = make_field("Please choose one")
+    wlg_decision = make_field("Please choose one")
     payoff_hypo_subround1 = models.IntegerField()
 
     # Decision Post Questionnaire -> what influenced the decision
@@ -529,7 +529,7 @@ class ComprehensionWLG(Page):
 
 class DecisionWLG(Page):  # TODO: Adjust instructions etc
     form_model = 'player'
-    form_fields = ['ownDecision_subround1']
+    form_fields = ['wlg_decision']
 
     @staticmethod
     def is_displayed(player):
@@ -537,8 +537,8 @@ class DecisionWLG(Page):  # TODO: Adjust instructions etc
 
     @staticmethod
     def live_method(player: Player, data):
-        if "ownDecision_subround1" in data:
-            player.ownDecision_subround1 = data["ownDecision_subround1"]
+        if "wlg_decision" in data:
+            player.wlg_decision = data["wlg_decision"]
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -574,7 +574,7 @@ class PostCoordinationQuestionnaire(Page):
 #
 #     def vars_for_template(self): # TODO staticmethodes?
 #         # Get the number of players who have arrived (decided) in the group
-#         arrived_players = [p for p in self.group.get_players() if p.field_maybe_none('ownDecision_subround1') is not None]
+#         arrived_players = [p for p in self.group.get_players() if p.field_maybe_none('wlg_decision') is not None]
 #         waiting_count = len(arrived_players)
 #
 #         return {
@@ -593,15 +593,15 @@ class PostCoordinationQuestionnaire(Page):
 #     @staticmethod
 #     def after_all_players_arrive(group: Group):
 #         # Calculate group minimum and individual payoffs
-#         group.groupMin = min(p.ownDecision_subround1 for p in group.get_players())
+#         group.groupMin = min(p.wlg_decision for p in group.get_players())
 #
 #         for p in group.get_players():
-#             p.payoff_hypo_subround1 = C.ENDOWMENT + (10 * group.groupMin) - (5 * p.ownDecision_subround1)
+#             p.payoff_hypo_subround1 = C.ENDOWMENT + (10 * group.groupMin) - (5 * p.wlg_decision)
 #
 #             # participant variables for payoff info
 #             p.participant.wlg_payoff = p.payoff_hypo_subround1
 #             p.participant.wlg_min_choice = group.groupMin
-#             p.participant.wlg_own_choice = p.ownDecision_subround1
+#             p.participant.wlg_own_choice = p.wlg_decision
 #
 #
 # class IntroQuestionnaire(Page):

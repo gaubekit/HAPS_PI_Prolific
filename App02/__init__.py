@@ -11,7 +11,8 @@ This App handel Stage 2, where 3 participants formed a team:
 
 
 - 7 min video meeting
-- Questionnaire 1/3: See / hear each other
+    + 2min upload time
+    + Questionnaire 1/3: SeeHear, Background, Human
 - Questionnaire 2/3: Nasa TLX, Zoom Fatigue & Exhaustion
 - Intro Weakest Link Game (WLG)
 - Comprehension WLG
@@ -45,7 +46,6 @@ class C(BaseConstants):
     NAME_IN_URL = 'App02'
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
-    ENDOWMENT = 200
 
     # Central configuration of duration Video Meeting and Upload Time Limit
     VM_DURATION = 3 * 60  # TODO 7 minutes
@@ -59,37 +59,31 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
      pass
 
-# TODO -> not needed anymore -> calculation in app03 without this logic
-#     groupMin = models.IntegerField(
-#         min=0, max=40, initial=40
-#     )
-#     randomNumber = models.IntegerField()
-
-
-def make_field(label):
-    """ Needed for SVO-Sliders """
-    return models.IntegerField(
-        choices=[0, 10, 20, 30, 40],
-        label=label,
-        widget=widgets.RadioSelect,
-    )
-
 
 class Player(BasePlayer):
     # Var to control Video Meeting Behavior: 1 -> no modification, 2 -> no self-view, 3 -> additional message above
+    # Note: not used in this study -> hardcoded '1' = no modification
     video_meeting_behavior = models.IntegerField(initial=1, blank=True)
+
+    # Var for Treatment
+    treatment_completed = models.StringField(initial='no')
 
     # Var to ensure that Video Meeting worked properly
     seeHear = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1'], [2, '2']], label='',
                                   attrs={"invisible": True}, default=2)
+
     attentionCheck = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1']], label='',
                                          attrs={"invisible": True}, default=0)
+
     correctBackground = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1']], label='',
                                             attrs={"invisible": True}, default=0)
 
     # Decisions in Weakest Link game
-    ownDecision_subround1 = make_field("Please choose one")
-    payoff_hypo_subround1 = models.IntegerField()
+    wlg_decision = models.IntegerField(
+        choices=[0, 10, 20, 30, 40],
+        label='',
+        widget=widgets.RadioSelect,
+    )
 
     # Decision Post Questionnaire -> what influenced the decision
     impact_goal = models.IntegerField(widget=widgets.RadioSelect, choices=[-3, -2, -1, 0, 1, 2, 3])
@@ -239,7 +233,6 @@ class MyWaitPage(WaitPage):
             try:
                 # get randomly the code of one group member
                 the_other_id = random.choice(p.participant.other_players_ids)
-                p.participant.the_other_id = the_other_id
 
                 # and search this participant in the session to get his svo
                 for other in group.session.get_participants():
@@ -248,7 +241,8 @@ class MyWaitPage(WaitPage):
                         break
 
             except IndexError:
-                p.participant.the_other_id = None
+                # no other -> no var "svo_from_other" --> NameError in next block
+                pass
 
             try:
                 p.participant.svo_from_other = svo_from_other
@@ -295,52 +289,15 @@ class WaitPage1(WaitPage):
         return None
 
 
-class TreatmentA(Page):  # TODO: Update after Treatment B is i.o.
-    pass
-    # """
-    # This page handles one of two treatments, and therefore includes:
-    #     - visualize personal and team-averaged Playground goals
-    #
-    # The treatment is handled via control-variable and a is_displayed staticmethod# TODO
-    #
-    # """
-    # form_model = 'player'
-    #
-    # @staticmethod
-    # def js_vars(player):
-    #     others = player.get_others_in_subsession()
-    #     others_vm_pref = [
-    #         (others[0].participant.vm_pref_achievement + others[1].participant.vm_pref_achievement) / 2,
-    #         (others[0].participant.vm_pref_dominance + others[1].participant.vm_pref_dominance) / 2,
-    #         (others[0].participant.vm_pref_face + others[1].participant.vm_pref_face) / 2,
-    #         (others[0].participant.vm_pref_rules + others[1].participant.vm_pref_rules) / 2,
-    #         (others[0].participant.vm_pref_concern + others[1].participant.vm_pref_concern) / 2,
-    #         (others[0].participant.vm_pref_tolerance + others[1].participant.vm_pref_tolerance) / 2,
-    #         ]
-    #
-    #     player.participant.others_vm_pref = others_vm_pref
-    #
-    #     return dict(
-    #         own=[player.participant.vm_pref_achievement,
-    #              player.participant.vm_pref_dominance,
-    #              player.participant.vm_pref_face,
-    #              player.participant.vm_pref_rules,
-    #              player.participant.vm_pref_concern,
-    #              player.participant.vm_pref_tolerance],
-    #         other=others_vm_pref
-    #     )
-    #
-    # @staticmethod
-    # def get_timeout_seconds(player):
-    #     if player.participant.single_player:
-    #         return 1
-    #     else:
-    #         return 5*60
-    #
-    # @staticmethod
-    # def before_next_page(player, timeout_happened):
-    #     if timeout_happened:
-    #         player.participant.single_player = True
+class TreatmentA(Page):
+    """
+    This page handles one of two treatments, and therefore includes:
+        - visualize personal and team-averaged Playground goals
+
+    The treatment is handled via control-variable and an is_displayed staticmethod
+
+    """
+    pass  # TODO: Update after Treatment B is i.o.
 
 
 class TreatmentB(Page):  # TODO add WOOP
@@ -353,6 +310,10 @@ class TreatmentB(Page):  # TODO add WOOP
 
     """
     form_model = 'player'
+
+    # @staticmethod
+    # def is_displayed(player):
+    #     return player.participant.treatment == 'WOOP'
 
     @staticmethod
     def js_vars(player):
@@ -485,6 +446,14 @@ class WaitPage3(WaitPage):
         if any(p.participant.single_player for p in group.get_players()):
             for p in group.get_players():
                 p.participant.single_player = True
+        # else: # TODO
+        #     # if the group number is equal, the treatment "woop" was completed
+        #     if group.id_in_session % 2:  # TODO: is this working?
+        #         for p in group.get_players():
+        #             p.player.treatment_completed = 'woop'
+        #     else:
+        #         for p in group.get_players():
+        #             p.player.treatment_completed = 'no_woop'
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -526,26 +495,13 @@ class ComprehensionWLG(Page):
 
 class DecisionWLG(Page):
     form_model = 'player'
-    form_fields = ['ownDecision_subround1']
-
-    # @staticmethod  # TODO: Do I need this?
-    # def is_displayed(player):
-    #     return player.participant.assigned_to_team
-
-    # @staticmethod  # TODO: Do I need this?
-    # def live_method(player: Player, data):
-    #     if "ownDecision_subround1" in data:
-    #         player.ownDecision_subround1 = data["ownDecision_subround1"]
-
-    # @staticmethod  # TODO: Do I need this?
-    # def vars_for_template(player: Player):
-    #     return dict(round_num=player.round_number)
+    form_fields = ['wlg_decision']
 
     @staticmethod
     def before_next_page(player, timeout_happened):
         """ Save decision in participant field. Calculation is done in App03/SurveyPVQ6 before_next_page() """
-        print('WLG own decision: ', player.ownDecision_subround1)
-        player.participant.wlg_own_choice = player.ownDecision_subround1
+        print('WLG own decision: ', player.wlg_decision)
+        player.participant.wlg_own_choice = player.wlg_decision
 
 
 class PostCoordinationQuestionnaire(Page):

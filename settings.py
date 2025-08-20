@@ -29,14 +29,9 @@ PARTICIPANT_FIELDS = [
     'consent',
     'optInConsent',
     # control variables for experiment flow
-    # 'wait_page_arrival',  # TODO brauche ich das?
     'additional_wait_time',
     'assigned_to_team',
     'single_player',
-    # 'confirmed_meeting', # TODO Brauche ich das noch?
-    # 'attention_fail',  # TODO Brauche ich das noch?
-    # 'attention_fail_cost',  # TODO Brauche ich das noch?
-    'the_other_id',
     'other_players_ids',
     'raised_dropout',
     # Social Value Orientation

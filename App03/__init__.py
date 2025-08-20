@@ -380,8 +380,8 @@ class SurveyPVQ6(Page):
                     # get WLG Decision of other players
                     for other in player.session.get_participants():
                         if other.code in player.participant.other_players_ids:
-                            print(other.code)
-                            print(other.wlg_own_choice)
+                            print('other.code: ', other.code)
+                            print('other.wlg_own_choice: ', other.wlg_own_choice)
                             wlg_decisions.append(other.wlg_own_choice)
                         if len(wlg_decisions) >= 2:
                             # stop loop after both players are found
@@ -390,9 +390,12 @@ class SurveyPVQ6(Page):
                     wlg_decisions.append(own_decision)
                     print('all decisions: ', wlg_decisions)
                     wlg_min_choice = min(wlg_decisions)
+                    print('wlg_min_choice : ', wlg_min_choice)
                     player.participant.wlg_min_choice = wlg_min_choice
                     player.participant.payoff_bonus_wlg = 200 + (10 * wlg_min_choice) - (5 * own_decision)
+                    print('calculated player.participant.payoff_bonus_wlg : ', player.participant.payoff_bonus_wlg)
                     player.participant.payoff_compensation_wlg_dropout = 0
+                    print('set player.participant.payoff_compensation_wlg_dropout = 0')
 
                 except KeyError:
                     print('raised KeyError: one of the others made no wlg_own_choice')

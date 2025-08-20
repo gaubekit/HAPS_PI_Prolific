@@ -16,8 +16,8 @@ doc = ("""
     
         (I)   giving no consent (App00_1 & App00_2) -> no payoff
         (II)  completing the study, raised dropout in stage 2 -> payoff Stage 1 & 3, no payoff wlg
-        (III) completing the study, dropout happened in Stage 2  -> payoff Stage 1 & 3, compensation wlg, svo_from_other
-        (IV)  completing the study, excluding Stage 2 -> payoff Stage 1 & 3
+        (III)  completing the study, excluding Stage 2 -> payoff Stage 1 & 3
+        (IV) completing the study, dropout happened in Stage 2  -> payoff Stage 1 & 3, compensation wlg, svo_from_other
         (V)   completing the study, including Stage 2  -> payoff Stage 1, 2 & 3
     
 """)
@@ -107,7 +107,7 @@ class ThankYouI(Page):
     @staticmethod
     def is_displayed(player):
         try:
-            return player.participant.consent == 0
+            return not player.participant.consent
         # Players that not eligible (willing to use Chrome etc.) raise TypeError(None) and enter this page
         # these are also forwarded to App05 and not reach ThankYouII etc.
         except TypeError:
@@ -132,7 +132,6 @@ class ThankYouII(Page):
     ========================================
 
         - no payoff
-        - short info that they can't participate without giving consent
 
     """
     form_model = 'player'
@@ -140,56 +139,96 @@ class ThankYouII(Page):
 
     @staticmethod
     def is_displayed(player):
-        return player.participant.consent == 1
-
-
-
-
-
-class ThankYou(Page):
-    form_model = 'player'
-    form_fields = ['feedback']
+        return player.participant.raised_dropout
 
     @staticmethod
-    def is_displayed(player):
-        return player.participant.consent == 1 # TODO and not..
-
-    @staticmethod # TODO
     def vars_for_template(player):
 
         process_data(player)
 
         return dict(
-            payoff_fix_pound=player.payoff_fix_pound,
-            payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
-            payoff_compensation_wait_pound=player.payoff_compensation_wait_pound,
-            payoff_bonus_wlg_pound=player.payoff_bonus_wlg_pound,
-            payoff_compensation_wlg_dropout_pound=player.payoff_compensation_wlg_dropout_pound,
-            payoff_total_pound=player.payoff_total_pound,
-        )
+            payoff_fix_pound=player.payoff_total_pound)
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        return 'App05'
 
 
-# class ThankYouByPass(Page):
-#     form_model = 'player'
-#
-#     @staticmethod
-#     def is_displayed(player):
-#         return player.participant.consent == 1 and player.participant.single_player
-#
-#     # # TODO: get payoff information from participants field and display it on page
-#     # @staticmethod
-#     # def vars_for_template(player):
-#     #     return dict(
-#     #         svo_to_self=player.participant.svo_to_self,
-#     #         fixed_payoff=player.participant.fixed_payoff,
-#     #         additional_payoff=player.participant.additional_payoff,
-#     #         attention_fail_cost=player.participant.attention_fail_cost,
-#     #         total_payoff=player.participant.total_payoff,
-#     #         final_payoff=player.participant.final_payoff,
-#     #         attention_fail=player.participant.attention_fail
-#     #     )
+class ThankYouIII(Page):
+    """
+    (III) Page for players who formed no team for Stage 2
+    ======================================================
+
+        - payoff WLG
+
+    """
+    form_model = 'player'
+    form_field = ['feedback', ]
+
+    @staticmethod
+    def is_displayed(player):
+        return not player.participant.assigned_to_team
+
+    @staticmethod
+    def vars_for_template(player):
+        process_data(player)
+
+        return dict(
+            payoff_fix_pound=player.payoff_total_pound)
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        return 'App05'
+
+
+class ThankYouIV(Page):
+    """
+    (IV) Page for players dropped out during Stage 2
+    ======================================================
+
+        - payoff WLG
+
+    """
+    form_model = 'player'
+    form_field = ['feedback', ]
+
+    @staticmethod
+    def is_displayed(player):
+        # Single player who raised_dropout or not assigned_to_team do not reach this page in the page sequence
+        return player.participant.single_player
+
+    @staticmethod
+    def vars_for_template(player):
+        process_data(player)
+
+        return dict(
+            payoff_fix_pound=player.payoff_total_pound)
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        return 'App05'
+
+
+class ThankYouV(Page):
+    form_model = 'player'
+    form_fields = ['feedback']
+
+    @staticmethod
+    def vars_for_template(player):
+        process_data(player)
+
+        return dict(
+            payoff_fix_pound=player.payoff_total_pound)
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        return 'App05'
+
 
 page_sequence = [
     ThankYouI,
-    ThankYouII, ]
-# page_sequence = [ThankYou, ThankYouByPass, ThankYouExit]
+    ThankYouII,
+    ThankYouIII,
+    ThankYouIV,
+    ThankYouV,
+]

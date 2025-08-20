@@ -45,19 +45,19 @@ Stage 2: Decision - Bonus Payoff
     Please <b>decide now</b> how many hours you would like to allocate to the team project:
     <br>
     <label for="ownDecision0">
-        <input type="radio" id="ownDecision0" name="ownDecision_subround1" value="0"> 0 &nbsp;&nbsp;
+        <input type="radio" id="ownDecision0" name="wlg_decision" value="0"> 0 &nbsp;&nbsp;
     </label>
     <label for="ownDecision10">
-        <input type="radio" id="ownDecision10" name="ownDecision_subround1" value="10"> 10 &nbsp;&nbsp;
+        <input type="radio" id="ownDecision10" name="wlg_decision" value="10"> 10 &nbsp;&nbsp;
     </label>
     <label for="ownDecision20">
-        <input type="radio" id="ownDecision20" name="ownDecision_subround1" value="20"> 20 &nbsp;&nbsp;
+        <input type="radio" id="ownDecision20" name="wlg_decision" value="20"> 20 &nbsp;&nbsp;
     </label>
     <label for="ownDecision30">
-        <input type="radio" id="ownDecision30" name="ownDecision_subround1" value="30"> 30 &nbsp;&nbsp;
+        <input type="radio" id="ownDecision30" name="wlg_decision" value="30"> 30 &nbsp;&nbsp;
     </label>
     <label for="ownDecision40">
-        <input type="radio" id="ownDecision40" name="ownDecision_subround1" value="40"> 40 &nbsp;&nbsp;
+        <input type="radio" id="ownDecision40" name="wlg_decision" value="40"> 40 &nbsp;&nbsp;
     </label>
 
 </div>
@@ -76,7 +76,7 @@ Stage 2: Decision - Bonus Payoff
     let row = document.querySelector("tbody").children[3];
     let rowA = Array.from(row.children);
     rowA.shift();
-    const radioButtons = document.querySelectorAll('input[name="ownDecision_subround1"]');
+    const radioButtons = document.querySelectorAll('input[name="wlg_decision"]');
     radioButtons.forEach(radio => {
         radio.addEventListener("change", function() {
             const val = this.value;
@@ -114,7 +114,7 @@ Stage 2: Decision - Bonus Payoff
 });
      document.onsubmit = () => {
             console.log("Next button clicked 2");
-            const radios = document.getElementsByName("ownDecision_subround1");
+            const radios = document.getElementsByName("wlg_decision");
             let selectedValue;
             for (const radio of radios) {
                 if (radio.checked) {
@@ -124,7 +124,7 @@ Stage 2: Decision - Bonus Payoff
             }
 
             liveSend({
-                "ownDecision_subround1": parseInt(selectedValue)
+                "wlg_decision": parseInt(selectedValue)
             });
             }
 </script>
