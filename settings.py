@@ -34,6 +34,7 @@ PARTICIPANT_FIELDS = [
     'single_player',
     'other_players_ids',
     'raised_dropout',
+    'arrival_time_for_grouping',
     # Social Value Orientation
     'svo_to_self',
     'svo_from_other',

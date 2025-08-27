@@ -1,5 +1,6 @@
 from otree.api import *
 import random
+import time
 
 c = cu
 
@@ -93,21 +94,21 @@ class Player(BasePlayer):
     impact_woop = models.IntegerField(widget=widgets.RadioSelect, choices=[-3, -2, -1, 0, 1, 2, 3])
 
     # Nasa TLX, Zoom Fatigue & Exhaustion Subscale Social and General
-    ## How mentally demanding was this video conference task?
+    #  <How mentally demanding was this video conference task?>
     nasatlx_1 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How hurried or rushed was the pace of this video conference?
+    # <How hurried or rushed was the pace of this video conference?>
     nasatlx_2 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How much do you tend to avoid social situations after this video conference?
+    # <How much do you tend to avoid social situations after this video conference?>
     zfe_social_1 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How much do you want to be alone after this video conference?
+    # <How much do you want to be alone after this video conference?>
     zfe_social_2 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How much do you need time by yourself after this video conference?
+    # <How much do you need time by yourself after this video conference?>
     zfe_social_3 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How much do you dread having to do things after this video conference?
+    # <How much do you dread having to do things after this video conference?>
     zfe_general_1 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How much do you feel like doing nothing after this video conference?
+    # <How much do you feel like doing nothing after this video conference?>
     zfe_general_2 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
-    ## How much do you feel too tired to do other things after this video conference?
+    # <How much do you feel too tired to do other things after this video conference?>
     zfe_general_3 = models.IntegerField(widget=widgets.RadioSelect, choices=list(range(-10, 11)))
 
     # Comprehension Weakest Link Game
@@ -138,6 +139,7 @@ class Player(BasePlayer):
         label='',
         widget=widgets.CheckboxInput,
         blank=True)
+
 
 # HELP FUNCTIONS
 # Functions for error messages in comprehension questions
@@ -201,18 +203,33 @@ def comprehension4c_error_message(player: Player, value):
     return None
 
 
-# PAGES
+def waiting_too_long(player):
+    """
+    Returns boolean, indicating whether the players waiting to long (after 60 seconds),
+    guaranteeing that player can't get stuck
+    """
+    return time.time() - player.participant.arrival_time_for_grouping > 60
 
+
+def group_by_arrival_time_method(subsession, waiting_players):
+    """ methode is called implicitly when group_by_arrival_time = True """
+    if len(waiting_players) >= 3:
+        return waiting_players[:3]
+    for player in waiting_players:
+        if waiting_too_long(player):
+            player.participant.single_player = True
+            # make a single-player group.
+            return [player]
+
+
+# PAGES
 class MyWaitPage(WaitPage):
     """
-    Page grouping participants by arrival time. Because App01_waiting guarantees for exact 3 active participants,
-    we can simply use "group_by_arrival_time"
-    """
+    Page grouping participants by arrival time. Theoretical App01_waiting guarantees for exact 3 active participants.
+    As fallback-mechanism, group_by_arrival_time_method() guarantees that player can't get stuck on this wait page.
 
-    # Note: players can't get stuck on a wait page, if the previous page has a time_out functionallity
-    # This case is special, theoretically 3 player should be automatically forwarded - but is there a chance to
-    # set a timeout on this page?: https://otree.readthedocs.io/en/latest/multiplayer/waitpages.html#use-group-by-arrival-time
-    # TODO def wait_too_long -> 30 secondes and def group_by_arrival_time_method(subsession, waiting_players)
+    The after_all_player_arrive methode is used to update the svo_bonus and to store group information.
+    """
 
     group_by_arrival_time = True
 
@@ -241,6 +258,7 @@ class MyWaitPage(WaitPage):
                         break
 
             except IndexError:
+                print('Error in App02 WaitPage, there was no other in the group')
                 # no other -> no var "svo_from_other" --> NameError in next block
                 pass
 
@@ -264,8 +282,20 @@ class MyWaitPage(WaitPage):
                 print('payoff waiting: ', p.participant.payoff_compensation_wait)
                 print('payoff total: ', p.participant.payoff_total)
             except NameError:
-                svo_from_other = 0
-                print('Error: The Other had no svo_to_other')
+                print('Error in App02 WaitPage: The Other had no svo_to_other ->payoff_bonus_svo not updated')
+                p.participant.payoff_compensation_svo_other = 50
+                print(f'payoff_compensation_svo_other for {p.participant.code} was updated: ', p.participant.payoff_compensation_svo_other)
+                p.participant.payoff_total = (
+                        p.participant.payoff_fix
+                        + p.participant.payoff_bonus_svo
+                        + p.participant.payoff_compensation_wait
+                        + p.participant.payoff_compensation_svo_other
+                )
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        if player.participant.single_player:
+            return 'App03'
 
 
 class InformOnScreenTimer(Page):

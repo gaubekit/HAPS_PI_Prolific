@@ -93,6 +93,8 @@ class RollingMatching(Page):
     def app_after_this_page(player, upcoming_apps):
         # Proceed to next app if the participant has been matched
         if player.participant.assigned_to_team:
+            player.participant.arrival_time_for_grouping = time.time()
+            print('set arrival_time_for_grouping in App01_waiting: ', player.participant.arrival_time_for_grouping)
             return 'App02'
         return None
 
@@ -115,7 +117,6 @@ class NoMatch(Page):
 
             player.participant.payoff_compensation_svo_other = C.SVO_COMPENSATION
             print('updated svo compensation: ', player.participant.payoff_compensation_svo_other)
-            player.participant.single_player = True
 
             player.participant.single_player = True
             player.single_player = True

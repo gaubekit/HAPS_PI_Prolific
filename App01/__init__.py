@@ -270,12 +270,12 @@ class IntroductionSpiderGraph(Page):
         - define flag indicating whether video_meeting_successful
         """
 
-        # player.participant.wait_page_arrival = time.time() # TODO vermutlich outdated
         player.participant.single_player = False
         player.participant.assigned_to_team = False
         player.participant.additional_wait_time = 0
-        # player.participant.confirmed_meeting = False # TODO: kann glaube ich weg
         player.participant.raised_dropout = False
+        player.participant.arrival_time_for_grouping = time.time()
+        print('set arrival_time_for_grouping in App01: ', player.participant.arrival_time_for_grouping)
 
 
 page_sequence = [

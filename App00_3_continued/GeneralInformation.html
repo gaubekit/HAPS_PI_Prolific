@@ -1,5 +1,5 @@
 {{ extends 'global/Page.html' }}
-{{ block title }} Pre-Study: Study Structure Information{{ endblock }}
+{{ block title }} Pre-Study: Information - Stages of the Study{{ endblock }}
 
 {{ block content }}
 
@@ -18,11 +18,12 @@
     <div style="margin-left: 20px; margin-top: 10px;">
         <ul>
             <li>
-                <b>In Stage 1</b>, you will be asked to answer initial questionnaires individually, and earn some bonus payoff.
+                <b>In Stage 1</b>, you will be asked to answer initial questionnaires individually. <!--, and earn some bonus payoff.-->
             </li>
             <br>
             <li>
-                <b>In Stage 2</b>, you will join a team with two other participants, get to know your team members in a 7-minutes video meeting, perform some tasks, and earn some bonus payoff.
+                <b>In Stage 2</b>, you will join a team with two other participants, get to know your team members in a 7-minutes video meeting,
+                perform some tasks. <!--, and earn some bonus payoff.-->
             </li>
             <br>
             <li>
@@ -31,12 +32,52 @@
         </ul>
     </div>
     <br>
-    Note: On each page, the 'Next'-button will become available after a certain time. Please <u>do not refresh</u> the pages.
+    <b>Note</b>: On each page, the 'Next'-button will become available after a certain time. Please do <u>not</u>  refresh the pages.
 </div>
-
 
 <br>
 
-{{ next_button }}
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p>You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 30; // adjust timeout here
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // Initialer Countdown-Text
+        countdownEl.textContent = secondsLeft;
+
+        // Countdown aktualisieren jede Sekunde
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
 
 {{ endblock }}

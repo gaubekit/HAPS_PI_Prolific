@@ -198,7 +198,6 @@ class ThankYouIII(Page):
         )
 
 
-
 class ThankYouIV(Page):
     """
     (IV) Page for players who dropped out during Stage 2
