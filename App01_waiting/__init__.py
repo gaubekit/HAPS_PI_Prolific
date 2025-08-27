@@ -23,6 +23,8 @@ class C(BaseConstants):
     NUM_ROUNDS = 5
     WAIT_SECONDS = 20  # 5 * 60
 
+    SVO_COMPENSATION = 50  # compensation for SVO from other, if no team is formed
+
 
 class Subsession(BaseSubsession):
     pass
@@ -110,6 +112,11 @@ class NoMatch(Page):
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
         if player.round_number == C.NUM_ROUNDS:
+
+            player.participant.payoff_compensation_svo_other = C.SVO_COMPENSATION
+            print('updated svo compensation: ', player.participant.payoff_compensation_svo_other)
+            player.participant.single_player = True
+
             player.participant.single_player = True
             player.single_player = True
             return 'App03'
@@ -141,6 +148,9 @@ class ContinueWaiting(Page):
     def app_after_this_page(player, upcoming_apps):
         """ forward players to stage 3 if they decide to skip stage 2"""
         if player.q_continue_waiting == 'No':
+            # because player can't be matched for svo with sbd else, svo compensation is updated
+            player.participant.payoff_compensation_svo_other = C.SVO_COMPENSATION
+            print('updated svo compensation: ', player.participant.payoff_compensation_svo_other)
             player.participant.single_player = True
             player.single_player = True
             return 'App03'

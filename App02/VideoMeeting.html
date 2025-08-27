@@ -39,8 +39,7 @@
             border: 1px solid #ccc;
             padding: 10px;
             background-color: #f9f9f9;
-            max-width: 1000px;
-            margin: 0 auto;
+
         }
 
         /* because there is my-box in the only call of my-box1 (function displayed yes/no), no border, padding, background is needed */
@@ -182,20 +181,25 @@
                     </li>
                 </ul>
             </div>
+
+            <br><br><br>
         </div>
 
-       <br/><br/>
+
 
         <!-- Progress bar-->
         <div id="progressBarContainer" style="width: 100%; background-color: #ddd; margin-top: -50px;">
             <div id="progressBar" style="width: 0%; height: 30px; background-color: cornflowerblue;"></div>
         </div>
 
-        <br/>
-
+        <!-- Adding some space between progress bar and video meeting, which is not visible after C.VM_DURATION-->
+        <div class="collapsible">
+            <br>
+        </div>
 
         <!-- Container contains Video meeting (id=meet) -->
         <div id="videopanel" class="row">
+
             <!-- In case of player.video_meeting_behavior 3 an extra container with instructions is displayed -->
             {% if player.video_meeting_behavior == 3 %}
                 <div id="container" class="column top">

@@ -1,5 +1,5 @@
 {{ extends 'global/Page.html' }}
-{{ block title }}End: Thank You{{ endblock }}
+{{ block title }}End of Study: No Participation Possible{{ endblock }}
 
 {{ block content }}
     <style>
@@ -17,9 +17,7 @@
         <br><br>
         <b>You are hence requested to leave the study now.</b>
         <br><br>
-        On the next Page, you can return to Prolific.
-    <br/>
+        You can return to Prolific now: {{ C.PROLIFIC_RETURN_LINK }}
     </div>
-    <br
-    {{ next_button }}
+
 {{ endblock }}

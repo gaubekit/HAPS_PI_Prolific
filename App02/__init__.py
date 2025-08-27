@@ -256,8 +256,11 @@ class MyWaitPage(WaitPage):
                         p.participant.payoff_fix
                         + p.participant.payoff_bonus_svo
                         + p.participant.payoff_compensation_wait
+                        + p.participant.payoff_compensation_svo_other
                 )
+
                 print('payoff svo: ', p.participant.payoff_bonus_svo)
+                print('payoff svo compensation: ', p.participant.payoff_compensation_svo_other)
                 print('payoff waiting: ', p.participant.payoff_compensation_wait)
                 print('payoff total: ', p.participant.payoff_total)
             except NameError:
@@ -523,7 +526,7 @@ page_sequence = [
     WaitPage2,
     VideoMeeting_dummy,  # TODO
     # VideoMeeting,  # TODO
-    # WaitPage3,
+    WaitPage3,
     PostVideoMeetingQuestionnaireII,
     IntroWLG,
     ComprehensionWLG,

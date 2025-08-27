@@ -167,11 +167,17 @@ class SurveySVO(Page):
         player.participant.svo_to_self = round(player.svo_to_self, 2)
         player.participant.svo_to_other = round(player.svo_to_other, 2)
         player.participant.svo_from_other = 0
+        player.participant.payoff_compensation_svo_other = 0
 
-        # set fist part of payoff:
-        player.participant.payoff_bonus_svo = player.participant.svo_to_self
-        print('set own svo payoff: ',  player.participant.payoff_bonus_svo)
-        player.participant.payoff_total = player.participant.payoff_fix + player.participant.payoff_bonus_svo
+        # update payoff svo (without match):
+        player.participant.payoff_bonus_svo = player.participant.svo_to_self + player.participant.svo_from_other
+        print('set own svo payoff as bonus: ',  player.participant.payoff_bonus_svo)
+        player.participant.payoff_total = (
+                player.participant.payoff_fix
+                + player.participant.payoff_bonus_svo
+                + player.participant.payoff_compensation_svo_other
+        )
+
         print('updated total payoff: ', player.participant.payoff_total)
 
 

@@ -28,6 +28,9 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
 
+    # TODO: add return-Link
+    PROLIFIC_RETURN_LINK = r'<span style="color: orange;"> !!!! OPEN TODO RETURN LINK !!!!</span>"'
+
 
 class Subsession(BaseSubsession):
     pass
@@ -38,13 +41,14 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    feedback = models.LongStringField(label="If you have any feedback, you can state it here:")
+    feedback = models.LongStringField(label="If you have any feedback, you can state it here: ")
 
     payoff_fix_pound = models.FloatField()
     payoff_bonus_svo_pound = models.FloatField()
     payoff_compensation_wait_pound = models.FloatField()
     payoff_bonus_wlg_pound = models.FloatField()
     payoff_compensation_wlg_dropout_pound = models.FloatField()
+    payoff_compensation_svo_other_pound = models.FloatField()
     payoff_total_pound = models.FloatField()
 
     svo_to_self = models.FloatField()
@@ -68,7 +72,9 @@ def process_data(player):
         "payoff_compensation_wait",
         "payoff_bonus_wlg",
         "payoff_compensation_wlg_dropout",
+        "payoff_compensation_svo_other",
         "payoff_total",
+        "svo_to_self",
         "svo_from_other",
         "svo_to_other",
         "wlg_own_choice",
@@ -83,10 +89,12 @@ def process_data(player):
         try:
             value = getattr(player.participant, field)
             if field.startswith("payoff_"):
-                value = round(value * 0.2)
+                value = round(value * 0.02, 2)
+
         except KeyError:
             value = 0
         setattr(player, f"{field}_pound" if field.startswith("payoff_") else field, value)
+        print('set field: ', field)
 
 
 # PAGES
@@ -95,14 +103,14 @@ class ThankYouI(Page):
     (I) Page for players who give no consent
     ========================================
 
-        - no payoff
+        - !NO payoff at all
         - short info that they can't participate without giving consent
 
 
     """
 
     form_model = 'player'
-    form_field = ['feedback',]
+    form_fields = ['feedback']
 
     @staticmethod
     def is_displayed(player):
@@ -121,21 +129,21 @@ class ThankYouI(Page):
         return dict(
             payoff_fix_pound=player.payoff_total_pound)
 
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        return 'App05'
-
 
 class ThankYouII(Page):
     """
     (II) Page for players who raised a dropout in Stage II
     ========================================
 
-        - no payoff
+        - payoff_fix
+        - payoff_compensation_wait
+        - payoff_svo_bonus = svo_to_self + svo_from_other
+        - !NO payoff_bonus_wlg !
+        - !NO payoff_compensation_wlg !
 
     """
     form_model = 'player'
-    form_field = ['feedback',]
+    form_fields = ['feedback',]
 
     @staticmethod
     def is_displayed(player):
@@ -143,15 +151,17 @@ class ThankYouII(Page):
 
     @staticmethod
     def vars_for_template(player):
-
         process_data(player)
 
         return dict(
-            payoff_fix_pound=player.payoff_total_pound)
-
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        return 'App05'
+            payoff_total_pound=player.payoff_total_pound,
+            payoff_fix_pound=player.payoff_fix_pound,
+            payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
+            svo_to_self=player.svo_to_self,
+            svo_from_other=player.svo_from_other,
+            payoff_compensation_wait_pound=player.payoff_compensation_wait_pound,
+            payoff_compensation_wlg_dropout_pound=player.payoff_compensation_wlg_dropout_pound,
+        )
 
 
 class ThankYouIII(Page):
@@ -159,11 +169,15 @@ class ThankYouIII(Page):
     (III) Page for players who formed no team for Stage 2
     ======================================================
 
-        - payoff WLG
-
+        - payoff_fix
+        - payoff_compensation_wait
+        - payoff_svo_bonus = svo_to_self !NO svo_from_other!
+        - payoff_compensation_svo_other
+        - !NO bonus_wlg!
+        - !NO compensation_wlg!
     """
     form_model = 'player'
-    form_field = ['feedback', ]
+    form_fields = ['feedback']
 
     @staticmethod
     def is_displayed(player):
@@ -174,23 +188,31 @@ class ThankYouIII(Page):
         process_data(player)
 
         return dict(
-            payoff_fix_pound=player.payoff_total_pound)
+            payoff_total_pound=player.payoff_total_pound,
+            payoff_fix_pound=player.payoff_fix_pound,
+            payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
+            svo_to_self=player.svo_to_self,
+            payoff_compensation_svo_other_pound=player.payoff_compensation_svo_other_pound,
+            payoff_compensation_wait_pound=player.payoff_compensation_wait_pound,
+            payoff_compensation_wlg_dropout_pound=player.payoff_compensation_wlg_dropout_pound,
+        )
 
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        return 'App05'
 
 
 class ThankYouIV(Page):
     """
-    (IV) Page for players dropped out during Stage 2
+    (IV) Page for players who dropped out during Stage 2
     ======================================================
 
-        - payoff WLG
+        - payoff_fix
+        - payoff_compensation_wait
+        - payoff_svo_bonus = svo_to_self + svo_from_other
+        - !NO payoff_bonus_wlg!
+        - payoff_compensation_wlg
 
     """
     form_model = 'player'
-    form_field = ['feedback', ]
+    form_fields = ['feedback']
 
     @staticmethod
     def is_displayed(player):
@@ -202,14 +224,28 @@ class ThankYouIV(Page):
         process_data(player)
 
         return dict(
-            payoff_fix_pound=player.payoff_total_pound)
-
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        return 'App05'
+            payoff_total_pound=player.payoff_total_pound,
+            payoff_fix_pound=player.payoff_fix_pound,
+            payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
+            svo_to_self=player.svo_to_self,
+            svo_from_other=player.svo_from_other,
+            payoff_compensation_wait_pound=player.payoff_compensation_wait_pound,
+            payoff_compensation_wlg_dropout_pound=player.payoff_compensation_wlg_dropout_pound,
+        )
 
 
 class ThankYouV(Page):
+    """
+    (V) Page for players who completed the complete experiment
+    ======================================================
+
+        - payoff_fix
+        - payoff_compensation_wait
+        - payoff_svo_bonus = svo_to_self + svo_from_other
+        - payoff_bonus_wlg
+        - payoff_compensation_wlg
+
+    """
     form_model = 'player'
     form_fields = ['feedback']
 
@@ -218,12 +254,18 @@ class ThankYouV(Page):
         process_data(player)
 
         return dict(
-            payoff_fix_pound=player.payoff_total_pound)
+            payoff_total_pound=player.payoff_total_pound,
+            payoff_fix_pound=player.payoff_fix_pound,
+            payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
+            svo_to_self=player.svo_to_self,
+            svo_from_other=player.svo_from_other,
+            payoff_bonus_wlg_pound=player.payoff_bonus_wlg_pound,
+            payoff_compensation_wait_pound=player.payoff_compensation_wait_pound,
+        )
 
-    @staticmethod
-    def app_after_this_page(player, upcoming_apps):
-        return 'App05'
 
+# Note: Players who not completed  Stage3, never arrive here and have to live with whatever was allocated to their
+#       total payoff at the stage where they stopped the experiment
 
 page_sequence = [
     ThankYouI,

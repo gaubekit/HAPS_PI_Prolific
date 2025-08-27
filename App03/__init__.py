@@ -262,6 +262,7 @@ class LandingPageSinglePlayer(Page):
                 player.participant.payoff_fix + player.participant.payoff_compensation_wait
                 + player.participant.payoff_bonus_svo + player.participant.payoff_bonus_wlg
                 + player.participant.payoff_compensation_wlg_dropout
+                + player.participant.payoff_compensation_svo_other
         )
 
 
@@ -416,6 +417,7 @@ class SurveyPVQ6(Page):
                 player.participant.payoff_fix + player.participant.payoff_compensation_wait
                 + player.participant.payoff_bonus_svo + player.participant.payoff_bonus_wlg
                 + player.participant.payoff_compensation_wlg_dropout
+                + player.participant.payoff_compensation_svo_other
         )
 
 

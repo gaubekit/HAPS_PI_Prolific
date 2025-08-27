@@ -1,0 +1,59 @@
+{{ extends 'global/Page.html' }}
+
+{{ block title }}End of Study: Feedback and Payoff Information {{ endblock }}
+
+{{ block content }}
+    <style>
+        .my-box {
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    background-color: #f9f9f9;
+                }
+    </style>
+
+    <div class="my-box">
+        <h5>Thank you for participating in this study.</h5>
+
+
+        {{ formfield 'feedback' }}
+
+        <hr>
+
+        <p>
+            <h5 style="text-align: center;">Payoff Formular: Payoff = Fix Payoff + Bonus Payoff + Compensation</h5>
+            <h5 style="text-align: center;">Payoff Conversion: 10 ECU = £0.2</h5>
+        </p>
+
+        <hr>
+
+        <h6><u>Your Payoff:</u></h6>
+         <ul>
+            <li>In this study, <b>you earned in total {{ participant.payoff_total }} ECU (£{{ player.payoff_total_pound }})</b>.
+            </li>
+         </ul>
+
+        <h6><u>Fix Payoff:</u></h6>
+        <ul>
+            <li>{{ participant.payoff_fix }} ECU (£{{ payoff_fix_pound }}) for completing the study</li>
+        </ul>
+        <h6><u>Bonus Payoff:</u></h6>
+        <ul>
+            <li>{{ participant.payoff_bonus_svo }} ECU (£{{ payoff_bonus_svo_pound }}) for Stage 1, where you allocated {{ participant.svo_to_self }} ECU to you. Because no team formed, you can not receive payoff from the other. You will be compensated.</li>
+            <li>0 ECU (£0) for Stage 2, because no team formed. </li>
+        </ul>
+
+         <h6><u>Compensation:</u></h6>
+        <ul>
+            <li>{{ participant.payoff_compensation_wlg_dropout }} ECU (£{{ payoff_compensation_wlg_dropout_pound }}) compensation for Stage 2, because no team formed.</li>
+            <li>{{ participant.payoff_compensation_svo_other }} ECU (£{{ payoff_compensation_svo_other_pound }}) compensation for Stage 1, because we could not allocate you payoff from "the other".</li>
+            <li>{{ participant.payoff_compensation_wait }} ECU (£{{ payoff_compensation_wait_pound }}) for your additional wait time, because you extended the wait time {{ participant.additional_wait_time }} times. (each extension = 15 ECU)</li>
+        </ul>
+
+        <hr>
+
+        <p>
+            We will transfer the £{{ player.payoff_total_pound }} to your Prolific account with the ID {{ participant.prolific_id }} within the next days.<br>
+            You can return to Prolific now: {{ C.PROLIFIC_RETURN_LINK }}
+        </p>
+    </div>
+{{ endblock }}

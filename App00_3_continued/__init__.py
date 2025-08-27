@@ -75,6 +75,7 @@ class EnterProlificId(Page):
             Participant variables for payoff are initialized to avoid key errors
             and guarantee for 1.5 (75 ECU) in case of dropout.
         """
+        player.participant.prolific_id = player.ProlificId
         player.participant.payoff_fix = 75
         player.participant.payoff_bonus_svo = 0
         player.participant.payoff_compensation_wait = 0
