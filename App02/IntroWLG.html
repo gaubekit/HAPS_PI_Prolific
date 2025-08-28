@@ -35,11 +35,7 @@
         <li>The success of the team project, depends on the <b>minimum</b> contribution of any team member.</li>
         <li>The success of the individual project only depends on the hours you allocate to it.</li>
         <li>Any hours (out of the 40) you do not allocate to the team project will be automatically allocated to your individual project.</li>
-
-        <br<br>
         <li>The team project is more valuable than the individual project, depending on the minimum contribution.</li>
-
-
     </ul>
 
 
@@ -50,8 +46,12 @@
     <h4 style="text-align: center;">Payoff Table</h4>
     {{ include_sibling 'PayoffTable.html' }}
 
-    Selecting your contribution to the team project via the radio buttons will highlight the corresponding row in the payoff table.
-    <br><br><b>Try out now:</b>
+
+    <p>
+        Selecting your contribution to the team project via the radio buttons will highlight the corresponding row in the payoff table.
+    </p>
+
+    <b>Try out</b> the radio buttons, this will <u>not</u> affect your payoff:
 
     <div class="radio-group">
         <span><span style="color:  rgba(54, 162, 235, 1);">Your</span> contribution:</span>
@@ -65,7 +65,49 @@
 </div>
 
 <br/>
-{{ next_button }}
+
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p style="color: gray; font-style: italic;">You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 30; // set minimum time
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // initial countdown-text
+        countdownEl.textContent = secondsLeft;
+
+        // update countdown
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
 
 
 <script>

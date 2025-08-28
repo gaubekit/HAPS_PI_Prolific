@@ -4,6 +4,14 @@ Stage 2: Decision - Bonus Payoff 2
 
 {{ block styles }}
 <style>
+    .btn-primary {
+        float: left;
+        display: none;
+        color: #fff;
+        background-color: #0d6efd;
+        border-color: #0d6efd
+    }
+
     .my-box {
         border: 1px solid #ccc;
         padding: 10px;
@@ -49,15 +57,7 @@ Stage 2: Decision - Bonus Payoff 2
 </div>
 <br>
 
-<!-- info -->
-<div id="decision-hint">
-    <p style="color: gray; font-style: italic;">You can proceed after reaching a decision</p>
-</div>
-
-<!-- Next-Button -->
-<div id="next-container" style="display: none;">
-    <p>{{ next_button }}</p>
-</div>
+ {{ next_button }}
 
 
 {{ endblock }}
@@ -103,13 +103,8 @@ Stage 2: Decision - Bonus Payoff 2
         rowA = Array.from(row.children);
         rowA.shift();
         rowA.forEach(el => el.classList.add("selected"));
-
-        // Hinweis weg
-        document.getElementById("decision-hint").style.display = "none";
-        // Next-Container anzeigen
-        document.getElementById("next-container").style.display = "block";
+        nextBtn.style.display = "block";
     }
-
 });
      document.onsubmit = () => {
             console.log("Next button clicked 2");
@@ -125,8 +120,7 @@ Stage 2: Decision - Bonus Payoff 2
             liveSend({
                 "wlg_decision": parseInt(selectedValue)
             });
-        }
-
+            }
 </script>
 
 {{ endblock }}

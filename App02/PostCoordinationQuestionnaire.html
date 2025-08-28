@@ -242,6 +242,46 @@
 
 <br/>
 
-<p>{{ next_button }}</p>
+<!-- Countdown -->
+<div id="countdown-container">
+    <p style="color: gray; font-style: italic;">You can proceed in <span id="countdown-timer"></span> seconds.</p>
+</div>
+
+<!-- Next-Button -->
+<div id="next-container" style="display: none;">
+    <p>{{ next_button }}</p>
+</div>
+
+
+<script>
+    const timeout_seconds = 30; // set minimum time
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // initial countdown-text
+        countdownEl.textContent = secondsLeft;
+
+        // update countdown
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
 
 {{ endblock }}

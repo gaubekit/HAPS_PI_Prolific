@@ -117,11 +117,11 @@ class Player(BasePlayer):
     comp3_check = models.IntegerField(initial=0)
     comp4_check = models.IntegerField(initial=0)
     comprehension1 = models.IntegerField(
-        label='<b>You contribute 0 hours and the minimum contribution by any team member is 10 hours:</b>', min=0, max=400)
+        label='To the team project, you contribute 0 hours and the minimum contribution by any team member is 10 hours:', min=0, max=400)
     comprehension2 = models.IntegerField(
-        label='<b>You contribute 20 hours and the minimum contribution by any team member is 10 hours:</b>', min=0, max=400)
+        label='To the team project, you contribute 20 hours and the minimum contribution by any team member is 10 hours:', min=0, max=400)
     comprehension3 = models.IntegerField(
-        label='<b>You contribute 40 hours and the minimum contribution by any team member is 30 hours:</b>', min=0, max=400)
+        label='To the team project, you contribute 40 hours and the minimum contribution by any team member is 30 hours:', min=0, max=400)
     comprehension4a = models.BooleanField(
         default=False,
         label='',
@@ -554,8 +554,8 @@ page_sequence = [
     TreatmentB,
     # MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
     WaitPage2,
-    VideoMeeting_dummy,  # TODO
-    # VideoMeeting,  # TODO
+    # VideoMeeting_dummy,  # TODO
+    VideoMeeting,  # TODO
     WaitPage3,
     PostVideoMeetingQuestionnaireII,
     IntroWLG,

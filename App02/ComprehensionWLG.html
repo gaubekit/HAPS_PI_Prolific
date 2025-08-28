@@ -19,7 +19,6 @@
         .radio-group {
             display: flex;
             gap: 20px;
-            margin-top: 20px;
         }
 
         .formfields-inline {
@@ -39,14 +38,14 @@
     <div class="my-box">
         Please answer the comprehension questions on this page.
         <br><br>
-        Depending on the hours you and your team members contribute to the team project, whald would be your bonus payoff for Stage?
+        <b>Considering the following 3 scenarios, what would be your bonus payoff for Stage 2?</b>
         <div class="formfields-inline">
             {{ formfield 'comprehension1' }}
             {{ formfield 'comprehension2' }}
             {{ formfield 'comprehension3' }}
         </div>
-        <br>
-        <b>What does your compensation depend on? Please select <u>all</u> applicable options.</b>
+
+        <b>What does your bonus payoff for Stage 2 depend on? Please select <u>all</u> applicable options.</b>
         <label><input type="checkbox" name="comprehension4a" class="form-check-input"/>&nbsp; &nbsp; Number of hours you work on the team project.</label>
         <br>
         <label><input type="checkbox" name="comprehension4b" class="form-check-input"/>&nbsp; &nbsp; Total number of hours worked by the team on the team project.</label>
@@ -73,21 +72,20 @@
         {{ endif }}
 
 
-    <h2 class="card-title text-center">Payoff Table</h2>
+    <h4 class="card-title text-center">Payoff Table</h4>
     {{ include_sibling 'PayoffTable.html' }}
 
 
+    <b>Try out</b> the radio buttons, this will <u>not</u> affect your payoff:
+
     <div class="radio-group">
-         <span><b>Try out</b> the radio buttons:</span>
+        <span><span style="color:  rgba(54, 162, 235, 1);">Your</span> contribution:</span>
         <label><input type="radio" name="choice" value="0"> 0 hour</label>
         <label><input type="radio" name="choice" value="10"> 10 hours</label>
         <label><input type="radio" name="choice" value="20"> 20 hours</label>
         <label><input type="radio" name="choice" value="30"> 30 hours</label>
         <label><input type="radio" name="choice" value="40"> 40 hours</label>
     </div>
-
-    </div>
-
 
 </div>
 

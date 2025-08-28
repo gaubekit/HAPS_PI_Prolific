@@ -97,8 +97,8 @@ class PayoffInformation(Page):
 page_sequence = [
     ConfirmAudioVideoInteract,
     BrowserCheck,
-    VVC0_dummy,  # TODO: use after 15:30 for testing (joint study conflict)
-    # VVC0,  # TODO: use only until 15:00 for testing (joint study conflict)
+    # VVC0_dummy,  # TODO: use after 15:30 for testing (joint study conflict)
+    VVC0,  # TODO: use only until 15:00 for testing (joint study conflict)
     EnterProlificId,
     GeneralInformation,
     PayoffInformation
