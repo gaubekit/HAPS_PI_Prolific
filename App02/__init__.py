@@ -48,9 +48,16 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
 
+    HEARTBEAT_THRESHOLD = 10 # 120
+
     # Central configuration of duration Video Meeting and Upload Time Limit
     VM_DURATION = 3 * 60  # TODO 7 minutes
     VM_UPLOAD_DURATION = 2 * 60  # TODO 2 minutes
+
+    AUDIO_GUIDE_APPEAR = 1 * 60
+    AUDIO_GUIDE_AUTO_SUBMIT = 2 * 60
+    AUDIO_GUIDE_DURATION = 5 * 60  # the duration of the mp3-file
+    AUDIO_GUIDE_TIME_AFTERWARDS = 2 * 60
 
 
 class Subsession(BaseSubsession):
@@ -68,6 +75,9 @@ class Player(BasePlayer):
 
     # Var for Treatment
     treatment_completed = models.StringField(initial='no')
+
+    # var storing notes in TreatmentB
+    treatment_notes = models.LongStringField()
 
     # Var to ensure that Video Meeting worked properly
     seeHear = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1'], [2, '2']], label='',
@@ -142,6 +152,22 @@ class Player(BasePlayer):
 
 
 # HELP FUNCTIONS
+def heartbeat_dropout_detection(participant): # TODO: Geht noch nicht -> Life Pages?
+    """
+    Checking the heart beat, to detect activ players.
+    If player is longer than  C.HEARTBEAT_THRESHOLD inaktiv → flagge as raised dropout and single player.
+    """
+    now = time.time()
+    last_seen = participant._last_page_timestamp or 0
+
+    if now - last_seen > C.HEARTBEAT_THRESHOLD:
+        participant.single_player = True
+        participant.raised_dropout = True
+        print(f'Player {participant.code} lost connection or closed browser for longer than {C.HEARTBEAT_THRESHOLD} and raised with this a dropout')
+        return True
+    return False
+
+
 # Functions for error messages in comprehension questions
 def comprehension1_error_message(player: Player, value):
     if value != 200:
@@ -299,21 +325,27 @@ class MyWaitPage(WaitPage):
 
 
 class InformOnScreenTimer(Page):
-    @staticmethod
-    def get_timeout_seconds(player):
-        if player.participant.single_player:
-            return 1
-        else:
-            return 5*60
+    form_model = 'player'
+    timeout_seconds = 5 * 60
 
     @staticmethod
     def before_next_page(player, timeout_happened):
-        print("timeout_happened is true: ", player.participant.code)
+        heartbeat_dropout_detection(player.participant)
+
         if timeout_happened:
+            print("timeout_happened is true. This player raised a dropout: ", player.participant.code)
+            player.participant.raised_dropout = True
             player.participant.single_player = True
 
 
 class WaitPage1(WaitPage):
+    @staticmethod
+    def after_all_players_arrive(group):
+        """ Check whether one of the players was labeled as single player. If so, all are labeled as single player """
+        if any(p.participant.single_player for p in group.get_players()):
+            for p in group.get_players():
+                p.participant.single_player = True
+
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
         for p in player.group.get_players():
@@ -337,12 +369,28 @@ class TreatmentB(Page):  # TODO add WOOP
     """
         This page handles one of two treatments, and therefore includes:
             - visualize personal and team-averaged Playground goals
+                ° same graph as in
+
             - Mental Contrasting
 
-        The treatment is handled via control-variable and a is_displayed staticmethod# TODO
+        The treatment is handled via control-variable and a is_displayed staticmethod. # TODO
 
+        Dropout detection is ensured via timeout_seconds:
+
+        timeout_seconds = (a) time for audio button  +  (b) audio button auto submit + (c) audio instruction
+                          + (d) time to click next-button
+
+            (a) 1 min in AUDIO_GUIDE_APPEAR
+            (b) 2 min in AUDIO_GUIDE_AUTO_SUBMIT
+            (c) 5 min in AUDIO_GUIDE_DURATION
+            (d) 2 min in AUDIO_GUIDE_TIME_AFTERWARDSF
+
+        --> timeout_seconds = 10 * 60 min
     """
     form_model = 'player'
+    form_fields = ['treatment_notes']
+    timeout_seconds = (C.AUDIO_GUIDE_APPEAR + C.AUDIO_GUIDE_AUTO_SUBMIT
+                       + C.AUDIO_GUIDE_DURATION + C.AUDIO_GUIDE_TIME_AFTERWARDS)
 
     # @staticmethod
     # def is_displayed(player):
@@ -372,18 +420,12 @@ class TreatmentB(Page):  # TODO add WOOP
             other=others_vm_pref
         )
 
-
-    # @staticmethod # TODO ACTIVATE, is deactivated for testing reasons
-    # def get_timeout_seconds(player):
-    #     if player.participant.single_player:
-    #         return 1
-    #     else:
-    #         return 5*60
-    #
-    # @staticmethod
-    # def before_next_page(player, timeout_happened):
-    #     if timeout_happened:
-    #         player.participant.single_player = True
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            print("timeout_happened is true. This player raised a dropout: ", player.participant.code)
+            player.participant.raised_dropout = True
+            player.participant.single_player = True
 
 
 class WaitPage2(WaitPage):
@@ -392,11 +434,21 @@ class WaitPage2(WaitPage):
         starts simultaneously. If a dropout happens, all group-members will be forwarded to Stage 3
     """
     @staticmethod
+    def after_all_players_arrive(group):
+        """ Check whether one of the players was labeled as single player. If so, all are labeled as single player """
+        if any(p.participant.single_player for p in group.get_players()):
+            print('dropout in TreatmentB detected')
+            for p in group.get_players():
+                p.participant.single_player = True
+        else:
+            print('TreatmentB i.o.')
+
+    @staticmethod
     def app_after_this_page(player, upcoming_apps):
         for p in player.group.get_players():
             if p.participant.single_player:
                 # if one of the others is a single player, all in the group are flagged as single player
-                player.participant.single_player = True
+                p.participant.single_player = True
 
         if player.participant.single_player:
             return 'App03'
@@ -554,8 +606,8 @@ page_sequence = [
     TreatmentB,
     # MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
     WaitPage2,
-    # VideoMeeting_dummy,  # TODO
-    VideoMeeting,  # TODO
+    VideoMeeting_dummy,  # TODO
+    # VideoMeeting,  # TODO
     WaitPage3,
     PostVideoMeetingQuestionnaireII,
     IntroWLG,

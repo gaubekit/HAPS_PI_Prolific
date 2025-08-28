@@ -109,22 +109,16 @@
         <div class="right-container">
             <div id="instruction-container">
                 <p>Please take a moment to consider <span style="color: rgba(54, 162, 235, 1);">your goals</span> and your <span style="color: rgba(255, 99, 132, 1);">team members' goals</span>.</p>
-                <p>After {{ C.AUDIO_GUIDE_APPEAR }} seconds, a play button will become visible. Click the button and follow the audio instructions.</p>
-            </div>
-
-            <div id="instruction-container-updated" style="display:none;">
-                <p>Please take a moment to consider <span style="color: rgba(54, 162, 235, 1);">your goals</span> and your <span style="color: rgba(255, 99, 132, 1);">team members' goals</span>.</p>
-                <p>
-                    Click the button as soon as you're ready and follow the audio instructions.
-                    The audio will automatically start in <span id="auto-start-timer">{{ C.AUDIO_GUIDE_AUTO_SUBMIT }}</span> seconds.
-                </p>
+                <p>After 60 seconds, a play button will become visible. Click the button and follow the audio instructions.</p>
             </div>
 
             <div id="instruction-container-off" style="display:none;">
-                <p>Please follow the audio instructions.</p>
+                <p>
+                    Please follow the audio instructions.
+                </p>
             </div>
 
-            <div id="audio-timer">{{ C.AUDIO_GUIDE_APPEAR }} seconds remaining...</div>
+            <div id="audio-timer">60 seconds remaining...</div>
 
             <button type="button" id="play-audio-btn" style="display:none;">▶ Play Audio Instruction</button>
 
@@ -141,91 +135,86 @@
         </div>
     </div>
     <br>
-    Please <u>do not</u> refresh this page!
+    Please <u>do not</u> refresh this page! The Next-Button will become available after following the audio instructions.
 </div>
 
-<br>
-
-<!-- Countdown for NEXT button -->
-<div>
-    <!-- Statushinweis -->
-    <div id="countdown-container">
-        <p style="color: gray; font-style: italic;">
-            The Next-Button will become available after the audio guide concluded.
-        </p>
-    </div>
-
-    <!-- Next-Button -->
-    <div id="next-container" style="display: none; text-align: left; margin-top: 20px;">
-        <p>{{ next_button }}</p>
-    </div>
+<!-- Countdown for NEXT button (appears after audio ends) -->
+<div id="next-container" style="display: none; text-align: left; margin-top: 20px;">
+    <p>{{ next_button }}</p>
 </div>
 
 <script>
     const goalDescriptions = {{ session.vm_goal_description }};
+
     const customGridLinesPlugin = {
-            beforeDraw(chart) {
-                const ctx = chart.ctx;
-                const scale = chart.scales['scale'];
-                ctx.save();
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
-                [-3, 0, 3].forEach(val => {
-                    const y = scale.getDistanceFromCenterForValue(val);
-                    ctx.beginPath();
-                    ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
-                    ctx.stroke();
-                });
-                ctx.restore();
+        beforeDraw(chart) {
+            const ctx = chart.ctx;
+            const scale = chart.scales['scale'];
+            ctx.save();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            [-3, 0, 3].forEach(val => {
+                const y = scale.getDistanceFromCenterForValue(val);
+                ctx.beginPath();
+                ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
+                ctx.stroke();
+            });
+            ctx.restore();
+        }
+    };
+
+
+
+
+    const customRadialLinesPlugin = {
+        beforeDraw(chart) {
+            const ctx = chart.ctx;
+            const scale = chart.scales['scale'];
+            const cx = scale.xCenter;
+            const cy = scale.yCenter;
+            ctx.save();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            const totalAxes = scale.pointLabels.length;
+            for (let i = 0; i < totalAxes; i++) {
+                const angle = scale.getIndexAngle(i) - Math.PI / 2;
+                const rMin = scale.getDistanceFromCenterForValue(-3);
+                const rMax = scale.getDistanceFromCenterForValue(3);
+                ctx.beginPath();
+                ctx.moveTo(cx + rMin * Math.cos(angle), cy + rMin * Math.sin(angle));
+                ctx.lineTo(cx + rMax * Math.cos(angle), cy + rMax * Math.sin(angle));
+                ctx.stroke();
             }
-        };
-        const customRadialLinesPlugin = {
-            beforeDraw(chart) {
-                const ctx = chart.ctx;
-                const scale = chart.scales['scale'];
-                const cx = scale.xCenter;
-                const cy = scale.yCenter;
-                ctx.save();
-                ctx.strokeStyle = '#ccc';
-                ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
-                const totalAxes = scale.pointLabels.length;
-                for (let i = 0; i < totalAxes; i++) {
-                    const angle = scale.getIndexAngle(i) - Math.PI / 2;
-                    const rMin = scale.getDistanceFromCenterForValue(-3);
-                    const rMax = scale.getDistanceFromCenterForValue(3);
-                    ctx.beginPath();
-                    ctx.moveTo(cx + rMin * Math.cos(angle), cy + rMin * Math.sin(angle));
-                    ctx.lineTo(cx + rMax * Math.cos(angle), cy + rMax * Math.sin(angle));
-                    ctx.stroke();
-                }
-                ctx.restore();
-            }
-        };
-        const customTickLabelsPlugin = {
-            afterDraw(chart) {
-                const ctx = chart.ctx;
-                const scale = chart.scales['scale'];
-                const cx = scale.xCenter;
-                const cy = scale.yCenter;
-                ctx.save();
-                ctx.fillStyle = '#666';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                const angle1 = scale.getIndexAngle(0) - Math.PI / 2;
-                const angle2 = scale.getIndexAngle(1) - Math.PI / 2;
-                const midAngle = (angle1 + angle2) / 2;
-                [-3, 0, 3].forEach(val => {
-                    const r = scale.getDistanceFromCenterForValue(val) -10;
-                    const x = cx + r * Math.cos(midAngle);
-                    const y = cy + r * Math.sin(midAngle);
-                    ctx.fillText(val, x, y);
-                });
-                ctx.restore();
-            }
-        };
+            ctx.restore();
+        }
+    };
+
+    const customTickLabelsPlugin = {
+        afterDraw(chart) {
+            const ctx = chart.ctx;
+            const scale = chart.scales['scale'];
+            const cx = scale.xCenter;
+            const cy = scale.yCenter;
+            ctx.save();
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const angle1 = scale.getIndexAngle(0) - Math.PI / 2;
+            const angle2 = scale.getIndexAngle(1) - Math.PI / 2;
+            const midAngle = (angle1 + angle2) / 2;
+            [-3, 0, 3].forEach(val => {
+                const r = scale.getDistanceFromCenterForValue(val) -10;
+                const x = cx + r * Math.cos(midAngle);
+                const y = cy + r * Math.sin(midAngle);
+                ctx.fillText(val, x, y);
+            });
+            ctx.restore();
+        }
+    };
+
 
     function createRadarChart() {
         const ctx = document.getElementById('myRadarChart').getContext('2d');
@@ -293,30 +282,25 @@
                     padding: 20
                 }
             },
+
             plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin ]
         });
     }
 
     createRadarChart();
 
-    // Variablen aus Backend
-    const appearDelay = {{ C.AUDIO_GUIDE_APPEAR }};
-    const autoSubmitDelay = {{ C.AUDIO_GUIDE_AUTO_SUBMIT }};
-
+    // Countdown for play button
+    let countdown = 60;
     const timerEl = document.getElementById("audio-timer");
     const playBtn = document.getElementById("play-audio-btn");
     const audioEl = document.getElementById("audio-player");
     const progressContainer = document.getElementById("progress-container");
     const progressBar = document.getElementById("audio-progress");
     const notesField = document.getElementById("notes-field");
-    const instructionContainer = document.getElementById("instruction-container");
-    const instructionContainerUpdated = document.getElementById("instruction-container-updated");
-    const instructionContainerOff = document.getElementById("instruction-container-off");
-    const countdownContainer = document.getElementById("countdown-container");
     const nextContainer = document.getElementById("next-container");
+    const instructionContainer = document.getElementById("instruction-container");
+    const instructionContainerOff = document.getElementById("instruction-container-off");
 
-    // Countdown bis Play-Button erscheint
-    let countdown = appearDelay;
     const countdownInterval = setInterval(() => {
         countdown--;
         timerEl.textContent = countdown + " seconds remaining...";
@@ -324,53 +308,28 @@
             clearInterval(countdownInterval);
             timerEl.style.display = "none";
             playBtn.style.display = "inline-block";
-            instructionContainer.style.display = "none";
-            instructionContainerUpdated.style.display = "block";
-
-            // Auto-Start Countdown anzeigen
-            let autoCountdown = autoSubmitDelay;
-            const autoStartTimerEl = document.getElementById("auto-start-timer");
-            const autoInterval = setInterval(() => {
-                autoCountdown--;
-                if (autoCountdown >= 0) {
-                    autoStartTimerEl.textContent = autoCountdown;
-                }
-                if (autoCountdown <= 0) {
-                    clearInterval(autoInterval);
-                }
-            }, 1000);
-
-            // Auto-Start nach autoSubmitDelay
-            setTimeout(() => {
-                if (playBtn.style.display !== "none") {
-                    startAudio();
-                }
-            }, autoSubmitDelay * 1000);
         }
     }, 1000);
 
-    function startAudio() {
+    playBtn.addEventListener("click", () => {
         playBtn.style.display = "none";
-        instructionContainerUpdated.style.display = "none";
+        instructionContainer.style.display = "none";
         instructionContainerOff.style.display = "block";
         progressContainer.style.display = "block";
         notesField.style.display = "block";
         audioEl.play();
-    }
+    });
 
-    playBtn.addEventListener("click", startAudio);
-
-    // Progress-Bar updaten
+    // Update progress bar
     audioEl.addEventListener("timeupdate", () => {
         if (audioEl.duration) {
             progressBar.value = audioEl.currentTime / audioEl.duration;
         }
     });
 
-    // Nach Ende der Audio -> Hinweis ausblenden, Next-Button einblenden
-      audioEl.addEventListener("ended", () => {
-        countdownContainer.style.display = "none";   // Statushinweis ausblenden
-        nextContainer.style.display = "block";       // Next-Button einblenden
+    // Show NEXT button after audio ends
+    audioEl.addEventListener("ended", () => {
+        nextContainer.style.display = "block";
     });
 
     // Prevent page refresh
