@@ -143,15 +143,16 @@
     <div id = "box1" class="my-box">
         <div id="message">
 
-            The virtual team meeting has started and you have a total of <b> 7 minutes to discuss types of vacation (camping, beach, city trips etc.).
-            In the Jitsi meeting, you can see a timer at the top center.</b> The virtual team meeting then ends automatically, and you will proceed to the next page.
-            <br/>Please <b><u>do not</u></b> refresh this page.
-            Please click <b><u>allow</u></b> on the popup for permission to record audio, otherwise you cannot proceed with the study after the video call.
+           The virtual team meeting has started. Please click <b><u>allow</u></b> on the popup for permission to record audio.
+            <br><br>
+           You have a total of <b> 7 minutes to discuss types of vacation </b> (camping, beach, city trips etc.).
+           The progress bar indicates the time left for discussion. The upload for the audio data starts automatically afterwards. <u>Do not</u> refresh this page.
+
 
            <!-- Provides the clickable "+", allowing to display additional Information = "Note: " -->
             <div class="collapsible-container" onclick="toggleContent()">
                 <span id="icon" class="icon">+</span>
-                <span>Note:</span>
+                <span>Technical notes:</span>
             </div>
 
             <!-- Content that is displayed via + "Note: " -->
@@ -234,7 +235,7 @@
         <!-- standard grey box for content = Questionnaires -->
         <div class="my-box">
             <form>
-                <p>You will be forwarded to the next page after {{ C.VM_UPLOAD_DURATION}} seconds. Please answer the questions below:</p>
+                <p>Please answer the questions below before the timer elapses, and you are forwarded automatically: <span id="countdown-timer" style="font-weight: bold;"></span></p>
 
                 <!-- See & Hear -->
                 <b>Please choose the closest option about the quality of the virtual team meeting:</b>
@@ -315,6 +316,34 @@
               }
             </script>
         </div>
+
+        <br>
+
+        <!--Countdown-Hinweis -->
+        <div id="countdown-container">
+            <p style="color: gray; font-style: italic;">
+                This page proceeds automatically.
+            </p>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let remaining = {{ timeout_seconds }};
+
+                document.getElementById("countdown-timer").textContent = remaining;
+
+                let interval = setInterval(function () {
+                    remaining--;
+                    if (remaining <= 0) {
+                        clearInterval(interval);
+                        document.getElementById("countdown-timer").textContent = "0";
+                    } else {
+                        document.getElementById("countdown-timer").textContent = remaining;
+                    }
+                }, 1000);
+            });
+        </script>
+
     </div>
 
 
@@ -612,15 +641,12 @@
                         if (api) api.dispose();
 
                         document.getElementById('message').innerHTML = `
-                            <div style="background-color: #FFCCCC; padding: 10px; margin: 0;">
-                              <p style="color: #C9224A;">
-                                Uploading recording... Please wait until the upload is finished.
-                                Please <u><b>do not refresh</b></u> the page during this time. <br/><br/>
-                                While uploading, please provide feedback on the virtual team meeting below.<br/><br/>
-                                <b>Please make sure to select at least one of the options below.</b> <br/><br/>
-                                Once the upload is finished, please answer the question below and click next.<br/><br/>
-                                <b>If the upload takes too long, you will automatically proceed to the next page after
-                                <b>two minutes at most</b>.</b>
+                            <div style="background-color: #e3f5d3; padding: 10px; margin: 0;">
+                              <p style="color: #13752d;">
+                                Uploading audio recording..
+                                </br></br>
+                                You will be forwarded automatically within two minutes. <br>
+                                Meanwhile, <b>please answer the questions below!</b>
                               </p>
                             </div>
                         `;
@@ -671,13 +697,12 @@
                         }
 
                         document.getElementById('message').innerHTML = `
-                            <div style="background-color: #FFCCCC; padding: 10px; margin: 0;">
-                              <p style="color: #C9224A;">
-                                Uploading recording... Please wait until the upload is finished.
-                                While uploading, you can provide feedback on the virtual team meeting below. <br/><br/>
-                                Once the upload is finished, you will automatically proceed to the next page. <br/><br/>
-                                <b>If the upload takes too long, you will automatically proceed to the next page after
-                                <b>two minutes at most</b>.</b>
+                            <div style="background-color: #e3f5d3; padding: 10px; margin: 0;">
+                              <p style="color: #13752d;">
+                                Uploading audio recording..
+                                </br></br>
+                                You will be forwarded automatically within two minutes. <br>
+                                Meanwhile, <b>please answer the questions below!</b>
                               </p>
                             </div>
                         `;

@@ -76,7 +76,7 @@
     {{ include_sibling 'PayoffTable.html' }}
 
 
-    <b>Try out</b> the radio buttons, this will <u>not</u> affect your payoff:
+    <b>Try out</b> the radio buttons. The radio button on this page will <u>not</u> affect your payoff:
 
     <div class="radio-group">
         <span><span style="color:  rgba(54, 162, 235, 1);">Your</span> contribution:</span>
@@ -90,7 +90,48 @@
 </div>
 
 <br/>
-{{ next_button }}
+<div>
+    <!-- Countdown-Hinweis -->
+    <div id="countdown-container">
+        <p style="color: gray; font-style: italic;">You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+
+    <!-- Next-Button erst nach Zeit -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+</div>
+
+<script>
+    const timeout_seconds = 30; // set minimum time
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const countdownEl = document.getElementById("countdown-timer");
+        let secondsLeft = timeout_seconds;
+
+        // initial countdown-text
+        countdownEl.textContent = secondsLeft;
+
+        // update countdown
+        const countdownInterval = setInterval(() => {
+            secondsLeft -= 1;
+            countdownEl.textContent = secondsLeft;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("countdown-container").style.display = "none";
+                document.getElementById("next-container").style.display = "block";
+            }
+        }, 1000);
+    });
+
+    // Prevent page refresh (F5, Ctrl+R, Reload)
+    document.addEventListener("keydown", function (e) {
+        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+            e.preventDefault();
+        }
+    });
+</script>
 
 {{ endblock }}
 

@@ -1,10 +1,12 @@
 from otree.api import *
+import time
 
 
 doc = """
 Your app description
 """
 
+last_active = {}
 
 class C(BaseConstants):
     NAME_IN_URL = 'Playground'
@@ -38,8 +40,23 @@ class Player(BasePlayer):
                                          attrs={"invisible": True}, default=0)
 
 
-
 # PAGES
+class HeartBeat(Page):
+    @staticmethod
+    def live_method(player, data):
+        now = time.time()
+        p = player.participant
+        page = p._current_page_name
+
+        # update last active time for current player
+        last_active[p.code] = now
+
+        if page == "HeartBeat" and last_active.get(p.code, 0) > now - 0.8:
+            print(f'player {p.code} was active: {last_active[p.code]}')
+        else:
+            print(f'!INACTIVE playe:r {p.code} {last_active[p.code]}')
+
+
 class WaitPageGroup(WaitPage):
     group_by_arrival_time = True
 
@@ -157,10 +174,11 @@ class VideoMeetingTest(Page):
 
 page_sequence = [
     WaitPageGroup,
-    MyPage0,
-    MyPage,
-    WaitPage3,
-    MyPage2,
+    HeartBeat,
+    # MyPage0,
+    # MyPage,
+    # WaitPage3,
+    # MyPage2,
 
     #VideoMeetingTest,
 ]

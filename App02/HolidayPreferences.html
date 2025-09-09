@@ -1,0 +1,210 @@
+{{ extends 'global/Page.html' }}
+{{ block title }}Stage 2: Preparing Video Meeting{{ endblock }}
+
+{{ block content }}
+    
+    <style>
+        .my-box {
+            border: 1px solid #ccc;
+            padding: 18px;
+            background-color: #f9f9f9;
+            font-family: sans-serif;
+        }
+
+        .slider-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 22px 0;
+            border-top: 1px solid #ccc;
+            column-gap: 40px;
+        }
+
+        .slider-grid:first-child {
+            border-top: none;
+        }
+
+        .slider-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .slider-wrapper span.label {
+            width: 80px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 80%;
+        }
+
+        .slider-ticks,
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            width: 94%;
+            left: 3%;
+            pointer-events: none;
+        }
+
+        .slider-ticks {
+            top: 14px;
+        }
+
+        .slider-labels {
+            top: 25px;
+            font-size: 0.8em;
+            width: 94%;
+            left: 2%;
+            color: #333;
+        }
+
+        .slider-ticks span {
+            width: 1px;
+            height: 10px;
+            background-color: black;
+            display: block;
+        }
+
+        .slider-labels span {
+            text-align: center;
+            width: 1px;
+            transform: translateX(-50%);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            height: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            background: #ccc;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            background: #007bff;
+            border-radius: 50%;
+            margin-top: -6px;
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-track {
+            background: #ccc;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            background: #007bff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider-section > div:first-child {
+            text-align: center;
+        }
+    </style>
+    
+    <div class="my-box">
+        On the next page, you will have the chance to <b>get to know the other team members</b> in a virtual team meeting.<br/>
+        The virtual team meeting will last <b>7 minutes </b> and will end automatically. <br/><br/>
+
+        To give you some input for starting the conversation, we ask each of you to evaluate different types of vacation before the meeting starts.
+        Please feel free to discuss your evaluation with the others during the meeting. You are of course welcome to chat about other topics as well.
+
+        <br><br>
+        <b>Please indicate how much you would enjoy the following types of vacation:</b>
+        <br><br>
+
+        {% for field, label in holidays %}
+        <div class="slider-grid">
+            <div>{{ label }}</div>
+            <div class="slider-section">
+                <div class="slider-wrapper">
+                    <span class="label">Not at all</span>
+                    <div class="slider-container">
+                        <div class="slider-ticks">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="slider-labels">
+                            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+                        </div>
+                        <input type="range" name="{{ field }}" min="1" max="7" step="1" class="persist">
+                    </div>
+                    <span class="label">Totally</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    <br>
+    
+    <!-- Countdown -->
+    <div id="countdown-container">
+        <p style="color: gray; font-style: italic;">You can proceed in <span id="countdown-timer"></span> seconds.</p>
+    </div>
+    
+    
+    <!-- Next-Button -->
+    <div id="next-container" style="display: none;">
+        <p>{{ next_button }}</p>
+    </div>
+    
+    
+    <script>
+        const timeout_seconds = 60; // set minimum time
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            const countdownEl = document.getElementById("countdown-timer");
+            let secondsLeft = timeout_seconds;
+    
+            // initial countdown-text
+            countdownEl.textContent = secondsLeft;
+    
+            // update countdown
+            const countdownInterval = setInterval(() => {
+                secondsLeft -= 1;
+                countdownEl.textContent = secondsLeft;
+    
+                if (secondsLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("countdown-container").style.display = "none";
+                    document.getElementById("next-container").style.display = "block";
+                }
+            }, 1000);
+        });
+    
+        // Prevent page refresh (F5, Ctrl+R, Reload)
+        document.addEventListener("keydown", function (e) {
+            if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
+                e.preventDefault();
+            }
+        });
+    </script>        
+
+
+{{ endblock }}

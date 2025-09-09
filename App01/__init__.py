@@ -177,6 +177,7 @@ class SurveySVO(Page):
                 + player.participant.payoff_bonus_svo
                 + player.participant.payoff_compensation_svo_other
         )
+        player.participant.payoff_total = round(player.participant.payoff_total, 2)
 
         print('updated total payoff: ', player.participant.payoff_total)
 

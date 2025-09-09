@@ -35,6 +35,7 @@ PARTICIPANT_FIELDS = [
     'other_players_ids',
     'raised_dropout',
     'arrival_time_for_grouping',
+    # 'holiday_list', if using participant.vars['holiday_list'], specifying here is not needed
     # Social Value Orientation
     'svo_to_self',
     'svo_from_other',

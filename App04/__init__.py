@@ -154,7 +154,7 @@ class ThankYouII(Page):
         process_data(player)
 
         return dict(
-            payoff_total_pound=player.payoff_total_pound,
+            payoff_total_pound=round(player.payoff_total_pound, 2),
             payoff_fix_pound=player.payoff_fix_pound,
             payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
             svo_to_self=player.svo_to_self,
@@ -188,7 +188,7 @@ class ThankYouIII(Page):
         process_data(player)
 
         return dict(
-            payoff_total_pound=player.payoff_total_pound,
+            payoff_total_pound=round(player.payoff_total_pound, 2),
             payoff_fix_pound=player.payoff_fix_pound,
             payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
             svo_to_self=player.svo_to_self,
@@ -223,7 +223,7 @@ class ThankYouIV(Page):
         process_data(player)
 
         return dict(
-            payoff_total_pound=player.payoff_total_pound,
+            payoff_total_pound=round(player.payoff_total_pound, 2),
             payoff_fix_pound=player.payoff_fix_pound,
             payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
             svo_to_self=player.svo_to_self,
@@ -253,7 +253,7 @@ class ThankYouV(Page):
         process_data(player)
 
         return dict(
-            payoff_total_pound=player.payoff_total_pound,
+            payoff_total_pound=round(player.payoff_total_pound, 2),
             payoff_fix_pound=player.payoff_fix_pound,
             payoff_bonus_svo_pound=player.payoff_bonus_svo_pound,
             svo_to_self=player.svo_to_self,

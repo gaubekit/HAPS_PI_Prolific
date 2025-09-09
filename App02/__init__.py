@@ -7,38 +7,44 @@ c = cu
 doc = ("""
 
 This App handel Stage 2, where 3 participants formed a team:
+
 - Treatment A: Spider Graph
 - Treatment B: Spider Graph + Mental Contrasting (MC)
-
 
 - 7 min video meeting
     + 2min upload time
     + Questionnaire 1/3: SeeHear, Background, Human
+
 - Questionnaire 2/3: Nasa TLX, Zoom Fatigue & Exhaustion
+
 - Intro Weakest Link Game (WLG)
 - Comprehension WLG
 - Decision WLG (One-Shot)
+
 - Questionnaire 3/3: Mental Model (compare with initial answer) + decision reasoning (Spider Graph, MC, Video Meeting)
 
 
 Players only arrive in this app, if it was possible to form a team. (flag "assigned_to_team" = True)
-The initial wait saves the player codes of the group members and calculates payoff_bonus_svo
+The initial waitpage saves the player codes of the group members and update payoff_bonus_svo
     -> upd. payoff_total = payoff_fix + payoff_bonus_svo + payoff_compensation_wait
 
 Dropout Handling I:
     - Guarantee that the video meeting completes (only situation where the participants interact in realtime)
-    - OnPage-Timer and WaitPages control the "experiment" that participants proceed in the same pase
-    -  if timeout happens -> all players are tagged as "single_player" and forwarded to Stage 3
-                          -> the participant who raised the timeout is tagged as "raised_timeout" and
-                             get no compensation for Stage 2 (calculated at the end of Stage 3)
-                          -> the other two will be compensated with 150 ECU (3 pound) (at the end of Stage 3)
+    - OnPage-Timer and WaitPages control that participants proceed in the same pase
+    - Additionally a heartbeat_detection functions monitors "active players" -> tab closed / disconnect
+    
+    - if timeout_happens or inactive player detected:
+        -> all players are tagged as "single_player" and forwarded to Stage 3
+        -> the participant who raised the timeout is tagged as "raised_timeout" and
+         get no compensation for Stage 2
+        -> the other two will be compensated with 150 ECU (3 pound)
                           
 Dropout Handling II:
-    - Once participants completed the video meeting -> no live interaction anymore
-    - no OnPage-Timer and no WaitPages -> pace is not controlled after WaitPage3
-    - On the very last page of Stage 3 player code of group members will checked for WLG Decision
+    - Once participants completed the video meeting without dropout -> no live interaction anymore
+    - no dropout detection after WaitPage3
+    - On the very last page of Stage 3 player.particpant.code of group members will checked for WLG Decision
         -> if decision made by all players: calculate payoff_bonus_wlg
-        -> else: payoff_bonus_wlg = 0; payoff_compensation_wlg_dropout = 150 ECU
+        -> else: payoff_bonus_wlg, payoff_compensation_wlg_dropout = 0, 150 (ECU)
         
 """)
 
@@ -48,7 +54,7 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
 
-    HEARTBEAT_THRESHOLD = 10 # 120
+    HEARTBEAT_THRESHOLD = 20  # 120
 
     # Central configuration of duration Video Meeting and Upload Time Limit
     VM_DURATION = 3 * 60  # TODO 7 minutes
@@ -66,6 +72,14 @@ class Subsession(BaseSubsession):
 
 class Group(BaseGroup):
      pass
+
+
+# def make_field(label):
+#     return models.IntegerField(
+#         choices=[1, 2, 3, 4, 5, 6, 7],
+#         label=label,
+#         widget=widgets.RadioSelect,
+#     )
 
 
 class Player(BasePlayer):
@@ -150,22 +164,91 @@ class Player(BasePlayer):
         widget=widgets.CheckboxInput,
         blank=True)
 
+    holidays_1 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Sun, sea, and beach vacation')
+    holidays_2 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Party vacation')
+    holidays_3 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Winter sports vacation')
+    holidays_4 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='City trip')
+    holidays_5 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Backpacking vacation')
+    holidays_6 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Excursion')
+    holidays_7 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Camping vacation')
+    holidays_8 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Cruise vacation')
+
 
 # HELP FUNCTIONS
-def heartbeat_dropout_detection(participant): # TODO: Geht noch nicht -> Life Pages?
-    """
-    Checking the heart beat, to detect activ players.
-    If player is longer than  C.HEARTBEAT_THRESHOLD inaktiv → flagge as raised dropout and single player.
-    """
-    now = time.time()
-    last_seen = participant._last_page_timestamp or 0
+# def heartbeat_dropout_detection(player, threshold):
+#     """
+#     Detect inactive players based on heartbeat pings.
+#     If a player has been inactive longer than the given threshold,
+#     they are flagged with participant fields `single_player=True` and `raised_dropout=True`.
+#
+#     Args:
+#         player (Player): The current player object.
+#         threshold (int): Timeout in seconds, typically set from `C.HEARTBEAT_THRESHOLD`.
+#
+#     Usage:
+#         - Call inside `live_method()`.
+#         - Requires global dictionary `last_active` to track last activity.
+#         - Requires participant fields `single_player` and `raised_dropout`.
+#
+#     Backend requirements:
+#         - `vars_for_template(player)` must pass `dropout_threshold=C.HEARTBEAT_THRESHOLD`
+#           to make the threshold available in the frontend.
+#
+#     Frontend requirements:
+#         - Include `heartbeat.js` in template:
+#             <script src="{% static 'heartbeat.js' %}"></script>
+#             <script>
+#                 startHeartbeat(800, {{ dropout_threshold }});
+#             </script>
+#     """
+#     last_active = {}  # participant.code -> timestamp
+#     now = time.time()
+#     code = player.participant.code
+#
+#     #player_on_page = player.participant._current_page_name
+#     # arrival = player.participant._last_page_timestamp
+#
+#     if player_on_page == current_page_name:
+#         last_active[code] = now
+#
+#     active_players = [
+#         p for p in player.subsession.get_players()
+#         if p.participant._current_page_name == page_name
+#            and last_active.get(p.participant.code, 0) > now - threshold]
 
-    if now - last_seen > C.HEARTBEAT_THRESHOLD:
-        participant.single_player = True
-        participant.raised_dropout = True
-        print(f'Player {participant.code} lost connection or closed browser for longer than {C.HEARTBEAT_THRESHOLD} and raised with this a dropout')
-        return True
-    return False
+    #
+    #
+    # # Check all players in the group for inactivity
+    # for p in player.group.get_players():
+    #     last_active.get(p.participant.code, 0)
+    #
+    #     # If last activity exceeds threshold → flag as dropout
+    #     if p.participant._current_page_name == page_name and last_active.get(p.participant.code, 0) > now - threshold:
+    #             p.participant.raised_dropout = True
+    #             p.participant.single_player = True
+    #             print(f"Dropout detected after {threshold} seconds inactivity: {p.participant.code}")
+    #
+    #             # TODO -> clarify: sollte frontendseitig ein auto-submit erzwungen werden?
+
+
+# Functions to handle grouping and waiting_too_long on waitpages
+def waiting_too_long(player):
+    """
+    Returns boolean, indicating whether the players waiting to long (after 60 seconds),
+    guaranteeing that player can't get stuck
+    """
+    return time.time() - player.participant.arrival_time_for_grouping > 60
+
+
+def group_by_arrival_time_method(subsession, waiting_players):
+    """ methode is called implicitly when group_by_arrival_time = True """
+    if len(waiting_players) >= 3:
+        return waiting_players[:3]
+    for player in waiting_players:
+        if waiting_too_long(player):
+            player.participant.single_player = True
+            # make a single-player group.
+            return [player]
 
 
 # Functions for error messages in comprehension questions
@@ -229,25 +312,6 @@ def comprehension4c_error_message(player: Player, value):
     return None
 
 
-def waiting_too_long(player):
-    """
-    Returns boolean, indicating whether the players waiting to long (after 60 seconds),
-    guaranteeing that player can't get stuck
-    """
-    return time.time() - player.participant.arrival_time_for_grouping > 60
-
-
-def group_by_arrival_time_method(subsession, waiting_players):
-    """ methode is called implicitly when group_by_arrival_time = True """
-    if len(waiting_players) >= 3:
-        return waiting_players[:3]
-    for player in waiting_players:
-        if waiting_too_long(player):
-            player.participant.single_player = True
-            # make a single-player group.
-            return [player]
-
-
 # PAGES
 class MyWaitPage(WaitPage):
     """
@@ -302,6 +366,7 @@ class MyWaitPage(WaitPage):
                         + p.participant.payoff_compensation_wait
                         + p.participant.payoff_compensation_svo_other
                 )
+                p.participant.payoff_total = round(p.participant.payoff_total, 2)
 
                 print('payoff svo: ', p.participant.payoff_bonus_svo)
                 print('payoff svo compensation: ', p.participant.payoff_compensation_svo_other)
@@ -317,6 +382,7 @@ class MyWaitPage(WaitPage):
                         + p.participant.payoff_compensation_wait
                         + p.participant.payoff_compensation_svo_other
                 )
+                p.participant.payoff_total = round( p.participant.payoff_total, 2)
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -325,15 +391,27 @@ class MyWaitPage(WaitPage):
 
 
 class InformOnScreenTimer(Page):
+    """
+        This page is thought to inform players about the on_screen timer, which raise drop_out if players
+        do not proceed in time.
+    """
+
     form_model = 'player'
     timeout_seconds = 5 * 60
 
+    # @staticmethod
+    # def vars_for_template(player):
+    #     return dict(dropout_threshold=C.HEARTBEAT_THRESHOLD)
+    #
+    # @staticmethod
+    # def live_method(player, data):
+    #     # heartbeat_dropout_detection(player, C.HEARTBEAT_THRESHOLD)
+    #     return {player.id_in_group: dict(ok=True)}
+
     @staticmethod
     def before_next_page(player, timeout_happened):
-        heartbeat_dropout_detection(player.participant)
-
         if timeout_happened:
-            print("timeout_happened is true. This player raised a dropout: ", player.participant.code)
+            print("timeout_happened is true in InformOnScreenTimer. This player raised a dropout: ", player.participant.code)
             player.participant.raised_dropout = True
             player.participant.single_player = True
 
@@ -389,9 +467,11 @@ class TreatmentB(Page):  # TODO add WOOP
     """
     form_model = 'player'
     form_fields = ['treatment_notes']
-    timeout_seconds = (C.AUDIO_GUIDE_APPEAR + C.AUDIO_GUIDE_AUTO_SUBMIT
-                       + C.AUDIO_GUIDE_DURATION + C.AUDIO_GUIDE_TIME_AFTERWARDS)
+    # TODO deactivated for testing
+    # timeout_seconds = (C.AUDIO_GUIDE_APPEAR + C.AUDIO_GUIDE_AUTO_SUBMIT
+    #                    + C.AUDIO_GUIDE_DURATION + C.AUDIO_GUIDE_TIME_AFTERWARDS)
 
+    # TODO deactivated for testing
     # @staticmethod
     # def is_displayed(player):
     #     return player.participant.treatment == 'WOOP'
@@ -420,12 +500,13 @@ class TreatmentB(Page):  # TODO add WOOP
             other=others_vm_pref
         )
 
-    @staticmethod
-    def before_next_page(player, timeout_happened):
-        if timeout_happened:
-            print("timeout_happened is true. This player raised a dropout: ", player.participant.code)
-            player.participant.raised_dropout = True
-            player.participant.single_player = True
+    # TODO deactivated for testing
+    # @staticmethod
+    # def before_next_page(player, timeout_happened):
+    #     if timeout_happened:
+    #         print("timeout_happened is true in TreatmentB. This player raised a dropout: ", player.participant.code)
+    #         player.participant.raised_dropout = True
+    #         player.participant.single_player = True
 
 
 class WaitPage2(WaitPage):
@@ -455,8 +536,49 @@ class WaitPage2(WaitPage):
         return None
 
 
+class HolidayPreferences(Page):
+    """
+        This asks about holiday-preferences, with the goal to actively prime the discussion topic.
+
+        Note: The methods get_form_fields and vars_for_template shuffle the formfields (types of vataion) in an
+              random order. The usage of participant.vars['some_var'] allows for usage of participant fields
+              without defining in settings.py. Because vars_for_template reloads get_form_fields, the non-existing
+              participant variable is used to set the field only once (in the shuffled order).
+    """
+    form_model = 'player'
+
+    @staticmethod
+    def get_form_fields(player):
+        try:
+            return [f for f, _ in player.participant.vars['holiday_list']]
+        except KeyError:
+            return None
+
+    @staticmethod
+    def vars_for_template(player):
+        if 'holiday_list' not in player.participant.vars:
+            holidays = [
+                ('holidays_1', 'Sun, sea, and beach vacation'),
+                ('holidays_2', 'Party vacation'),
+                ('holidays_3', 'Winter sports vacation'),
+                ('holidays_4', 'City trip'),
+                ('holidays_5', 'Backpacking vacation'),
+                ('holidays_6', 'Excursion'),
+                ('holidays_7', 'Camping vacation'),
+                ('holidays_8', 'Cruise vacation'),
+            ]
+            import random
+            random.shuffle(holidays)
+            player.participant.vars['holiday_list'] = holidays
+            print(">>> Shuffle created:", player.participant.code, holidays)
+        else:
+            print(">>> Using existing shuffle:", player.participant.code, player.participant.vars['holiday_list'])
+
+        return dict(holidays=player.participant.vars['holiday_list'])
+
+
 class VideoMeeting(Page):
-    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static
+    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static from joint-study
     form_model = 'player'
     timeout_seconds = C.VM_DURATION + C.VM_UPLOAD_DURATION   # 540 7min VM + 2min upload/Questionnaire
     form_fields = ['seeHear', 'correctBackground', 'attentionCheck', 'video_meeting_behavior']
@@ -466,7 +588,8 @@ class VideoMeeting(Page):
         # TODO: Hardcoded for testing, because optInConsent is written in App01 and I have no "is_dropout" logic
         player.participant.optInConsent = 1
 
-        return dict(optInConsent=player.participant.optInConsent)
+        return dict(optInConsent=player.participant.optInConsent,
+                    timeout_seconds=VideoMeeting.timeout_seconds)
 
     @staticmethod
     def before_next_page(player, timeout_happened):
@@ -485,7 +608,6 @@ class VideoMeeting(Page):
 
 
 class VideoMeeting_dummy(Page):
-    # Note: I added global.css, Picture_Camera.jpg and Picture_Microphone.jpg to _static
     form_model = 'player'
     timeout_seconds = C.VM_UPLOAD_DURATION
     form_fields = ['seeHear', 'correctBackground', 'attentionCheck', 'video_meeting_behavior']
@@ -594,17 +716,13 @@ class PostCoordinationQuestionnaire(Page):
     form_fields = ['impact_goal', 'impact_expectation', 'impact_spider_graph', 'impact_video_meeting', 'impact_woop']
 
 
-class MyPage(Page):  # TODO: only for testing reasons
-    form_model = 'player'
-
-
 page_sequence = [
     MyWaitPage,
     InformOnScreenTimer,
     WaitPage1,
     # Treatment A, # TODO
     TreatmentB,
-    # MyPage,  # TODO: only a page for test reasons -> skip TreatmentB
+    HolidayPreferences,
     WaitPage2,
     VideoMeeting_dummy,  # TODO
     # VideoMeeting,  # TODO

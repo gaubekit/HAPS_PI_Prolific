@@ -143,6 +143,7 @@ class ContinueWaiting(Page):
                     player.participant.payoff_fix
                     + player.participant.payoff_compensation_wait
             )
+            player.participant.payoff_total = round(player.participant.payoff_total, 2)
             print(f'added 15 ECU, compensation for waiting is now {player.participant.payoff_compensation_wait}')
 
     @staticmethod

@@ -3,107 +3,132 @@
 
 {{ block content }}
 
- <style>
-      /* Applying Roboto font to all elements */
-      .my-box {
+    <style>
+        /* Applying Roboto font to all elements */
+        .my-box {
         border: 1px solid #ccc;
         padding: 10px;
         background-color: #f9f9f9;
-      }
+        }
 
+
+        details {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+        }
+
+        details summary {
+            /* font-weight: bold; */
+            font-style: italic;
+            cursor: pointer;
+            outline: none;
+        }
+
+        details[open] summary {
+            color: #0073e6;
+        }
     </style>
-     <div class="my-box">
 
-    <p>
-        You can only participate in this study if you use <b> a Chrome, an Edge, or an Opera browser</b>.
-        <br/> <br/>
+    <div class="my-box">
+
+        You can only participate in this study if you use <b>a Chrome (version 137.0.xx.xx or higher), an Edge, or an Opera browser!</b>
+        Therefore, the "Next"-button is only available if you meet this requirement.
+
+        <br><br>
+        No "Next"-button? Click the respective fields below to get further instructions:
         <ul>
-         <li>If you are currently <b>not</b> using a Chrome, an Edge, or an Opera browser,</li><br/>
-         <ul>
-         <li><b>Please copy the link of the current page, and open it in a Chrome, an Edge, or an Opera browser</b>. <br/><br/>Otherwise, you cannot proceed with this study.</li><br/>
-          <li>Please remember to <b><u>close</u></b> this current tab. </li><br/>
-             <br/>
+            <details>
+            <summary>If you are currently <u>not using</u> a Chrome, an Edge, or an Opera browser</summary>
+                <ul>
+                    <li>Please copy the link of the current page, and open it in a Chrome, an Edge, or an Opera browser.</li>
+                    <li>Please remember to <u>close</u> this current tab. </li>
+                </ul>
+                </details>
+            <details>
+                <summary>For Chrome users, if you are currently <u>not using</u> the latest update (137.0.xx.xx) or higher.</summary>
+                <ul>
+                    <li>
+                        Please copy the link of the current page on your clipboard, update your Chrome version by clicking on Chrome's settings
+                        and open it in a new Chrome browser window after the update.
+                    </li>
+                    <li>Please remember to <u>close</u> this current tab. </li>
+                </ul>
+            </details>
         </ul>
-
-
-       <li>For Chrome users, if you are currently <b>not</b> using the latest update (137.0.xx.xx) or higher, <br/><br/></li>
-        <ul>
-            <li>Please copy the link of the current page on your clipboard, <b>update your Chrome version by clicking on Chrome's settings </b> and open it in a new Chrome browser window after the update.
-             <br/><br/>Otherwise, you cannot proceed with this study.</li>
-        <br/>
-              <li>Please remember to <b><u>close</u></b> this current tab. </li><br/>
-        </ul>
-
-         <li>Afterwards, please click on the "Next" button in the <b><u>permitted</u></b> browser to proceed with the study.</li>
-            </ul>
-    </p>
+        <br>
+        Please click on the "Next"-button in the <u>permitted</u> browser to proceed with the study.
 
     </div>
 
-<script>
-     document.addEventListener("DOMContentLoaded", function() {
-          const nextButton = document.querySelector(".otree-btn-next.btn.btn-primary");
-           nextButton.style.display = "none";
-        // Function to detect if the browser is Chrome, Opera, or Edge
-            function isSupportedBrowser() {
-                const userAgent = navigator.userAgent.toLowerCase();
-                // Check if the browser is Chrome, Opera, or Edge
-                  if (userAgent.indexOf("chrome") > -1 || userAgent.indexOf("opr") > -1 || userAgent.indexOf("edg") > -1) {
-                      if (userAgent.indexOf("chrome") > -1) {
-                            // Extract Chrome version number
-                            let match = userAgent.match(/chrome\/(\d+)\./); // Extracts major version like 137
-                            if (match && parseInt(match[1]) >= 137) {
-                                return true; // Chrome version is supported
-                            } else {
-                                return false; // Chrome version is too old
+    <script>
+         document.addEventListener("DOMContentLoaded", function() {
+              const nextButton = document.querySelector(".otree-btn-next.btn.btn-primary");
+               nextButton.style.display = "none";
+            // Function to detect if the browser is Chrome, Opera, or Edge
+                function isSupportedBrowser() {
+                    const userAgent = navigator.userAgent.toLowerCase();
+                    // Check if the browser is Chrome, Opera, or Edge
+                      if (userAgent.indexOf("chrome") > -1 || userAgent.indexOf("opr") > -1 || userAgent.indexOf("edg") > -1) {
+                          if (userAgent.indexOf("chrome") > -1) {
+                                // Extract Chrome version number
+                                let match = userAgent.match(/chrome\/(\d+)\./); // Extracts major version like 137
+                                if (match && parseInt(match[1]) >= 137) {
+                                    return true; // Chrome version is supported
+                                } else {
+                                    return false; // Chrome version is too old
+                                }
                             }
-                        }
-                      return true; // Supported browser
-                } else {
-                      return false; // Not a supported browser
-                }
-            }      // Enable the button if the browser is Chrome, Opera, or Edge
-          if (isSupportedBrowser()) {
-              nextButton.style.display = "block";
-          }
+                          return true; // Supported browser
+                    } else {
+                          return false; // Not a supported browser
+                    }
+                }      // Enable the button if the browser is Chrome, Opera, or Edge
+              if (isSupportedBrowser()) {
+                  nextButton.style.display = "block";
+              }
 
-          measureInternetSpeed();
+              measureInternetSpeed();
 
-             function measureInternetSpeed() {
-                const image = new Image();
-                const imageSizeBytes = 54290; // Adjust this to the actual file size
-                const startTime = new Date().getTime();
+                 function measureInternetSpeed() {
+                    const image = new Image();
+                    const imageSizeBytes = 54290; // Adjust this to the actual file size
+                    const startTime = new Date().getTime();
 
-                    image.onload = () => {
-                        const endTime = new Date().getTime();
-                        const durationSeconds = (endTime - startTime) / 1000;
-                        const bitsLoaded = imageSizeBytes * 8;
-                        const speedBps = bitsLoaded / durationSeconds;
-                        const speedKbps = speedBps / 1024;
-                        const speedMbps = speedKbps / 1024;
+                        image.onload = () => {
+                            const endTime = new Date().getTime();
+                            const durationSeconds = (endTime - startTime) / 1000;
+                            const bitsLoaded = imageSizeBytes * 8;
+                            const speedBps = bitsLoaded / durationSeconds;
+                            const speedKbps = speedBps / 1024;
+                            const speedMbps = speedKbps / 1024;
 
-                        const roundedSpeed = Math.round(speedMbps * 100) / 100; // Round to 2 decimal places
+                            const roundedSpeed = Math.round(speedMbps * 100) / 100; // Round to 2 decimal places
 
-                        if (roundedSpeed) {
-                            console.log("Speed (Mbps):", roundedSpeed);
-                            liveSend({ internet_speed: roundedSpeed });  // <--- Send speed to oTree server
-                        } else {
-                            console.log("Could not measure speed");
-                        }
-                    };
+                            if (roundedSpeed) {
+                                console.log("Speed (Mbps):", roundedSpeed);
+                                liveSend({ internet_speed: roundedSpeed });  // <--- Send speed to oTree server
+                            } else {
+                                console.log("Could not measure speed");
+                            }
+                        };
 
-                    image.onerror = () => {
-                        console.error("Error loading image for speed test");
-                        liveSend({ internet_speed: null });
-                    };
-                    // Avoid caching
-                    image.src = "{% static 'black.jpeg' %}" + "?cache_bust=" + new Date().getTime();
-                }
-            });
+                        image.onerror = () => {
+                            console.error("Error loading image for speed test");
+                            liveSend({ internet_speed: null });
+                        };
+                        // Avoid caching
+                        image.src = "{% static 'black.jpeg' %}" + "?cache_bust=" + new Date().getTime();
+                    }
+                });
 
 
-</script>
+    </script>
 
-  <br/>
-{{next_button}}
+    <br/>
+    {{next_button}}
+
 {{ endblock }}

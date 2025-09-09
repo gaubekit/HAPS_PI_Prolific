@@ -265,6 +265,8 @@ class LandingPageSinglePlayer(Page):
                 + player.participant.payoff_compensation_svo_other
         )
 
+        player.participant.payoff_total = round(player.participant.payoff_total, 2)
+
 
 class QuestDemographics(Page):
     form_model = 'player'
@@ -419,6 +421,7 @@ class SurveyPVQ6(Page):
                 + player.participant.payoff_compensation_wlg_dropout
                 + player.participant.payoff_compensation_svo_other
         )
+        player.participant.payoff_total = round(player.participant.payoff_total, 2)
 
 
 page_sequence = [
