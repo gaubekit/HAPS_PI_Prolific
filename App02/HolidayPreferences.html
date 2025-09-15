@@ -173,7 +173,15 @@
     <div id="next-container" style="display: none;">
         <p>{{ next_button }}</p>
     </div>
-    
+
+
+    <script>
+    // trigger repeatedly otree live_methode
+     setInterval(() => {
+            liveSend("ping");
+        }, 800);
+    </script>
+
     
     <script>
         const timeout_seconds = 60; // set minimum time

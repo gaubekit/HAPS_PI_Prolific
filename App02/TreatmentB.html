@@ -162,24 +162,43 @@
 </div>
 
 <script>
+    // trigger repeatedly otree live_methode
+     setInterval(() => {
+            liveSend("ping");
+        }, 800);
+</script>
+
+
+<script>
     const goalDescriptions = {{ session.vm_goal_description }};
     const customGridLinesPlugin = {
-            beforeDraw(chart) {
+            beforeDraw: function(chart) {
                 const ctx = chart.ctx;
                 const scale = chart.scales['scale'];
+
                 ctx.save();
                 ctx.strokeStyle = '#ccc';
                 ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
-                [-3, 0, 3].forEach(val => {
+
+                const showLinesAt = [-3, 0, 3];
+                showLinesAt.forEach(val => {
+                    // Prüfen, ob äußerste oder innerste Linie
+                    if (val === -3 || val === 3) {
+                        ctx.setLineDash([]); // durchgezogen
+                    } else {
+                        ctx.setLineDash([5, 5]); // gestrichelt
+                    }
+
                     const y = scale.getDistanceFromCenterForValue(val);
                     ctx.beginPath();
                     ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
                     ctx.stroke();
                 });
+
                 ctx.restore();
             }
         };
+
         const customRadialLinesPlugin = {
             beforeDraw(chart) {
                 const ctx = chart.ctx;

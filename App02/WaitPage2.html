@@ -1,0 +1,61 @@
+{{ block title }}
+    Wait Page
+{{ endblock }}
+
+{{ block content }}
+
+    <style>
+        .otree-btn-next {
+            display: none;
+        }
+
+        .otree-timer {
+            display: none;
+        }
+
+       .my-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+    </style>
+
+    <div class="my-box">
+        Please wait until the others of your group arrived from the previous page.
+
+        Please do NOT leave your computer while waiting. You will be forwarded automatically once all group members are ready.
+        <br><br>
+        Waiting for <span id="count">0</span> group members.
+    </div>
+
+    <br>
+    <div>
+        <p style="color: gray; font-style: italic;">You will be forwarded automatically after all players arrived, a dropout happened or alternatively
+            after 5min.</p>
+    </div>
+
+    {{ next_button }}
+
+    <script>
+         // 800ms Live-Ping
+        setInterval(() => {
+            liveSend("ping");
+        }, 800);
+
+        // Serverantwort verarbeiten
+        function liveRecv(data) {
+            document.getElementById("count").textContent = 3 - data.count;
+            if (data.ready) {
+                setTimeout(() => {
+                    const realNext = document.querySelector('.otree-btn-next');
+                    if (realNext) {
+                        realNext.click();
+                    }
+                }, 100);
+            }
+        }
+
+
+    </script>
+
+{{ endblock }}

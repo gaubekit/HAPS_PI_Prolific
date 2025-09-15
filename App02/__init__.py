@@ -49,17 +49,20 @@ Dropout Handling II:
 """)
 
 
+# GLOBAL VAR for App02
+last_active = {}        # Tracks last "ping" timestamp per player
+
+
 class C(BaseConstants):
     NAME_IN_URL = 'App02'
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
 
-    HEARTBEAT_THRESHOLD = 20  # 120
-
     # Central configuration of duration Video Meeting and Upload Time Limit
     VM_DURATION = 3 * 60  # TODO 7 minutes
-    VM_UPLOAD_DURATION = 2 * 60  # TODO 2 minutes
+    VM_UPLOAD_DURATION = 2 * 60
 
+    # Central configuration of timings on TreatmentB Page
     AUDIO_GUIDE_APPEAR = 1 * 60
     AUDIO_GUIDE_AUTO_SUBMIT = 2 * 60
     AUDIO_GUIDE_DURATION = 5 * 60  # the duration of the mp3-file
@@ -71,15 +74,8 @@ class Subsession(BaseSubsession):
 
 
 class Group(BaseGroup):
-     pass
-
-
-# def make_field(label):
-#     return models.IntegerField(
-#         choices=[1, 2, 3, 4, 5, 6, 7],
-#         label=label,
-#         widget=widgets.RadioSelect,
-#     )
+     dropout_happened = models.BooleanField(initial=False)
+     treatment = models.StringField(initial='WOOP')
 
 
 class Player(BasePlayer):
@@ -91,7 +87,7 @@ class Player(BasePlayer):
     treatment_completed = models.StringField(initial='no')
 
     # var storing notes in TreatmentB
-    treatment_notes = models.LongStringField()
+    treatment_notes = models.LongStringField(initial='', blank=True)
 
     # Var to ensure that Video Meeting worked properly
     seeHear = models.IntegerField(blank=True, choices=[[0, '0'], [1, '1'], [2, '2']], label='',
@@ -141,11 +137,14 @@ class Player(BasePlayer):
     comp3_check = models.IntegerField(initial=0)
     comp4_check = models.IntegerField(initial=0)
     comprehension1 = models.IntegerField(
-        label='To the team project, you contribute 0 hours and the minimum contribution by any team member is 10 hours:', min=0, max=400)
+        label='To the team project, you contribute 0 hours and the minimum contribution '
+              'by any team member is 10 hours:', min=0, max=400)
     comprehension2 = models.IntegerField(
-        label='To the team project, you contribute 20 hours and the minimum contribution by any team member is 10 hours:', min=0, max=400)
+        label='To the team project, you contribute 20 hours and the minimum contribution '
+              'by any team member is 10 hours:', min=0, max=400)
     comprehension3 = models.IntegerField(
-        label='To the team project, you contribute 40 hours and the minimum contribution by any team member is 30 hours:', min=0, max=400)
+        label='To the team project, you contribute 40 hours and the minimum contribution '
+              'by any team member is 30 hours:', min=0, max=400)
     comprehension4a = models.BooleanField(
         default=False,
         label='',
@@ -164,72 +163,18 @@ class Player(BasePlayer):
         widget=widgets.CheckboxInput,
         blank=True)
 
-    holidays_1 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Sun, sea, and beach vacation')
-    holidays_2 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Party vacation')
-    holidays_3 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Winter sports vacation')
-    holidays_4 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='City trip')
-    holidays_5 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Backpacking vacation')
-    holidays_6 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Excursion')
-    holidays_7 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Camping vacation')
-    holidays_8 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])#, label='Cruise vacation')
+    # Holiday Preferences for priming Video Meeting (Same as in Joint Study)
+    holidays_1 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_2 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_3 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_4 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_5 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_6 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_7 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
+    holidays_8 = models.IntegerField(widget=widgets.RadioSelect, choices=[1, 2, 3, 4, 5, 6, 7])
 
 
 # HELP FUNCTIONS
-# def heartbeat_dropout_detection(player, threshold):
-#     """
-#     Detect inactive players based on heartbeat pings.
-#     If a player has been inactive longer than the given threshold,
-#     they are flagged with participant fields `single_player=True` and `raised_dropout=True`.
-#
-#     Args:
-#         player (Player): The current player object.
-#         threshold (int): Timeout in seconds, typically set from `C.HEARTBEAT_THRESHOLD`.
-#
-#     Usage:
-#         - Call inside `live_method()`.
-#         - Requires global dictionary `last_active` to track last activity.
-#         - Requires participant fields `single_player` and `raised_dropout`.
-#
-#     Backend requirements:
-#         - `vars_for_template(player)` must pass `dropout_threshold=C.HEARTBEAT_THRESHOLD`
-#           to make the threshold available in the frontend.
-#
-#     Frontend requirements:
-#         - Include `heartbeat.js` in template:
-#             <script src="{% static 'heartbeat.js' %}"></script>
-#             <script>
-#                 startHeartbeat(800, {{ dropout_threshold }});
-#             </script>
-#     """
-#     last_active = {}  # participant.code -> timestamp
-#     now = time.time()
-#     code = player.participant.code
-#
-#     #player_on_page = player.participant._current_page_name
-#     # arrival = player.participant._last_page_timestamp
-#
-#     if player_on_page == current_page_name:
-#         last_active[code] = now
-#
-#     active_players = [
-#         p for p in player.subsession.get_players()
-#         if p.participant._current_page_name == page_name
-#            and last_active.get(p.participant.code, 0) > now - threshold]
-
-    #
-    #
-    # # Check all players in the group for inactivity
-    # for p in player.group.get_players():
-    #     last_active.get(p.participant.code, 0)
-    #
-    #     # If last activity exceeds threshold → flag as dropout
-    #     if p.participant._current_page_name == page_name and last_active.get(p.participant.code, 0) > now - threshold:
-    #             p.participant.raised_dropout = True
-    #             p.participant.single_player = True
-    #             print(f"Dropout detected after {threshold} seconds inactivity: {p.participant.code}")
-    #
-    #             # TODO -> clarify: sollte frontendseitig ein auto-submit erzwungen werden?
-
 
 # Functions to handle grouping and waiting_too_long on waitpages
 def waiting_too_long(player):
@@ -288,7 +233,9 @@ def comprehension4a_error_message(player: Player, value):
         if player.comp4_check == 1:
             return "Unfortunately, that's incorrect. Please try again."
         elif player.comp4_check >= 2:
-            return "Unfortunately, that's incorrect. Your compensation depends on the <strong>number of hours you work on the team project</strong> and the <strong>fewest number of hours worked by a member of your team on the team project</strong>."
+            return ("Unfortunately, that's incorrect. Your compensation depends on the <strong>"
+                    "number of hours you work on the team project</strong> and the <strong>fewest "
+                    "number of hours worked by a member of your team on the team project</strong>.")
     return None
 
 
@@ -298,7 +245,9 @@ def comprehension4b_error_message(player: Player, value):
         if player.comp4_check == 1:
             return "Unfortunately, that's incorrect. Please try again."
         elif player.comp4_check >= 2:
-            return "Unfortunately, that's incorrect. Your compensation depends on the <strong>number of hours you work on the team project</strong> and the <strong>fewest number of hours worked by a member of your team on the team project</strong>."
+            return ("Unfortunately, that's incorrect. Your compensation depends on the <strong>"
+                    "number of hours you work on the team project</strong> and the <strong>"
+                    "fewest number of hours worked by a member of your team on the team project</strong>.")
     return None
 
 
@@ -308,7 +257,9 @@ def comprehension4c_error_message(player: Player, value):
         if player.comp4_check == 1:
             return "Unfortunately, that's incorrect. Please try again."
         elif player.comp4_check >= 2:
-            return "Unfortunately, that's incorrect. Your compensation depends on the <strong>number of hours you work on the team project</strong> and the <strong>fewest number of hours worked by a member of your team on the team project</strong>."
+            return ("Unfortunately, that's incorrect. Your compensation depends on the <strong>"
+                    "number of hours you work on the team project</strong> and the <strong>"
+                    "fewest number of hours worked by a member of your team on the team project</strong>.")
     return None
 
 
@@ -318,7 +269,11 @@ class MyWaitPage(WaitPage):
     Page grouping participants by arrival time. Theoretical App01_waiting guarantees for exact 3 active participants.
     As fallback-mechanism, group_by_arrival_time_method() guarantees that player can't get stuck on this wait page.
 
-    The after_all_player_arrive methode is used to update the svo_bonus and to store group information.
+    The after_all_player_arrive methode is used to:
+        - update the svo_bonus
+        - store group information
+        - initialize entry's for participants of the group in last_active
+        - select group treatment randomly
     """
 
     group_by_arrival_time = True
@@ -331,8 +286,24 @@ class MyWaitPage(WaitPage):
             - update payoff_bonus_svo
             - update payoff_total
         """
+
         # for all players in the group
         for p in group.get_players():
+
+            if p.id_in_group == 1:
+                p.group.treatment = random.choice(['WOOP', 'Control'])
+                print(f'group was assigned to treatment {p.group.treatment}')
+
+            # initialize dict with time, page and activity status for each participant
+            last_active[p.participant.code] = {
+                'last_time': time.time(),
+                'current_page': p.participant._current_page_name,
+                'activity_status': True,
+            }
+
+            p.session.last_active_session_wide[p.participant.code] = last_active[p.participant.code]
+            p.participant.last_sync = time.time()
+
             print('this is player: ', p)
             # store the id's (code) of the other group members in a participant field "other_players_ids"
             p.participant.other_players_ids = [pl.participant.code for pl in p.get_others_in_group()]
@@ -399,37 +370,132 @@ class InformOnScreenTimer(Page):
     form_model = 'player'
     timeout_seconds = 5 * 60
 
-    # @staticmethod
-    # def vars_for_template(player):
-    #     return dict(dropout_threshold=C.HEARTBEAT_THRESHOLD)
-    #
-    # @staticmethod
-    # def live_method(player, data):
-    #     # heartbeat_dropout_detection(player, C.HEARTBEAT_THRESHOLD)
-    #     return {player.id_in_group: dict(ok=True)}
+    @staticmethod
+    def live_method(player, data):
+        try:
+            """ checks every 800ms whether all players are alive (browser not closed)"""
+            now = time.time()
+            code = player.participant.code
+            page = player.participant._current_page_name
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # Check whether one of the players is inactive fore more than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    print('set set activity_status in last_active to False for: ', p.participant.code)
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            return None
+
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on InformOnScreenTimer')
+
+            return None
 
     @staticmethod
     def before_next_page(player, timeout_happened):
+        """ Checks whether a player was alive but did not proceed within the given time """
         if timeout_happened:
             print("timeout_happened is true in InformOnScreenTimer. This player raised a dropout: ", player.participant.code)
             player.participant.raised_dropout = True
             player.participant.single_player = True
+            player.group.dropout_happened = True
 
 
-class WaitPage1(WaitPage):
+class WaitPage1(Page):
+    """
+        This Page simulates a WaitPage, but controlling for players "alive"-status (browser not closed longer than 2min)
+        Page has a Timeout of 5 minutes, guaranteeing that active players are forwarded in any case.
+    """
+    form_model = 'player'
+    timeout_seconds = 5 * 60
+
     @staticmethod
-    def after_all_players_arrive(group):
-        """ Check whether one of the players was labeled as single player. If so, all are labeled as single player """
-        if any(p.participant.single_player for p in group.get_players()):
-            for p in group.get_players():
+    def vars_for_template(player: Player):
+        """ passing timeout seconds to frontend --> ensuring players forwarded automatically after xx seconds"""
+        print('wait page timeout seconds', WaitPage1.timeout_seconds)
+        return dict(timeout_seconds=WaitPage1.timeout_seconds)
+
+    @staticmethod
+    def live_method(player, data):
+        """ checks every 800ms whether all players are alive (browser not closed)"""
+        try:
+            now = time.time()
+            page = player.participant._current_page_name
+            code = player.participant.code
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # check whether a player is not "alive" for longer than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            # create a list of all players waiting on this page
+            alive_players_waiting = [
+                p for p in player.group.get_players()
+                if last_active.get(p.participant.code, {}).get('activity_status', False)
+                   and last_active.get(p.participant.code, {}).get('current_page', False) == page
+            ]
+            return {
+                p.id_in_group: dict(
+                    count=len(alive_players_waiting),
+                    ready=len(alive_players_waiting) == 3 or p.group.dropout_happened
+                )
+                for p in player.group.get_players()
+            }
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on WaitPage1')
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        """if timeout_happened = player alive but do not proceed in time -> flag player"""
+        if timeout_happened:
+            # flag player who raised the timeout
+            player.participant.raised_dropout = True
+
+            # flag all players as single player
+            for p in player.group.get_players():
                 p.participant.single_player = True
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
-        for p in player.group.get_players():
-            if p.participant.single_player:
-                return 'App03'
-        return None
+        """if player flagged -> direct  to App03"""
+
+        if any(p.participant.single_player for p in player.group.get_players()):
+            for p in player.group.get_players():
+                p.participant.single_player = True
+                p.group.dropout_happened = True
+
+        if player.participant.single_player:
+            return 'App03'
+        else:
+            print(f' Player {player.participant.code}: InformOnPageScreener i.o.')
 
 
 class TreatmentA(Page):
@@ -467,18 +533,19 @@ class TreatmentB(Page):  # TODO add WOOP
     """
     form_model = 'player'
     form_fields = ['treatment_notes']
-    # TODO deactivated for testing
-    # timeout_seconds = (C.AUDIO_GUIDE_APPEAR + C.AUDIO_GUIDE_AUTO_SUBMIT
-    #                    + C.AUDIO_GUIDE_DURATION + C.AUDIO_GUIDE_TIME_AFTERWARDS)
 
-    # TODO deactivated for testing
-    # @staticmethod
-    # def is_displayed(player):
-    #     return player.participant.treatment == 'WOOP'
+    timeout_seconds = (C.AUDIO_GUIDE_APPEAR + C.AUDIO_GUIDE_AUTO_SUBMIT
+                       + C.AUDIO_GUIDE_DURATION + C.AUDIO_GUIDE_TIME_AFTERWARDS)
+
+    @staticmethod
+    def is_displayed(player):
+        print(f'treatment would be {player.group.treatment}')
+        return True
+        # return player.participant.treatment == 'WOOP' # TODO deactivated for testing
 
     @staticmethod
     def js_vars(player):
-        others = player.get_others_in_subsession()
+        others = player.get_others_in_group()
         others_vm_pref = [
             (others[0].participant.vm_pref_achievement + others[1].participant.vm_pref_achievement) / 2,
             (others[0].participant.vm_pref_dominance + others[1].participant.vm_pref_dominance) / 2,
@@ -500,40 +567,130 @@ class TreatmentB(Page):  # TODO add WOOP
             other=others_vm_pref
         )
 
-    # TODO deactivated for testing
-    # @staticmethod
-    # def before_next_page(player, timeout_happened):
-    #     if timeout_happened:
-    #         print("timeout_happened is true in TreatmentB. This player raised a dropout: ", player.participant.code)
-    #         player.participant.raised_dropout = True
-    #         player.participant.single_player = True
-
-
-class WaitPage2(WaitPage):
-    """
-        This Page ensures that all participants arrive to the same time on the video meeting page and the dropout time
-        starts simultaneously. If a dropout happens, all group-members will be forwarded to Stage 3
-    """
     @staticmethod
-    def after_all_players_arrive(group):
-        """ Check whether one of the players was labeled as single player. If so, all are labeled as single player """
-        if any(p.participant.single_player for p in group.get_players()):
-            print('dropout in TreatmentB detected')
-            for p in group.get_players():
+    def live_method(player, data):
+        try:
+            """ checks every 800ms whether all players are alive (browser not closed)"""
+            now = time.time()
+            code = player.participant.code
+            page = player.participant._current_page_name
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # Check whether one of the players is inactive fore more than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    print('set set activity_status in last_active to False for: ', p.participant.code)
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            return None
+
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on TreatmentB')
+
+            return None
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            print("timeout_happened is true in TreatmentB. This player raised a dropout: ", player.participant.code)
+            player.participant.raised_dropout = True
+            player.participant.single_player = True
+            player.group.dropout_happened = True
+
+
+class WaitPage2(Page):
+    """
+        This Page simulates a WaitPage, but controlling for players "alive"-status (browser not closed longer than 2min)
+        Page has a Timeout of 5 minutes, guaranteeing that active players are forwarded in any case.
+    """
+    form_model = 'player'
+    timeout_seconds = 8 * 60
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        """ passing timeout seconds to frontend --> ensuring players forwarded automatically after xx seconds"""
+        return dict(timeout_seconds=WaitPage2.timeout_seconds)
+
+    @staticmethod
+    def live_method(player, data):
+        """ checks every 800ms whether all players are alive (browser not closed)"""
+        try:
+            now = time.time()
+            page = player.participant._current_page_name
+            code = player.participant.code
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # check whether a player is not "alive" for longer than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            # create a list of all players waiting on this page
+            alive_players_waiting = [
+                p for p in player.group.get_players()
+                if last_active.get(p.participant.code, {}).get('activity_status', False)
+                and last_active.get(p.participant.code, {}).get('current_page', False) == page
+            ]
+            return {
+                    p.id_in_group: dict(
+                        count=len(alive_players_waiting),
+                        ready=len(alive_players_waiting) == 3 or p.group.dropout_happened
+                    )
+                    for p in player.group.get_players()
+                }
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on WaitPage2')
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        """if timeout_happened = player alive but do not proceed in time -> flag player"""
+        if timeout_happened:
+            # flag player who raised the timeout
+            player.participant.raised_dropout = True
+
+            # flag all players as single player
+            for p in player.group.get_players():
                 p.participant.single_player = True
-        else:
-            print('TreatmentB i.o.')
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
-        for p in player.group.get_players():
-            if p.participant.single_player:
-                # if one of the others is a single player, all in the group are flagged as single player
+        """if player flagged -> direct  to App03"""
+
+        if any(p.participant.single_player for p in player.group.get_players()):
+            for p in player.group.get_players():
                 p.participant.single_player = True
+                p.group.dropout_happened = True
 
         if player.participant.single_player:
             return 'App03'
-        return None
+        else:
+            print(f' Player {player.participant.code}: Treatment i.o.')
 
 
 class HolidayPreferences(Page):
@@ -546,6 +703,7 @@ class HolidayPreferences(Page):
               participant variable is used to set the field only once (in the shuffled order).
     """
     form_model = 'player'
+    timeout_seconds = 60 * 3
 
     @staticmethod
     def get_form_fields(player):
@@ -567,14 +725,137 @@ class HolidayPreferences(Page):
                 ('holidays_7', 'Camping vacation'),
                 ('holidays_8', 'Cruise vacation'),
             ]
-            import random
             random.shuffle(holidays)
             player.participant.vars['holiday_list'] = holidays
-            print(">>> Shuffle created:", player.participant.code, holidays)
+            print("Shuffle created:", player.participant.code, holidays)
         else:
-            print(">>> Using existing shuffle:", player.participant.code, player.participant.vars['holiday_list'])
+            print("Using existing shuffle:", player.participant.code, player.participant.vars['holiday_list'])
 
         return dict(holidays=player.participant.vars['holiday_list'])
+
+    @staticmethod
+    def live_method(player, data):
+        try:
+            """ checks every 800ms whether all players are alive (browser not closed)"""
+            now = time.time()
+            code = player.participant.code
+            page = player.participant._current_page_name
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # Check whether one of the players is inactive fore more than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    print('set set activity_status in last_active to False for: ', p.participant.code)
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            return None
+
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on HolidayPreferences')
+
+            return None
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            print("timeout_happened is true in HolidayPreferences. This player raised a dropout: ", player.participant.code)
+            player.participant.raised_dropout = True
+            player.participant.single_player = True
+            player.group.dropout_happened = True
+
+
+class WaitPage3(Page):
+    """
+        Waitpage Simulation - Same as previously
+    """
+    form_model = 'player'
+    timeout_seconds = 3 * 60
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        """ passing timeout seconds to frontend --> ensuring players forwarded automatically after xx seconds"""
+        return dict(timeout_seconds=WaitPage3.timeout_seconds)
+
+    @staticmethod
+    def live_method(player, data):
+        """ checks every 800ms whether all players are alive (browser not closed)"""
+        try:
+            now = time.time()
+            page = player.participant._current_page_name
+            code = player.participant.code
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # check whether a player is not "alive" for longer than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            # create a list of all players waiting on this page
+            alive_players_waiting = [
+                p for p in player.group.get_players()
+                if last_active.get(p.participant.code, {}).get('activity_status', False)
+                   and last_active.get(p.participant.code, {}).get('current_page', False) == page
+            ]
+            return {
+                p.id_in_group: dict(
+                    count=len(alive_players_waiting),
+                    ready=len(alive_players_waiting) == 3 or p.group.dropout_happened
+                )
+                for p in player.group.get_players()
+            }
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on WaitPage3')
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        """if timeout_happened = player alive but do not proceed in time -> flag player"""
+        if timeout_happened:
+            # flag player who raised the timeout
+            player.participant.raised_dropout = True
+
+            # flag all players as single player
+            for p in player.group.get_players():
+                p.participant.single_player = True
+
+    @staticmethod
+    def app_after_this_page(player, upcoming_apps):
+        """if player flagged -> direct  to App03"""
+
+        if any(p.participant.single_player for p in player.group.get_players()):
+            for p in player.group.get_players():
+                p.participant.single_player = True
+                p.group.dropout_happened = True
+
+        if player.participant.single_player:
+            return 'App03'
+        else:
+            print(f' Player {player.participant.code}: HolidayPreferences i.o.')
 
 
 class VideoMeeting(Page):
@@ -585,11 +866,43 @@ class VideoMeeting(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        # TODO: Hardcoded for testing, because optInConsent is written in App01 and I have no "is_dropout" logic
-        player.participant.optInConsent = 1
-
         return dict(optInConsent=player.participant.optInConsent,
                     timeout_seconds=VideoMeeting.timeout_seconds)
+
+    @staticmethod
+    def live_method(player, data):
+        try:
+            """ checks every 800ms whether all players are alive (browser not closed)"""
+            now = time.time()
+            code = player.participant.code
+            page = player.participant._current_page_name
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # Check whether one of the players is inactive fore more than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    print('set set activity_status in last_active to False for: ', p.participant.code)
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            return None
+
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on VideoMeeting')
+
+            return None
 
     @staticmethod
     def before_next_page(player, timeout_happened):
@@ -614,9 +927,6 @@ class VideoMeeting_dummy(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        # TODO: Hardcoded for testing, because optInConsent is written in App01 and I have no "is_dropout" logic
-        player.participant.optInConsent = 1
-
         return dict(optInConsent=player.participant.optInConsent)
 
     @staticmethod
@@ -635,39 +945,92 @@ class VideoMeeting_dummy(Page):
             player.participant.single_player = True
 
 
-class WaitPage3(WaitPage):
+class WaitPage4(Page):
     """
+        Waitpage Simulation
+
         Three active players joining the Video Meeting at the same time (WaitPage2). They are automatically
         forwarded after C.VM_DURATION + C.VM_UPLOAD_DURATION, landing on this Page.
         If a player do not confirm that he is "human", this players will be labeled as "raised_dropout"
-        and as "single_player" in the before_next_page methode. Also, players date do not seeHear  all others are
+        and as "single_player" in the before_next_page methode. Also, players date do not seeHear all the others are
         labeled as "single_player"
-
-        Therefore, this WaitPage have only to check whether someone in the group was labeled as single player.
-        In this case, all players of the group are labeled as single player and forwarded to Stage 3.
     """
+    form_model = 'player'
+    timeout_seconds = 3 * 60
 
     @staticmethod
-    def after_all_players_arrive(group):
-        """ Check whether one of the players was labeled as single player. If so, all are labeled as single player """
-        if any(p.participant.single_player for p in group.get_players()):
-            for p in group.get_players():
+    def vars_for_template(player: Player):
+        """ passing timeout seconds to frontend --> ensuring players forwarded automatically after xx seconds"""
+        return dict(timeout_seconds=WaitPage2.timeout_seconds)
+
+    @staticmethod
+    def live_method(player, data):
+        """ checks every 800ms whether all players are alive (browser not closed)"""
+        try:
+            now = time.time()
+            page = player.participant._current_page_name
+            code = player.participant.code
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # check whether a player is not "alive" for longer than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            # create a list of all players waiting on this page
+            alive_players_waiting = [
+                p for p in player.group.get_players()
+                if last_active.get(p.participant.code, {}).get('activity_status', False)
+                   and last_active.get(p.participant.code, {}).get('current_page', False) == page
+            ]
+            return {
+                p.id_in_group: dict(
+                    count=len(alive_players_waiting),
+                    ready=len(alive_players_waiting) == 3 or p.group.dropout_happened
+                )
+                for p in player.group.get_players()
+            }
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on WaitPage4')
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        """if timeout_happened = player alive but do not proceed in time -> flag player"""
+        if timeout_happened:
+            # flag player who raised the timeout
+            player.participant.raised_dropout = True
+
+            # flag all players as single player
+            for p in player.group.get_players():
                 p.participant.single_player = True
-        # else: # TODO
-        #     # if the group number is equal, the treatment "woop" was completed
-        #     if group.id_in_session % 2:  # TODO: is this working?
-        #         for p in group.get_players():
-        #             p.player.treatment_completed = 'woop'
-        #     else:
-        #         for p in group.get_players():
-        #             p.player.treatment_completed = 'no_woop'
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
-        """ In case of dropout, all players skip the Weakest Link game and continue with Stage 3 """
+        """if player flagged -> direct  to App03"""
+
+        if any(p.participant.single_player for p in player.group.get_players()):
+            for p in player.group.get_players():
+                p.participant.single_player = True
+                p.group.dropout_happened = True
+
         if player.participant.single_player:
             return 'App03'
-        return None
+        else:
+            print(f' Player {player.participant.code}: VideoMeeting i.o.')
+            player.treatment_completed = player.group.treatment
 
 
 class PostVideoMeetingQuestionnaireII(Page):
@@ -713,20 +1076,29 @@ class DecisionWLG(Page):
 
 class PostCoordinationQuestionnaire(Page):
     form_model = 'player'
-    form_fields = ['impact_goal', 'impact_expectation', 'impact_spider_graph', 'impact_video_meeting', 'impact_woop']
+
+    @staticmethod
+    def get_form_fields(player):
+        fields = ['impact_goal', 'impact_expectation', 'impact_spider_graph', 'impact_video_meeting']
+        if player.group.treatment == "WOOP":
+            fields.append('impact_woop')
+        return fields
 
 
 page_sequence = [
+    # --- Dropout Handling I --- #
     MyWaitPage,
     InformOnScreenTimer,
     WaitPage1,
     # Treatment A, # TODO
     TreatmentB,
-    HolidayPreferences,
     WaitPage2,
-    VideoMeeting_dummy,  # TODO
-    # VideoMeeting,  # TODO
+    HolidayPreferences,
     WaitPage3,
+    # VideoMeeting_dummy,  # TODO -> activate or deactivate
+    VideoMeeting,  # TODO -> activate or deactivate
+    WaitPage4,
+    # --- Dropout Handling II --- #
     PostVideoMeetingQuestionnaireII,
     IntroWLG,
     ComprehensionWLG,

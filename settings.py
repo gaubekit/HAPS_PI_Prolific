@@ -7,10 +7,10 @@ SESSION_CONFIGS = [dict(name='HAPS_PI_Prolific', num_demo_participants=3,
                             'App00_2_exit',  # check for consent
                             'App00_3_continued',  # Audio and Video-Check, Prolific ID
                             'App01',  # Study Information, SVO, -> Stage 1 (individual)
-                            'App01_waiting',  # Wait for 3 active players, 5 x 5 minutes waiting time
+                            'App01_waiting',  # Wait for 3 active players, 10 minutes plus 4 x 5 minutes waiting time
                             'App02',  # SpiderGraph(+ WOOP) -> Stage 2 (group)
                             'App03',  # Questionnaires -> Stage 3 (individual)
-                            'App04',  # payoff & ThankYou
+                            'App04',  # payoff & ThankYou + return Prolific
                               ]),
                    dict(
                        name='Testing',
@@ -35,6 +35,7 @@ PARTICIPANT_FIELDS = [
     'other_players_ids',
     'raised_dropout',
     'arrival_time_for_grouping',
+    'last_sync',
     # 'holiday_list', if using participant.vars['holiday_list'], specifying here is not needed
     # Social Value Orientation
     'svo_to_self',
@@ -62,8 +63,13 @@ PARTICIPANT_FIELDS = [
     'payoff_total',
 ]
 
-SESSION_FIELDS = ['vm_goal_labels',
-                  'vm_goal_description']
+SESSION_FIELDS = [
+    # for dropout logic
+    'last_active_session_wide',
+    # for spider graph
+    'vm_goal_labels',
+    'vm_goal_description',
+]
 ROOMS = [
     dict(
         name='PersonalityBehavior',
@@ -83,4 +89,4 @@ INSTALLED_APPS = ['otree']
 OTREE_PRODUCTION = True
 
 # deactivate debug info
-#DEBUG = False
+DEBUG = False

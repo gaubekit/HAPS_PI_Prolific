@@ -95,13 +95,13 @@
     </div>
 
     <br><br>
-    <p><b>On the next page, you will have to wait until two more participants arrived to form a group (max 5 min)</b>.</p>
+    <p><b>On the next page, you will have to wait until two more participants arrived to form a group (max 10 min)</b>.</p>
 
     <script>
         // Erklärungstexte der Ziele
         let goalDescriptions = {{ session.vm_goal_description }};
 
-        // Plugin für gestrichelte konzentrische Kreise nur bei -3,0,3
+        // Plugin für konzentrische Kreise nur bei -3,0,3
         const customGridLinesPlugin = {
             beforeDraw: function(chart) {
                 const ctx = chart.ctx;
@@ -110,11 +110,17 @@
                 ctx.save();
                 ctx.strokeStyle = '#ccc';
                 ctx.lineWidth = 1;
-                ctx.setLineDash([5, 5]);
 
                 const showLinesAt = [-3, 0, 3];
                 showLinesAt.forEach(val => {
-                    const y = scale.getDistanceFromCenterForValue(val); // + 10 weg
+                    // Prüfen, ob äußerste oder innerste Linie
+                    if (val === -3 || val === 3) {
+                        ctx.setLineDash([]); // durchgezogen
+                    } else {
+                        ctx.setLineDash([5, 5]); // gestrichelt
+                    }
+
+                    const y = scale.getDistanceFromCenterForValue(val);
                     ctx.beginPath();
                     ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
                     ctx.stroke();
@@ -123,6 +129,7 @@
                 ctx.restore();
             }
         };
+
 
         // Plugin für gestrichelte radiale Linien nur von -3 bis 3
         const customRadialLinesPlugin = {

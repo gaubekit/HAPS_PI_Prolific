@@ -52,7 +52,60 @@
 
         <p>
             We will transfer the £{{ player.payoff_total_pound }} to your Prolific account with the ID {{ participant.prolific_id }} within the next days.<br>
-            You can return to Prolific now: {{ C.PROLIFIC_RETURN_LINK }}
         </p>
+        Please use the button below to return to Prolific.
     </div>
+
+    <br>
+
+    {{ next_button }}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // URL aus den Constants (ersetze ggf. den Namen)
+        const redirectUrl = "{{ C.PROLIFIC_RETURN_LINK }}";
+
+        const form = document.querySelector('form');
+        const nextBtn = document.querySelector('.otree-btn-next');
+
+        // Button-Text anpassen (optional)
+        if (nextBtn) nextBtn.textContent = "Return to Prolific";
+
+        if (!form) return;
+
+        form.addEventListener('submit', async (ev) => {
+            ev.preventDefault(); // verhindern, dass Browser direkt navigiert
+
+            try {
+                // CSRF token: aus dem hidden input holen (oTree / Django fügt das ein)
+                const csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
+                const csrfToken = csrfInput ? csrfInput.value : null;
+
+                // FormData enthält alle formfields (inkl. oTree-hidden fields)
+                const formData = new FormData(form);
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                    headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {}
+                });
+
+                if (response.ok) {
+                    // Submission war erfolgreich — jetzt extern weiterleiten
+                    window.location.href = redirectUrl;
+                } else {
+                    // Server-Antwort nicht OK -> Fehler anzeigen / fallback
+                    console.error('Submission failed (status):', response.status);
+                    // Fallback: normales Formular abschicken (führt evtl. zu oTree-Next-Seite)
+                    form.submit();
+                }
+            } catch (err) {
+                console.error('Error during submission:', err);
+                // in case nothing works: normal submit
+                form.submit();
+            }
+        });
+    });
+    </script>
 {{ endblock }}

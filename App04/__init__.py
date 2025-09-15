@@ -29,7 +29,7 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
 
     # TODO: add return-Link
-    PROLIFIC_RETURN_LINK = r'<span style="color: orange;"> !!!! OPEN TODO RETURN LINK !!!!</span>"'
+    PROLIFIC_RETURN_LINK = r'https://im.win.kit.edu/'
 
 
 class Subsession(BaseSubsession):
@@ -41,7 +41,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    feedback = models.LongStringField(label="If you have any feedback, you can state it here: ")
+    feedback = models.LongStringField(label="If you have any feedback, you can state it here: ", blank=True)
 
     payoff_fix_pound = models.FloatField()
     payoff_bonus_svo_pound = models.FloatField()
@@ -162,6 +162,7 @@ class ThankYouII(Page):
             payoff_compensation_wait_pound=player.payoff_compensation_wait_pound,
             payoff_compensation_wlg_dropout_pound=player.payoff_compensation_wlg_dropout_pound,
         )
+
 
 
 class ThankYouIII(Page):

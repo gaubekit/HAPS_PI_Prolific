@@ -50,7 +50,12 @@ class RollingMatching(Page):
     @staticmethod
     def vars_for_template(player):
         # Pass the countdown time to the frontend template
-        return dict(wait_seconds=C.WAIT_SECONDS)
+        wait_seconds = C.WAIT_SECONDS
+        # 10 minutes wait time for the first round
+        if player.round_number == 1:
+            wait_seconds = wait_seconds * 2
+
+        return dict(wait_seconds=wait_seconds)
 
     @staticmethod
     def live_method(player, data):
@@ -81,7 +86,6 @@ class RollingMatching(Page):
             # Remove matched players from current pool
             active_players = [p for p in active_players if p not in matched_group]
 
-        # Return status to each participant
         return {
             player.id_in_group: dict(
                 ready=player.participant.assigned_to_team,

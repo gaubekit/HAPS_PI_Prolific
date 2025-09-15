@@ -64,6 +64,8 @@ class ConsentFormA2(Page):
     @staticmethod
     def before_next_page(player, timeout_happened):
         player.participant.optInConsent = player.optInConsent
+        print('player label: ', player.participant.label)
+        print('player code: ', player.participant.code)
 
 
 class ConsentFormB(Page):
@@ -75,6 +77,20 @@ class ConsentFormB(Page):
     def before_next_page(player: Player, timeout_happened):
         if not timeout_happened:
             player.participant.consent = player.consent
+
+        try:
+            # initialize dict for participant
+            player.session.last_active_session_wide[player.participant.code] = {}
+            print(player.session.last_active_session_wide)
+        except KeyError as e:
+            # initialize session var if not existing
+            player.session.last_active_session_wide = {}
+            player.session.last_active_session_wide[player.participant.code] = {}
+            print('initialized session var last_active_session_wide')
+            print(player.session.last_active_session_wide)
+
+
+
 
     @staticmethod
     def app_after_this_page(player: Player, upcoming_apps):

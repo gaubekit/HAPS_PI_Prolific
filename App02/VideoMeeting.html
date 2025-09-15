@@ -350,6 +350,12 @@
     <!-- load Jitsi into JS-->
     <script src="https://haps-meeting.k8s.iism.kit.edu/external_api.js"></script>
 
+    <script>
+        // trigger repeatedly otree live_methode
+         setInterval(() => {
+                liveSend("ping");
+            }, 800);
+    </script>
 
     <script>
         const domain = "haps-meeting.k8s.iism.kit.edu"; //Here goes your domain where the meeting takes place.
