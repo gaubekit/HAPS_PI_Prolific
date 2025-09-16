@@ -59,7 +59,8 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
 
     # Central configuration of duration Video Meeting and Upload Time Limit
-    VM_DURATION = 3 * 60  # TODO 7 minutes
+    VM_DURATION = 7 * 60
+    # VM_DURATION = 1 * 60  # 1 minute for testing
     VM_UPLOAD_DURATION = 2 * 60
 
     # Central configuration of timings on TreatmentB Page
@@ -1167,8 +1168,8 @@ page_sequence = [
     MyWaitPage,
     InformOnScreenTimer,
     WaitPage1,
-    TreatmentA, # TODO
-    #TreatmentB,
+    TreatmentA,
+    TreatmentB,
     WaitPage2,
     HolidayPreferences,
     WaitPage3,
