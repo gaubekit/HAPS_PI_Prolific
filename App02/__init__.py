@@ -485,7 +485,7 @@ class WaitPage1(Page):
                 p.participant.single_player = True
 
         # TODO: I set the treatment manually for testing
-        #player.participant.treatment = 'WOOP'
+        player.group.treatment = 'WOOP'
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -518,7 +518,7 @@ class TreatmentA(Page):
     @staticmethod
     def is_displayed(player):
         print(f'treatment is {player.group.treatment}')
-        return player.participant.treatment == 'Control'
+        return player.group.treatment == 'Control'
 
     @staticmethod
     def js_vars(player):
@@ -619,7 +619,7 @@ class TreatmentB(Page):
     @staticmethod
     def is_displayed(player):
         print(f'treatment is {player.group.treatment}')
-        return player.participant.treatment == 'WOOP'
+        return player.group.treatment == 'WOOP'
 
     @staticmethod
     def js_vars(player):
