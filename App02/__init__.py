@@ -483,6 +483,9 @@ class WaitPage1(Page):
             for p in player.group.get_players():
                 p.participant.single_player = True
 
+        # TODO: I set the treatment manually for testing
+        #player.participant.treatment = 'WOOP'
+
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
         """if player flagged -> direct  to App03"""
@@ -506,10 +509,85 @@ class TreatmentA(Page):
     The treatment is handled via control-variable and an is_displayed staticmethod
 
     """
-    pass  # TODO: Update after Treatment B is i.o.
+    form_model = 'player'
+    form_fields = ['treatment_notes']
+
+    timeout_seconds = (C.AUDIO_GUIDE_DURATION + C.AUDIO_GUIDE_TIME_AFTERWARDS)
+
+    @staticmethod
+    def is_displayed(player):
+        print(f'treatment is {player.group.treatment}')
+        return player.participant.treatment == 'Control'
+
+    @staticmethod
+    def js_vars(player):
+        others = player.get_others_in_group()
+        others_vm_pref = [
+            (others[0].participant.vm_pref_achievement + others[1].participant.vm_pref_achievement) / 2,
+            (others[0].participant.vm_pref_dominance + others[1].participant.vm_pref_dominance) / 2,
+            (others[0].participant.vm_pref_face + others[1].participant.vm_pref_face) / 2,
+            (others[0].participant.vm_pref_rules + others[1].participant.vm_pref_rules) / 2,
+            (others[0].participant.vm_pref_concern + others[1].participant.vm_pref_concern) / 2,
+            (others[0].participant.vm_pref_tolerance + others[1].participant.vm_pref_tolerance) / 2,
+        ]
+
+        player.participant.others_vm_pref = others_vm_pref
+
+        return dict(
+            own=[player.participant.vm_pref_achievement,
+                 player.participant.vm_pref_dominance,
+                 player.participant.vm_pref_face,
+                 player.participant.vm_pref_rules,
+                 player.participant.vm_pref_concern,
+                 player.participant.vm_pref_tolerance],
+            other=others_vm_pref
+        )
+
+    @staticmethod
+    def live_method(player, data):
+        try:
+            """ checks every 800ms whether all players are alive (browser not closed)"""
+            now = time.time()
+            code = player.participant.code
+            page = player.participant._current_page_name
+
+            last_active[code]['last_time'] = now
+            last_active[code]['current_page'] = page
+
+            # Check whether one of the players is inactive fore more than 2 minutes
+            for p in player.group.get_players():
+                if last_active[p.participant.code]['last_time'] < now - 60 * 2:
+                    last_active[p.participant.code]['activity_status'] = False
+                    print('set set activity_status in last_active to False for: ', p.participant.code)
+                    p.participant.raised_dropout = True
+                    p.participant.single_player = True
+                    p.group.dropout_happened = True
+
+            # Save last_active every 90 seconds in participant var as backup
+            if time.time() - player.participant.last_sync < 90:
+                player.session.last_active_session_wide[player.participant.code] = last_active[player.participant.code]
+                player.participant.last_sync = time.time()
+
+            return None
+
+        except KeyError as e:
+            # Restore participant key in last_active
+            missing_key = e.args[0]
+            last_active[missing_key] = player.session.last_active_session_wide[missing_key]
+            print(f'Restored {e.args[0]} in last_active on TreatmentA')
+
+            return None
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        if timeout_happened:
+            print("timeout_happened is true in TreatmentA. This player raised a dropout: ", player.participant.code)
+            player.participant.raised_dropout = True
+            player.participant.single_player = True
+            player.group.dropout_happened = True
 
 
-class TreatmentB(Page):  # TODO add WOOP
+class TreatmentB(Page):
     """
         This page handles one of two treatments, and therefore includes:
             - visualize personal and team-averaged Playground goals
@@ -517,7 +595,7 @@ class TreatmentB(Page):  # TODO add WOOP
 
             - Mental Contrasting
 
-        The treatment is handled via control-variable and a is_displayed staticmethod. # TODO
+        The treatment is handled via control-variable and a is_displayed staticmethod.
 
         Dropout detection is ensured via timeout_seconds:
 
@@ -539,9 +617,8 @@ class TreatmentB(Page):  # TODO add WOOP
 
     @staticmethod
     def is_displayed(player):
-        print(f'treatment would be {player.group.treatment}')
-        return True
-        # return player.participant.treatment == 'WOOP' # TODO deactivated for testing
+        print(f'treatment is {player.group.treatment}')
+        return player.participant.treatment == 'WOOP'
 
     @staticmethod
     def js_vars(player):
@@ -1090,8 +1167,8 @@ page_sequence = [
     MyWaitPage,
     InformOnScreenTimer,
     WaitPage1,
-    # Treatment A, # TODO
-    TreatmentB,
+    TreatmentA, # TODO
+    #TreatmentB,
     WaitPage2,
     HolidayPreferences,
     WaitPage3,

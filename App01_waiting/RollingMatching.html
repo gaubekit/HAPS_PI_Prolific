@@ -4,75 +4,77 @@
 
 {{ block content }}
 
-    <style>
-        .otree-btn-next {
-            display: none;
+<style>
+    .otree-btn-next {
+        display: none;
+    }
+
+   .my-box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+</style>
+
+<div class="my-box">
+    At this page you have to wait until enough active players arrived to form a group. <br>
+    If we are unable to form a group within <span id="wait-minutes"></span> minutes,
+    we will ask you whether you would like to rejoin the grouping or continue with Stage 3.
+    <br><br>
+    As soon as enough active players are available, the active players will be <b>automatically</b> forwarded to the next page.<br>
+    <br>
+    <b>Please do NOT leave your computer while waiting.</b>
+    <br><br>
+    <p>Waiting for 3 active players..</p>
+    <p>Active players (including you): <span id="count">0</span></p>
+    <p>Remaining waiting time: <span id="timer">--:--</span></p>
+</div>
+
+{{ next_button }}
+
+<script>
+    const totalSeconds = {{ wait_seconds }};
+    let remaining = totalSeconds;
+
+    // Minuten dynamisch ins HTML schreiben
+    document.getElementById("wait-minutes").textContent = Math.floor(totalSeconds / 60);
+
+    // 800ms Live-Ping
+    setInterval(() => {
+        liveSend("ping");
+    }, 800);
+
+    // Serverantwort verarbeiten
+    function liveRecv(data) {
+        document.getElementById("count").textContent = data.count;
+
+        if (data.ready) {
+            setTimeout(() => {
+                const realNext = document.querySelector('.otree-btn-next');
+                if (realNext) {
+                    realNext.click();
+                }
+            }, 100);
         }
+    }
 
-       .my-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #f9f9f9;
+    // Automatische Weiterleitung nach Ablauf
+    setTimeout(() => {
+        const realNext = document.querySelector('.otree-btn-next');
+        if (realNext) {
+            realNext.click();
         }
-    </style>
+    }, totalSeconds * 1000);
 
-    <div class="my-box">
+    // Countdown-Anzeige
+    const timerDisplay = document.getElementById("timer");
+    setInterval(() => {
+        if (remaining <= 0) return;
+        remaining -= 1;
+        const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
+        const seconds = String(remaining % 60).padStart(2, '0');
+        timerDisplay.textContent = `${minutes}:${seconds}`;
+    }, 1000);
+</script>
 
-
-        At this page you have to wait until enough active players arrived to form a group. <br>
-        If we are unable to form a group within 5 minutes, we will ask you whether you would like to rejoin the grouping or continue with Stage 3.
-        <br><br>
-        As soon as enough active players available, the active players will be <b>automatically</b> forwarded to the next page.<br>
-        <br>
-        <b>Please do NOT leave your computer while waiting.</b>
-        <br><br>
-        <p>Waiting for 3 active players..</p>
-        <p>Active players (including you): <span id="count">0</span></p>
-        <p>Remaining waiting time: <span id="timer">--:--</span></p>
-
-    </div>
-    {{ next_button }}
-
-
-    <script>
-        const totalSeconds = {{ wait_seconds }};
-        let remaining = totalSeconds;
-
-        // 800ms Live-Ping
-        setInterval(() => {
-            liveSend("ping");
-        }, 800);
-
-        // Serverantwort verarbeiten
-        function liveRecv(data) {
-            document.getElementById("count").textContent = data.count;
-
-            if (data.ready) {
-                setTimeout(() => {
-                    const realNext = document.querySelector('.otree-btn-next');
-                    if (realNext) {
-                        realNext.click();
-                    }
-                }, 100);
-            }
-        }
-
-        // Automatische Weiterleitung nach Ablauf
-        setTimeout(() => {
-            const realNext = document.querySelector('.otree-btn-next');
-            if (realNext) {
-                realNext.click();
-            }
-        }, totalSeconds * 1000);
-
-        // Countdown-Anzeige
-        const timerDisplay = document.getElementById("timer");
-        setInterval(() => {
-            if (remaining <= 0) return;
-            remaining -= 1;
-            const minutes = String(Math.floor(remaining / 60)).padStart(2, '0');
-            const seconds = String(remaining % 60).padStart(2, '0');
-            timerDisplay.textContent = `${minutes}:${seconds}`;
-        }, 1000);
-    </script>
 {{ endblock }}

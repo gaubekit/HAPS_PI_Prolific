@@ -3,6 +3,7 @@
 {{ endblock }}
 
 {{ block content }}
+<!-- Chart.js für Radar Chart -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
 <style>
@@ -37,30 +38,24 @@
         padding: 20px;
         overflow-y: auto;
         font-family: Arial, sans-serif;
-        font-size: 14px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        flex-direction: column;
+        font-size: 13px;
+
+        display: flex;            /* Flexbox aktivieren */
+        justify-content: center;  /* horizontal zentrieren */
+        align-items: center;      /* vertikal zentrieren */
+        text-align: center;       /* Text zentrieren, falls mehrzeilig */
+    }
+
+    .right-container h3 {
+        margin-top: 15px;
+        margin-bottom: 5px;
+        font-size: 13px;
     }
 
     .right-container p {
         margin: 0 0 12px 0;
-        font-size: 14px;
+        font-size: 11px;
         line-height: 1.4;
-    }
-
-    #notes-field {
-        margin-top: 15px;
-        width: 100%;
-    }
-
-    #notes-field textarea {
-        width: 100%;
-        height: 100px;
-        font-size: 13px;
-        padding: 8px;
     }
 
     #myRadarChart {
@@ -71,8 +66,8 @@
 
 <div class="my-box">
     <p>
-        You have been matched with two other participants. As before, the <span style="color: rgba(54, 162, 235, 1);">blue line</span> shows <span style="color: rgba(54, 162, 235, 1);">your</span> video meeting goals in the spider graph.
-        Additionally, the <span style="color: rgba(255, 99, 132, 1);">red line</span> shows the <u>average</u> video meeting goals of the <span style="color: rgba(255, 99, 132, 1);">other team members</span>.
+        We matched you with two other participants. As before, the blue line shows how your video meeting goals look like in a multidimensional visualization.
+        The red line now shows the average meeting goals of the other team members.
     </p>
 
     <div class="outer-container">
@@ -83,65 +78,30 @@
         </div>
 
         <div class="right-container">
-            <p>Please take the next 5 minutes to consider <span style="color: rgba(54, 162, 235, 1);">your goals</span> and your <span style="color: rgba(255, 99, 132, 1);">team members' goals</span>.</p>
-            <p>You may also use the notes field below if you want to write down your reflections.</p>
-
-            <div id="notes-field">
-                <label for="notes">Your notes:</label><br>
-                <textarea id="notes" name="treatment_notes" placeholder="Write down your reflections here..."></textarea>
-            </div>
+            Please take a moment to consider your goals and your team members goals.
         </div>
     </div>
-    <br>
-    Please <u>do not</u> refresh this page!
-</div>
 
-<br>
+    <br><br>
+    <p><b>On the next page, you will have to wait until your two members are ready, before the video meeting starts </b>.</p>
 
-<!-- Countdown for NEXT button -->
-<div id="countdown-container">
-    <p style="color: gray; font-style: italic;">
-        You can proceed in <span id="countdown-timer"></span> seconds.
-    </p>
-</div>
-
-<!-- Next-Button -->
-<div id="next-container" style="display: none; text-align: left; margin-top: 20px;">
-    <p>{{ next_button }}</p>
-</div>
-
-<script>
-    // trigger repeatedly otree live_methode
-    setInterval(() => {
-        liveSend("ping");
-    }, 800);
-</script>
-
-<script>
+    <script>
     const goalDescriptions = {{ session.vm_goal_description }};
+
     const customGridLinesPlugin = {
-        beforeDraw: function(chart) {
+        beforeDraw(chart) {
             const ctx = chart.ctx;
             const scale = chart.scales['scale'];
-
             ctx.save();
             ctx.strokeStyle = '#ccc';
             ctx.lineWidth = 1;
-
-            const showLinesAt = [-3, 0, 3];
-            showLinesAt.forEach(val => {
-                if (val === -3 || val === 3) {
-                    ctx.setLineDash([]);
-                } else {
-                    ctx.setLineDash([5, 5]);
-                }
-
+            ctx.setLineDash([5, 5]);
+            [-3, 0, 3].forEach(val => {
                 const y = scale.getDistanceFromCenterForValue(val);
                 ctx.beginPath();
                 ctx.arc(scale.xCenter, scale.yCenter, y, 0, 2 * Math.PI);
                 ctx.stroke();
             });
-
             ctx.restore();
         }
     };
@@ -185,7 +145,7 @@
             const angle2 = scale.getIndexAngle(1) - Math.PI / 2;
             const midAngle = (angle1 + angle2) / 2;
             [-3, 0, 3].forEach(val => {
-                const r = scale.getDistanceFromCenterForValue(val) - 10;
+                const r = scale.getDistanceFromCenterForValue(val) -10;
                 const x = cx + r * Math.cos(midAngle);
                 const y = cy + r * Math.sin(midAngle);
                 ctx.fillText(val, x, y);
@@ -193,6 +153,7 @@
             ctx.restore();
         }
     };
+
 
     function createRadarChart() {
         const ctx = document.getElementById('myRadarChart').getContext('2d');
@@ -236,7 +197,7 @@
                         fontSize: 12,
                         fontStyle: 'normal',
                         fontColor: '#666'
-                    },
+                        },
                     gridLines: { display: false },
                     angleLines: { display: false }
                 },
@@ -251,7 +212,7 @@
                     }
                 },
                 hover: { mode: 'nearest', intersect: true },
-                legend: { position: 'bottom', align: 'start', labels: { padding: 30 }},
+                legend: {position: 'bottom', align: 'start', labels: {padding: 30}},
                 title: {
                     display: true,
                     text: 'Video Meeting Goals',
@@ -260,39 +221,16 @@
                     padding: 20
                 }
             },
-            plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin]
+
+            plugins: [customGridLinesPlugin, customRadialLinesPlugin, customTickLabelsPlugin ]
         });
     }
 
     createRadarChart();
+    </script>
+</div>
 
-    // Next-Button Countdown
-    const timeout_seconds = {{ C.AUDIO_GUIDE_DURATION }};
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const countdownEl = document.getElementById("countdown-timer");
-        let secondsLeft = timeout_seconds;
-
-        countdownEl.textContent = secondsLeft;
-
-        const countdownInterval = setInterval(() => {
-            secondsLeft -= 1;
-            countdownEl.textContent = secondsLeft;
-
-            if (secondsLeft <= 0) {
-                clearInterval(countdownInterval);
-                document.getElementById("countdown-container").style.display = "none";
-                document.getElementById("next-container").style.display = "block";
-            }
-        }, 1000);
-    });
-
-    // Prevent page refresh
-    document.addEventListener("keydown", function (e) {
-        if ((e.key === "F5") || (e.ctrlKey && e.key === "r")) {
-            e.preventDefault();
-        }
-    });
-</script>
+<br/>
+{{ next_button }}
 
 {{ endblock }}
