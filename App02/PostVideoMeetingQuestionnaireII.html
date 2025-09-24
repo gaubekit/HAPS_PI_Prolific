@@ -172,7 +172,7 @@
     <div class="slider-section">
         <div class="question-text">How mentally demanding was this video conference?</div>
         <div class="slider-wrapper">
-            <span class="slider-label">very low</span>
+            <span class="slider-label">not at all</span>
             <div class="slider-container">
                 <div class="slider-ticks">
                     {% for i in range(-10, 11) %}
@@ -192,7 +192,7 @@
                 </div>
                 <input type="range" name="nasatlx_1" min="-10" max="10" step="1" class="persist">
             </div>
-            <span class="slider-label">very high</span>
+            <span class="slider-label">extremely</span>
         </div>
     </div>
 
@@ -264,7 +264,7 @@
     <div class="slider-section">
         <div class="question-text">How hurried or rushed was the pace of this video conference?</div>
         <div class="slider-wrapper">
-            <span class="slider-label">very low</span>
+            <span class="slider-label">not at all</span>
             <div class="slider-container">
                 <div class="slider-ticks">
                     {% for i in range(-10, 11) %}
@@ -284,7 +284,7 @@
                 </div>
                 <input type="range" name="nasatlx_2" min="-10" max="10" step="1" class="persist">
             </div>
-            <span class="slider-label">very high</span>
+            <span class="slider-label">extremely</span>
         </div>
     </div>
 
@@ -394,7 +394,7 @@
 </div>
 
 <script>
-    const timeout_seconds = 60; // zentral konfigurierbar
+    const timeout_seconds = 40; // zentral konfigurierbar
 
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
@@ -403,7 +403,7 @@
         // Initialer Countdown-Text
         countdownEl.textContent = secondsLeft;
 
-        // Countdown aktualisieren jede Sekunde
+        // Countdown
         const countdownInterval = setInterval(() => {
             secondsLeft -= 1;
             countdownEl.textContent = secondsLeft;

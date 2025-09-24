@@ -59,14 +59,14 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
 
     # Central configuration of duration Video Meeting and Upload Time Limit
-    VM_DURATION = 7 * 60
+    VM_DURATION = 7 # * 60 # TODO
     # VM_DURATION = 1 * 60  # 1 minute for testing
     VM_UPLOAD_DURATION = 2 * 60
 
     # Central configuration of timings on TreatmentB Page
     AUDIO_GUIDE_APPEAR = 1 * 60
     AUDIO_GUIDE_AUTO_SUBMIT = 2 * 60
-    AUDIO_GUIDE_DURATION = 5 * 60  # the duration of the mp3-file
+    AUDIO_GUIDE_DURATION = 5 #* 60  # the duration of the mp3-file # TODO
     AUDIO_GUIDE_TIME_AFTERWARDS = 2 * 60
 
 
@@ -484,8 +484,9 @@ class WaitPage1(Page):
             for p in player.group.get_players():
                 p.participant.single_player = True
 
-        # TODO: I set the treatment manually for testing
-        player.group.treatment = 'WOOP'
+        # Setting the treatment manually to "WOOP" for testing reasons
+        # player.group.treatment = 'WOOP'
+        player.group.treatment = 'Control'
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -596,7 +597,7 @@ class TreatmentB(Page):
 
             - Mental Contrasting
 
-        The treatment is handled via control-variable and a is_displayed staticmethod.
+        The treatment is handled via control-variable and an is_displayed staticmethod.
 
         Dropout detection is ensured via timeout_seconds:
 
