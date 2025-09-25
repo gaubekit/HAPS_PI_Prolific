@@ -2,7 +2,7 @@ from otree.api import *
 
 
 doc = """
-Your app description
+This app informs roughly about the study and checks for consent. No consent -> no participation.
 """
 
 

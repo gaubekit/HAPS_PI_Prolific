@@ -12,12 +12,6 @@ SESSION_CONFIGS = [dict(name='HAPS_PI_Prolific', num_demo_participants=3,
                             'App03',  # Questionnaires -> Stage 3 (individual)
                             'App04',  # payoff & ThankYou + return Prolific
                               ]),
-                   dict(
-                       name='Testing',
-                       display_name="Testing",
-                       app_sequence=['Playground'],
-                       num_demo_participants=3,
-                   ),
                    ]
 LANGUAGE_CODE = 'en'
 REAL_WORLD_CURRENCY_CODE = ''
