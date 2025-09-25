@@ -1,4 +1,4 @@
-{{ block title }}Stage 2: Questionnaire 3/3{{ endblock }}
+{{ block title }}Stage 1: Questionnaire 1/2{{ endblock }}
 {{ block content }}
 
 <style>
@@ -123,13 +123,14 @@
 
 
 <div class="my-box">
-    <p>Please take a moment to reflect your decision on the previous page and adjust the sliders accordingly.</p>
+    <p>Please take a moment to reflect on virtual collaborative behavior as a spectrum between competition and cooperation.
+       Adjust the two sliders below to indicate your personal stance.</p>
 
-    <p><b>In this team,...</b></p>
+    <p><b>Usually, when working virtually in a team,...</b></p>
 
-    <!-- Slider 1 Goal -->
+    <!-- Slider 1 -->
     <div class="slider-grid">
-        <div><br>..I wanted to:</div>
+        <div><br>..regardless of what I expect from others, my own goal is to:</div>
         <div class="slider-section">
             <center><div><strong>Goal</strong></div></center>
             <div class="slider-wrapper">
@@ -141,16 +142,16 @@
                     <div class="slider-labels">
                         <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
                     </div>
-                    <input type="range" name="impact_goal" min="-3" max="3" step="1" class="persist">
+                    <input type="range" name="collaborative_goal" min="-3" max="3" step="1" class="persist">
                 </div>
                 <span class="label">cooperate</span>
             </div>
         </div>
     </div>
      <br>
-    <!-- Slider 2 Expectations -->
+    <!-- Slider 2 -->
     <div class="slider-grid">
-        <div><br>..I expected that my team members:</div>
+        <div><br>..regardless of my own goals, I expect my team members to:</div>
         <div class="slider-section">
             <center><div><strong>Expectations</strong></div></center>
             <div class="slider-wrapper">
@@ -162,90 +163,15 @@
                     <div class="slider-labels">
                         <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
                     </div>
-                    <input type="range" name="impact_expectation" min="-3" max="3" step="1" class="persist">
+                    <input type="range" name="collaboration_expectations" min="-3" max="3" step="1" class="persist">
                 </div>
                 <span class="label">cooperate</span>
             </div>
         </div>
     </div>
-
-    <br><br>
-    <p> <b>Further, please think about the following statements and indicate with the sliders your level of agreement:</b></p>
-
-    <!-- Slider 3 influence Spider graph -->
-    <div class="slider-grid">
-        <div><br>Knowing the meeting-goals of my team using the spider graph influenced my choice on the last page.</div>
-        <div class="slider-section">
-            <center><div><strong>Spider Graph</strong></div></center>
-            <div class="slider-wrapper">
-                <span class="label">Not at all</span>
-                <div class="slider-container">
-                    <div class="slider-ticks">
-                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                    </div>
-                    <div class="slider-labels">
-                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
-                    </div>
-                    <input type="range" name="impact_spider_graph" min="-3" max="3" step="1" class="persist">
-                </div>
-                <span class="label">Very much</span>
-            </div>
-        </div>
-    </div>
-
-    <br>
-
-    <!-- Slider 4 influence Video Meeting -->
-    <div class="slider-grid">
-        <div><br>Talking to my team in the video call influenced my choice on the last page.</div>
-        <div class="slider-section">
-            <center><div><strong>Video Meeting</strong></div></center>
-            <div class="slider-wrapper">
-                <span class="label">Not at all</span>
-                <div class="slider-container">
-                    <div class="slider-ticks">
-                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                    </div>
-                    <div class="slider-labels">
-                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
-                    </div>
-                    <input type="range" name="impact_video_meeting" min="-3" max="3" step="1" class="persist">
-                </div>
-                <span class="label">Very much</span>
-            </div>
-        </div>
-    </div>
-
-    <br>
-
-    {% if player.group.treatment == "WOOP" %}
-
-    <!-- Slider 5 influence WOOP -->
-    <div class="slider-grid">
-        <div><br>The alignment with my meeting-goal using the audio-guided mental contrasting influenced my choice on the last page.</div>
-        <div class="slider-section">
-            <center><div><strong>Mental Contrasting</strong></div></center>
-            <div class="slider-wrapper">
-                <span class="label">Not at all</span>
-                <div class="slider-container">
-                    <div class="slider-ticks">
-                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                    </div>
-                    <div class="slider-labels">
-                        <span>-3</span><span>-2</span><span>-1</span><span>&nbsp;0</span><span>&nbsp;1</span><span>&nbsp;2</span><span>&nbsp;3</span>
-                    </div>
-                    <input type="range" name="impact_woop" min="-3" max="3" step="1" class="persist">
-                </div>
-                <span class="label">Very much</span>
-            </div>
-        </div>
-    </div>
-
-    {% endif %}
-
 </div>
 
-<br/>
+<br>
 
 <!-- Countdown -->
 <div id="countdown-container">
@@ -259,7 +185,7 @@
 
 
 <script>
-    const timeout_seconds = 40; // set minimum time
+    const timeout_seconds = 20; // set minimum time
 
     document.addEventListener("DOMContentLoaded", function () {
         const countdownEl = document.getElementById("countdown-timer");
