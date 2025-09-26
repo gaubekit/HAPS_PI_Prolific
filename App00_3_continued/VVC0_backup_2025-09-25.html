@@ -53,23 +53,16 @@
         font-size: 1rem;
     }
 
-    .confirmation-section details {
-        margin-top: 15px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background: #fff;
-    }
-
-    .confirmation-section summary {
+    .confirmation-section label {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 15px;
         font-weight: bold;
-        cursor: pointer;
     }
 
     .confirmation-section input[type="checkbox"] {
-        margin-right: 10px;
+        margin-top: 4px;
         transform: scale(1.2);
         cursor: pointer;
     }
@@ -78,28 +71,21 @@
         font-weight: normal;
         font-size: 0.9em;
         color: #555;
+        margin-left: 30px;
         margin-top: 5px;
-        padding-left: 28px;
     }
 
-    #next-info-container {
-        margin-top: 30px;
-        text-align: left;
-        max-width: 1000px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    #next-container {
-        margin-top: 30px;
-        text-align: left;
-        max-width: 1000px;
-        margin-left: auto;
-        margin-right: auto;
+    #next-button-container {
         display: none;
+        margin-top: 30px;
+        text-align: left;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
     }
 </style>
 
+<!-- Description, Video Meeting, Control Questions -->
 <div class="my-box">
 
     <div id="message"></div>
@@ -130,62 +116,48 @@
     <!-- Confirmation checkboxes -->
     <div class="confirmation-section">
 
-        <!-- Background confirmation (optional) -->
-        <details>
-            <summary>
-                <input type="checkbox" id="cb-background">
-                I confirm that I have selected a virtual background for the video meeting.
-            </summary>
-            <div class="note">
-                Note: If you accidentally selected no background, press F5 to reload the page and choose the correct one.
-            </div>
-        </details>
+        <!-- Background confirmation -->
+        <label>
+            <input type="checkbox" id="cb-background">
+            I confirm that I have selected a virtual background for the video meeting.
+        </label>
+        <div class="note">
+            Note: If you accidentally selected no background, press F5 to reload the page and choose the correct one.
+        </div>
 
         <!-- Audio confirmation -->
-        <details>
-            <summary>
-                <input type="checkbox" id="cb-audio">
-                I confirm that my speaker (audio output) is working.
-            </summary>
-            <div class="note">
-                Note: Click the arrow (^) next to the microphone icon, check the "Speaker" section, hover over your selected device and click the test button. You should hear a test tone.
-            </div>
-        </details>
+        <label>
+            <input type="checkbox" id="cb-audio">
+            I confirm that my speaker (audio output) is working.
+        </label>
+        <div class="note">
+            Note: Click the arrow (^) next to the microphone icon, check the "Speaker" section, hover over your selected device and click the test button. You should hear a test tone.
+        </div>
 
         <!-- Microphone confirmation -->
-        <details>
-            <summary>
-                <input type="checkbox" id="cb-mic">
-                I confirm that my microphone is working.
-            </summary>
-            <div class="note">
-                Note: Click the arrow (^) next to the microphone icon, check the "Microphone" section. Speak into your mic and watch for the input level bar to move.
-            </div>
-        </details>
+        <label>
+            <input type="checkbox" id="cb-mic">
+            I confirm that my microphone is working.
+        </label>
+        <div class="note">
+            Note: Click the arrow (^) next to the microphone icon, check the "Microphone" section. Speak into your mic and watch for the input level bar to move.
+        </div>
 
         <!-- Video confirmation -->
-        <details>
-            <summary>
-                <input type="checkbox" id="cb-video">
-                I confirm that I can see myself in the video meeting.
-            </summary>
-            <div class="note">
-                Note: You should see yourself, but your real background should not be visible.
-            </div>
-        </details>
+        <label>
+            <input type="checkbox" id="cb-video">
+            I confirm that I can see myself in the video meeting.
+        </label>
+        <div class="note">
+            Note: You should see yourself, but your real background should not be visible.
+        </div>
     </div>
 
 </div> <!-- End .my-box -->
 
-<!-- Info text and Next button -->
-<div id="next-info-container" style="display: none;">
-    <p style="color: gray; font-style: italic;">
-        You can proceed once you confirm that you meet all requirements.
-    </p>
-</div>
-
-<div id="next-container">
-    <p>{{ next_button }}</p>
+<!-- Next button outside the box -->
+<div id="next-button-container">
+    {{ next_button }}
 </div>
 
 <!-- Jitsi Meet API -->
@@ -196,20 +168,38 @@
     const TN_name = "P" + {{ player.id_in_group }};
 
     const options = {
-        roomName: "Video Meeting" + {{ player.id_in_group }},
-        parentNode: document.querySelector('#meet'),
+        roomName: "Video Meeting" + {{ player.id_in_group }},// This is the name of the room, with player's group ID
+        parentNode: document.querySelector('#meet'), // Now, you declare here which element should parent your stream.
         configOverwrite: {
-            prejoinConfig: { enabled: false },
+            prejoinConfig: {
+                enabled: false
+            },
             disableSelfView: false,
             startWithAudioMuted: false,
             startWithVideoMuted: false,
+            filmstrip: {
+                disableResizable: true,
+            },
+            participantsPane: {
+                hideModeratorSettingsTab: true,
+                hideMoreActionsButton: true,
+                hideMuteAllButton: true
+            },
             resolution: 480,
+            disableAEC: false, // Acoustic Echo Cancellation
+            disableNS: false, // Noise Suppression
             constraints: {
                 video: {
-                    height: { ideal: 480, max: 480, min: 240 }
+                    height: {
+                        ideal: 480,
+                        max: 480,
+                        min: 240
+                    }
                 }
-            }
-        },
+            },
+            disableSimulcast: false,
+            enableLayerSuspension: true
+        }, // You can turn on or off config elements with this prop.
         interfaceConfigOverwrite: {
             TOOLBAR_BUTTONS: ['microphone', 'camera', 'fodeviceselection'],
             SHOW_JITSI_WATERMARK: false,
@@ -226,37 +216,38 @@
 
     const api = new JitsiMeetExternalAPI(domain, options);
 
+    // The function below turns on the Tile View every time a participant joins. Practically it makes Tile View the default mode
+    // Set the virtual background
     api.addEventListener('videoConferenceJoined', () => {
         api.executeCommand('setTileView', true);
         setTimeout(() => {
-            api.executeCommand('toggleVirtualBackgroundDialog');
+                   <!-- HTML content to display if participant is a dropout -->
+
+                    api.executeCommand('toggleVirtualBackgroundDialog');
+
         }, 1000);
     });
 
-    // Checkbox logic
-    const requiredIds = ['cb-audio', 'cb-mic', 'cb-video']; // required checkboxes
-    const checkboxes = requiredIds.map(id => document.getElementById(id));
-    const nextInfoContainer = document.getElementById('next-info-container');
-    const nextContainer = document.getElementById('next-container');
+    // Insert 'myself' text in the correct column
+    const playerId = {{ player.id_in_group }};
+    console.debug (playerId);
+    console.debug(playerId === 1);
 
-    // Initially: show info, hide button
-    nextInfoContainer.style.display = "block";
-    nextContainer.style.display = "none";
+    // Handle checkbox logic
+    const checkboxIds = ['cb-background', 'cb-audio', 'cb-mic', 'cb-video'];
+    const checkboxes = checkboxIds.map(id => document.getElementById(id));
+    const nextButtonContainer = document.getElementById('next-button-container');
 
-    function updateNextButton() {
-        const allRequiredChecked = checkboxes.every(c => c.checked);
-
-        if (allRequiredChecked) {
-            nextInfoContainer.style.display = "none";
-            nextContainer.style.display = "block";
-        } else {
-            nextInfoContainer.style.display = "block";
-            nextContainer.style.display = "none";
-        }
-    }
-
-    document.querySelectorAll('.confirmation-section input[type="checkbox"]').forEach(cb => {
-        cb.addEventListener('change', updateNextButton);
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            if (cb.checked) {
+                cb.disabled = true;
+            }
+            const allChecked = checkboxes.every(c => c.checked);
+            if (allChecked) {
+                nextButtonContainer.style.display = 'block';
+            }
+        });
     });
 </script>
 

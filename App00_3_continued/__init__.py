@@ -82,6 +82,7 @@ class EnterProlificId(Page):
         player.participant.payoff_bonus_wlg = 0
         player.participant.payoff_compensation_wlg_dropout = 0
         player.participant.payoff_total = player.participant.payoff_fix
+        player.participant.wlg_own_choice = None
 
 
 class GeneralInformation(Page):
