@@ -93,6 +93,11 @@ def process_data(player):
 
         except KeyError:
             value = 0
+        except AttributeError:
+            value = None
+        except TypeError:
+            pass  # only raised if round function, in case value is none
+
         setattr(player, f"{field}_pound" if field.startswith("payoff_") else field, value)
         print('set field: ', field)
 
