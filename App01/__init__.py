@@ -262,11 +262,11 @@ class IntroductionSpiderGraph(Page):
         """
         This methode provides participant-var for the next app
 
-            - store arrival time at the waite page (first page in next app) # TODO weg
+            - store arrival time at the waite page (first page in next app)
         - define a flag for single player = False, used to flag players that form no group or can't continue
         - define a flag indicating whether the participant formed a team
         - define var to track additional wait time in rolling matching
-            - confirmed meeting? # todo weg
+            - confirmed meeting?
         - define flag indicating whether this particular player raised the dropout
         - define flag indicating whether video_meeting_successful
         """
