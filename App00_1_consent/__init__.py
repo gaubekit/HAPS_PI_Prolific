@@ -57,7 +57,7 @@ class EligibilityCheck(Page):
 
     @staticmethod
     def app_after_this_page(player: Player, upcoming_apps):
-        if player.consent_eligibility == 0:  # TODO : ich habe hier participatn  consent = 0 weg gemacht
+        if player.consent_eligibility == 0:
             return 'App04'
 
 
