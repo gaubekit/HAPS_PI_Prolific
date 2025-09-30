@@ -28,7 +28,14 @@ class Player(BasePlayer):
         widget=widgets.RadioSelect
     )
 
-    eligibility = models.IntegerField(
+    consent_form = models.IntegerField(
+        label='<b>Do you want to participate?</b>',
+        blank=False,
+        choices=[(1, "Yes, I want to participate."), (0, "No, I do not want to participate.")],
+        widget=widgets.RadioSelect
+    )
+
+    consent_eligibility = models.IntegerField(
         label='<b>Are you able and willing to use a Chrome, Edge or Opera browser in this study?</b>',
         blank=False,
         choices=[(1, "Yes"), (0, "No")],
@@ -42,12 +49,15 @@ class Player(BasePlayer):
 # PAGES
 class EligibilityCheck(Page):
     form_model = 'player'
-    form_fields = ['eligibility']
+    form_fields = ['consent_eligibility']
+
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        player.participant.consent_eligibility = player.consent_eligibility
 
     @staticmethod
     def app_after_this_page(player: Player, upcoming_apps):
-        if player.eligibility == 0:
-            player.participant.consent = 0
+        if player.consent_eligibility == 0:  # TODO : ich habe hier participatn  consent = 0 weg gemacht
             return 'App04'
 
 
@@ -64,18 +74,20 @@ class ConsentFormA2(Page):
     @staticmethod
     def before_next_page(player, timeout_happened):
         player.participant.optInConsent = player.optInConsent
-        print('player label: ', player.participant.label)
-        print('player code: ', player.participant.code)
+        # print('player label: ', player.participant.label)
+        # print('player code: ', player.participant.code)
 
 
 class ConsentFormB(Page):
     """ if not consent:  ask second time in App00_2_exit (if not exit) else App00_3_continued """
     form_model = 'player'
-    form_fields = ['consent']
+    form_fields = ['consent_form']
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         if not timeout_happened:
+            player.participant.consent_form = player.consent_form
+            player.consent = player.participant.consent_form and player.participant.consent_eligibility
             player.participant.consent = player.consent
 
         try:
@@ -89,12 +101,9 @@ class ConsentFormB(Page):
             print('initialized session var last_active_session_wide')
             print(player.session.last_active_session_wide)
 
-
-
-
     @staticmethod
     def app_after_this_page(player: Player, upcoming_apps):
-        if player.consent == 0:
+        if player.consent_form == 0:
             return 'App00_2_exit'  # Check a second time for consent before going to exit (App04)
         else:
             return 'App00_3_continued'  # continue with Audio/Video Check and Prolific ID

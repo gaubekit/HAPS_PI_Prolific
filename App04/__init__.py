@@ -121,8 +121,7 @@ class ThankYouI(Page):
     def is_displayed(player):
         try:
             return not player.participant.consent
-        # Players that not eligible (willing to use Chrome etc.) raise TypeError(None) and enter this page
-        # these are also forwarded to App05 and not reach ThankYouII etc.
+        # Players that not eligible (willing to use Chrome etc.) raise TypeError(None)
         except TypeError:
             return True
 

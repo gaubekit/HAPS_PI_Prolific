@@ -20,6 +20,8 @@ DEMO_PAGE_INTRO_HTML = ''
 PARTICIPANT_FIELDS = [
     # control variables for consent
     'consent',
+    'consent_eligibility',
+    'consent_form',
     'optInConsent',
     'prolific_id',
     # control variables for experiment flow
