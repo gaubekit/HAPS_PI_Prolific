@@ -160,7 +160,6 @@ class ThankYouII(Page):
         )
 
 
-
 class ThankYouIII(Page):
     """
     (III) Page for players who formed no team for Stage 2

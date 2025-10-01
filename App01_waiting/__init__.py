@@ -21,8 +21,8 @@ class C(BaseConstants):
     NAME_IN_URL = 'App01_waiting'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 5
-    WAIT_SECONDS = 20  # Note: Testing
-    # WAIT_SECONDS = 5 * 60  # Note: Production
+    # WAIT_SECONDS = 20  # Note: Testing
+    WAIT_SECONDS = 5 * 60  # Note: Production
 
     SVO_COMPENSATION = 50  # compensation for SVO from other, if no team is formed
 

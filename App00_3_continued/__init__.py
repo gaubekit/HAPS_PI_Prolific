@@ -60,7 +60,7 @@ class VVC0(Page):
     form_model = 'player'
 
 
-class VVC0_dummy(Page):  # TODO: use after 15:30 for testing (joint study conflict)
+class VVC0_dummy(Page):
     form_model = 'player'
 
 
@@ -98,8 +98,8 @@ class PayoffInformation(Page):
 page_sequence = [
     ConfirmAudioVideoInteract,
     BrowserCheck,
-    # VVC0_dummy,  # TODO: use after 15:30 for testing (joint study conflict)
-    VVC0,  # TODO: use only until 15:00 for testing (joint study conflict)
+    # VVC0_dummy,  # testing without VM
+    VVC0,  # productive
     EnterProlificId,
     GeneralInformation,
     PayoffInformation

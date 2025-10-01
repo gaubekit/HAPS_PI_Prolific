@@ -59,14 +59,15 @@ class C(BaseConstants):
     NUM_ROUNDS = 1
 
     # Central configuration of duration Video Meeting and Upload Time Limit
-    # VM_DURATION = 7 * 60
-    VM_DURATION = 1 * 60  # 1 minute for testing
+    VM_DURATION = 7 * 60  # productive
+    # VM_DURATION = 1 * 60  # testing
     VM_UPLOAD_DURATION = 2 * 60
 
     # Central configuration of timings on TreatmentB Page
     AUDIO_GUIDE_APPEAR = 1 * 60
     AUDIO_GUIDE_AUTO_SUBMIT = 2 * 60
-    AUDIO_GUIDE_DURATION = 5 #* 60  # the duration of the mp3-file # TODO
+    # AUDIO_GUIDE_DURATION = 10 # testing
+    AUDIO_GUIDE_DURATION = 5 * 60  # productive
     AUDIO_GUIDE_TIME_AFTERWARDS = 2 * 60
 
 
@@ -485,8 +486,8 @@ class WaitPage1(Page):
                 p.participant.single_player = True
 
         # Setting the treatment manually to "WOOP" for testing reasons
-        # player.group.treatment = 'WOOP'
-        player.group.treatment = 'Control'
+        player.group.treatment = 'WOOP'
+        # player.group.treatment = 'Control'
 
     @staticmethod
     def app_after_this_page(player, upcoming_apps):
@@ -1174,8 +1175,8 @@ page_sequence = [
     WaitPage2,
     HolidayPreferences,
     WaitPage3,
-    # VideoMeeting_dummy,  # TODO -> activate or deactivate
-    VideoMeeting,  # TODO -> activate or deactivate
+    # VideoMeeting_dummy,  # testing without VM
+    VideoMeeting,  # productive
     WaitPage4,
     # --- Dropout Handling II --- #
     PostVideoMeetingQuestionnaireII,
