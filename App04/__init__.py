@@ -125,14 +125,6 @@ class ThankYouI(Page):
         except TypeError:
             return True
 
-    @staticmethod
-    def vars_for_template(player):
-
-        process_data(player)
-
-        return dict(
-            payoff_fix_pound=player.payoff_total_pound)
-
 
 class ThankYouII(Page):
     """
